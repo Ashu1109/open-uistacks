@@ -1,0 +1,22 @@
+{
+  "name": "prompt-attachments",
+  "title": "Prompt with attachments",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "The chat composer with a file picker and drag-and-drop; chosen files appear as removable chips above the field. The parent owns the list and any uploading.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "attachment",
+    "prompt-input"
+  ],
+  "files": [
+    {
+      "path": "ui/prompt-attachments.tsx",
+      "content": "\"use client\";\n\nimport { useRef, useState, type DragEvent } from \"react\";\nimport { Paperclip } from \"lucide-react\";\nimport { PromptInput, PromptInputAction } from \"./prompt-input\";\nimport { Attachment, AttachmentList, type AttachmentProps } from \"./attachment\";\n\n/* Prompt with attachments: the chat composer with a file picker and drag-and-drop; chosen files appear as removable chips above the field. The parent owns the list and any uploading. */\n\nexport interface PromptAttachment extends Omit<AttachmentProps, \"onRemove\" | \"className\"> {\n  id: string;\n}\n\n/** Files from a drop or picker, minus any whose name and size match one already listed. */\nexport function newFiles(files: File[], existing: PromptAttachment[]): File[] {\n  return files.filter((f) => !existing.some((a) => a.name === f.name && a.size === f.size));\n}\n\nexport interface PromptAttachmentsProps {\n  attachments: PromptAttachment[];\n  onAdd?: (files: File[]) => void;\n  onRemove?: (id: string) => void;\n  onSubmit?: (text: string, attachments: PromptAttachment[]) => void;\n  accept?: string;\n  placeholder?: string;\n  className?: string;\n}\n\nexport function PromptAttachments({ attachments, onAdd, onRemove, onSubmit, accept, placeholder = \"Ask about your files\", className = \"\" }: PromptAttachmentsProps) {\n  const picker = useRef<HTMLInputElement>(null);\n  const [dragging, setDragging] = useState(false);\n  const add = (list: FileList | null) => {\n    const files = newFiles(Array.from(list ?? []), attachments);\n    if (files.length) onAdd?.(files);\n  };\n  const onDrop = (e: DragEvent) => {\n    e.preventDefault();\n    setDragging(false);\n    add(e.dataTransfer.files);\n  };\n\n  return (\n    <div\n      onDragOver={(e) => { e.preventDefault(); setDragging(true); }}\n      onDragLeave={() => setDragging(false)}\n      onDrop={onDrop}\n      className={`w-full max-w-xl rounded-[26px] transition-shadow ${dragging ? \"shadow-[0_0_0_3px_var(--select)]\" : \"\"} ${className}`}\n    >\n      <input ref={picker} type=\"file\" multiple accept={accept} hidden aria-label=\"Choose files\" onChange={(e) => { add(e.target.files); e.target.value = \"\"; }} />\n      <PromptInput\n        placeholder={placeholder}\n        onSubmit={(text) => onSubmit?.(text, attachments)}\n        leading={<PromptInputAction label=\"Attach files\" onClick={() => picker.current?.click()}><Paperclip size={17} aria-hidden /></PromptInputAction>}\n        header={attachments.length > 0 && (\n          <AttachmentList>\n            {attachments.map(({ id, ...rest }) => <Attachment key={id} {...rest} onRemove={onRemove && (() => onRemove(id))} />)}\n          </AttachmentList>\n        )}\n      />\n      {dragging && <p role=\"status\" className=\"mt-1 text-center text-xs text-select-text\">Drop to attach</p>}\n    </div>\n  );\n}\n"
+    }
+  ]
+}

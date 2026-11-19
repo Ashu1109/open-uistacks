@@ -1,0 +1,21 @@
+{
+  "name": "run-card",
+  "title": "Run card",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "Summary of one agent run with status, step progress, elapsed time and cost, plus Stop while running and Open details.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "tool-call"
+  ],
+  "files": [
+    {
+      "path": "ui/run-card.tsx",
+      "content": "\"use client\";\n\nimport { CircleCheck, CircleX, Loader2, Square } from \"lucide-react\";\nimport { formatMs } from \"./tool-call\";\n\n/* Run card: summary of one agent run with status, step progress, elapsed time and cost, plus Stop while running and Open details. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport type RunStatus = \"running\" | \"succeeded\" | \"failed\" | \"stopped\";\n\nexport function runProgress(done: number, total: number): number {\n  return total > 0 ? Math.min(Math.max(done / total, 0), 1) : 0;\n}\n\nexport function formatCost(usd: number): string {\n  return usd < 0.01 && usd > 0 ? \"<$0.01\" : `$${usd.toFixed(2)}`;\n}\n\nconst STATUS: Record<RunStatus, { label: string; tone: string; bar: string }> = {\n  running: { label: \"Running\", tone: \"bg-select-soft text-select-text\", bar: \"var(--select)\" },\n  succeeded: { label: \"Succeeded\", tone: \"bg-success-soft text-success-text\", bar: \"var(--success)\" },\n  failed: { label: \"Failed\", tone: \"bg-danger-soft text-danger-text\", bar: \"var(--danger)\" },\n  stopped: { label: \"Stopped\", tone: \"bg-subtle text-fg-muted\", bar: \"var(--series-3)\" },\n};\n\nexport interface RunCardProps {\n  title: string;\n  agent: string;\n  status: RunStatus;\n  stepsDone: number;\n  stepsTotal: number;\n  elapsedMs: number;\n  costUsd?: number;\n  onStop?: () => void;\n  onOpen?: () => void;\n  className?: string;\n}\n\nexport function RunCard({ title, agent, status, stepsDone, stepsTotal, elapsedMs, costUsd, onStop, onOpen, className = \"\" }: RunCardProps) {\n  const s = STATUS[status];\n  const pct = Math.round(runProgress(stepsDone, stepsTotal) * 100);\n  const Icon = status === \"running\" ? Loader2 : status === \"succeeded\" ? CircleCheck : status === \"failed\" ? CircleX : Square;\n  return (\n    <article aria-label={`Run: ${title}`} className={`rounded-[16px] bg-surface p-4 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <div className=\"flex items-start justify-between gap-3\">\n        <div className=\"min-w-0\">\n          <h4 className=\"truncate text-sm font-medium text-fg\">{title}</h4>\n          <p className=\"text-xs text-fg-subtle\">{agent}</p>\n        </div>\n        <span role=\"status\" className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${s.tone}`}>\n          <Icon size={11} aria-hidden className={status === \"running\" ? \"animate-spin motion-reduce:animate-none\" : \"\"} />\n          {s.label}\n        </span>\n      </div>\n      <div role=\"progressbar\" aria-label=\"Steps completed\" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} className=\"mt-3 h-1.5 overflow-hidden rounded-full bg-track\">\n        <div className=\"h-full rounded-full transition-[width] duration-300\" style={{ width: `${pct}%`, background: s.bar }} />\n      </div>\n      <div className=\"mt-2 flex items-center justify-between text-xs tabular-nums text-fg-muted\">\n        <span>{stepsDone} of {stepsTotal} steps</span>\n        <span>{formatMs(elapsedMs)}{costUsd !== undefined && ` · ${formatCost(costUsd)}`}</span>\n      </div>\n      {(onStop || onOpen) && (\n        <div className=\"mt-3 flex justify-end gap-2\">\n          {onStop && status === \"running\" && (\n            <button type=\"button\" onClick={onStop} className={`h-8 rounded-[10px] px-3 text-[13px] text-danger-text hover:bg-danger-soft ${ring}`}>Stop</button>\n          )}\n          {onOpen && (\n            <button type=\"button\" onClick={onOpen} className={`h-8 rounded-[10px] bg-subtle px-3 text-[13px] text-fg hover:bg-track ${ring}`}>Open details</button>\n          )}\n        </div>\n      )}\n    </article>\n  );\n}\n"
+    }
+  ]
+}

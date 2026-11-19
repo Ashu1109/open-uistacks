@@ -1,0 +1,30 @@
+{
+  "name": "llm-ops",
+  "title": "LLM ops",
+  "kind": "template",
+  "group": "Templates",
+  "description": "Plumb, a fictional LLM observability product, with an Overview of runs, spend, evals and latency and a Reliability view of provider health, latency and caching.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "llm-ops-agent-runs",
+    "llm-ops-cost-by-feature",
+    "llm-ops-cost-by-provider",
+    "llm-ops-eval-scorecard",
+    "llm-ops-latency",
+    "llm-ops-model-spend",
+    "llm-ops-prompt-cache",
+    "llm-ops-provider-health",
+    "sidebar-nav"
+  ],
+  "files": [
+    {
+      "path": "templates/llm-ops.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Activity, Gauge, HeartPulse, LayoutDashboard, ListChecks, Wallet } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { LlmOpsAgentRuns } from \"../blocks/llm-ops-agent-runs\";\nimport { LlmOpsCostByFeature } from \"../blocks/llm-ops-cost-by-feature\";\nimport { LlmOpsCostByProvider } from \"../blocks/llm-ops-cost-by-provider\";\nimport { LlmOpsEvalScorecard } from \"../blocks/llm-ops-eval-scorecard\";\nimport { LlmOpsLatency } from \"../blocks/llm-ops-latency\";\nimport { LlmOpsModelSpend } from \"../blocks/llm-ops-model-spend\";\nimport { LlmOpsPromptCache } from \"../blocks/llm-ops-prompt-cache\";\nimport { LlmOpsProviderHealth } from \"../blocks/llm-ops-provider-health\";\nimport type { NavSection } from \"../ui/sidebar-nav\";\n\n/* LLM ops template: Plumb, a fictional LLM observability product, with an Overview of runs, spend, evals and latency and a Reliability view of provider health, latency and caching. */\n\nconst icon = (I: typeof Activity) => <I size={16} aria-hidden />;\n\nconst SECTIONS: NavSection[] = [\n  {\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: icon(LayoutDashboard) },\n      { id: \"reliability\", label: \"Reliability\", icon: icon(HeartPulse) },\n    ],\n  },\n  {\n    title: \"Workspace\",\n    items: [\n      { id: \"runs\", label: \"Agent runs\", icon: icon(Activity) },\n      { id: \"evals\", label: \"Evaluations\", icon: icon(ListChecks) },\n      { id: \"spend\", label: \"Spend\", icon: icon(Wallet) },\n    ],\n  },\n];\n\nconst VIEWS: Record<string, { title: string; subtitle: string }> = {\n  overview: { title: \"Overview\", subtitle: \"Last 30 days · all projects\" },\n  reliability: { title: \"Reliability\", subtitle: \"Providers, latency and caching\" },\n  runs: { title: \"Agent runs\", subtitle: \"Live and recent runs\" },\n  evals: { title: \"Evaluations\", subtitle: \"Quality by model\" },\n  spend: { title: \"Spend\", subtitle: \"Cost by feature, provider and month\" },\n};\n\nexport interface LlmOpsProps {\n  className?: string;\n}\n\nfunction Mark() {\n  return (\n    <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\">\n      <Gauge size={16} aria-hidden />\n    </span>\n  );\n}\n\nfunction Grid({ children }: { children: React.ReactNode }) {\n  return <div className=\"@container\"><div className=\"grid grid-cols-1 gap-4 @[900px]:grid-cols-12\">{children}</div></div>;\n}\n\nexport function LlmOps({ className = \"\" }: LlmOpsProps) {\n  const [view, setView] = useState(\"overview\");\n  const meta = VIEWS[view] ?? VIEWS.overview;\n\n  return (\n    <AppShell product={{ name: \"Plumb\", mark: <Mark /> }} sections={SECTIONS} activeId={view} onNavigate={setView} title={meta.title} subtitle={meta.subtitle} className={className}>\n      {view === \"overview\" && (\n        <Grid>\n          <div className=\"@[900px]:col-span-8\"><LlmOpsModelSpend /></div>\n          <div className=\"@[900px]:col-span-4\"><LlmOpsCostByProvider /></div>\n          <div className=\"@[900px]:col-span-12\"><LlmOpsAgentRuns /></div>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsCostByFeature /></div>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsEvalScorecard /></div>\n        </Grid>\n      )}\n      {view === \"reliability\" && (\n        <Grid>\n          <div className=\"@[900px]:col-span-12\"><LlmOpsLatency /></div>\n          <div className=\"@[900px]:col-span-8\"><LlmOpsProviderHealth /></div>\n          <div className=\"@[900px]:col-span-4\"><LlmOpsPromptCache /></div>\n        </Grid>\n      )}\n      {view === \"runs\" && <LlmOpsAgentRuns />}\n      {view === \"evals\" && (\n        <Grid>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsEvalScorecard /></div>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsLatency /></div>\n        </Grid>\n      )}\n      {view === \"spend\" && (\n        <Grid>\n          <div className=\"@[900px]:col-span-12\"><LlmOpsModelSpend /></div>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsCostByFeature /></div>\n          <div className=\"@[900px]:col-span-6\"><LlmOpsCostByProvider /></div>\n        </Grid>\n      )}\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

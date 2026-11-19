@@ -1,0 +1,19 @@
+{
+  "name": "api-key-row",
+  "title": "API key row",
+  "kind": "component",
+  "group": "Data display",
+  "description": "A named API key shown masked, with reveal, copy and regenerate buttons; copying confirms for two seconds in a live region.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/api-key-row.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useState } from \"react\";\nimport { Check, Copy, Eye, EyeOff, RefreshCw } from \"lucide-react\";\n\n/* ApiKeyRow: a named API key shown masked, with reveal, copy and regenerate buttons; copying confirms for two seconds in a live region. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\n/** Keeps the prefix up to the second underscore and the last `tail` characters: sk_test_••••••••9f2a. */\nexport function maskKey(key: string, tail = 4): string {\n  if (key.length <= tail + 4) return \"•\".repeat(key.length);\n  const prefixEnd = key.indexOf(\"_\", key.indexOf(\"_\") + 1);\n  const prefix = prefixEnd > 0 && prefixEnd < key.length - tail ? key.slice(0, prefixEnd + 1) : \"\";\n  return `${prefix}${\"•\".repeat(8)}${key.slice(-tail)}`;\n}\n\nexport interface ApiKeyRowProps {\n  name: string;\n  value: string;\n  createdLabel?: string;\n  onReveal?: (revealed: boolean) => void;\n  onCopy?: (value: string) => void;\n  onRegenerate?: () => void;\n  className?: string;\n}\n\nconst iconButton = `grid size-8 place-items-center rounded-[10px] text-fg-muted transition-colors hover:bg-[color-mix(in_srgb,var(--fg)_6%,var(--surface))] hover:text-fg ${ring}`;\n\nexport function ApiKeyRow({ name, value, createdLabel, onReveal, onCopy, onRegenerate, className = \"\" }: ApiKeyRowProps) {\n  const [revealed, setRevealed] = useState(false);\n  const [copied, setCopied] = useState(false);\n\n  useEffect(() => {\n    if (!copied) return;\n    const t = setTimeout(() => setCopied(false), 2000);\n    return () => clearTimeout(t);\n  }, [copied]);\n\n  const copy = async () => {\n    try {\n      await navigator.clipboard?.writeText(value);\n    } catch {\n      return;\n    }\n    setCopied(true);\n    onCopy?.(value);\n  };\n\n  return (\n    <div className={`flex items-center gap-3 rounded-[16px] bg-surface px-4 py-3 shadow-[var(--shadow-card)] ${className}`}>\n      <div className=\"min-w-0 flex-1\">\n        <p className=\"text-sm font-medium text-fg\">{name}</p>\n        <code aria-label={`${name} key`} className=\"mt-0.5 block truncate font-mono text-[13px] text-fg-muted\">{revealed ? value : maskKey(value)}</code>\n        {createdLabel && <p className=\"mt-0.5 text-xs text-fg-subtle\">{createdLabel}</p>}\n      </div>\n      <div className=\"flex shrink-0 items-center gap-0.5\">\n        <button type=\"button\" aria-pressed={revealed} aria-label={revealed ? `Hide ${name}` : `Reveal ${name}`} onClick={() => { setRevealed(!revealed); onReveal?.(!revealed); }} className={iconButton}>\n          {revealed ? <EyeOff size={16} aria-hidden /> : <Eye size={16} aria-hidden />}\n        </button>\n        <button type=\"button\" aria-label={`Copy ${name}`} onClick={copy} className={iconButton}>\n          {copied ? <Check size={16} className=\"text-success-text\" aria-hidden /> : <Copy size={16} aria-hidden />}\n        </button>\n        <button type=\"button\" aria-label={`Regenerate ${name}`} onClick={onRegenerate} className={iconButton}>\n          <RefreshCw size={16} aria-hidden />\n        </button>\n      </div>\n      <span role=\"status\" className=\"sr-only\">{copied ? \"Copied to clipboard\" : \"\"}</span>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

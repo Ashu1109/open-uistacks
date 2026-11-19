@@ -1,0 +1,21 @@
+{
+  "name": "devops-uptime-history",
+  "title": "Uptime history",
+  "kind": "block",
+  "group": "DevOps",
+  "description": "90-day uptime bars per service with each service's overall percentage. A full-width section, or 1/2 width.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "uptime-bars"
+  ],
+  "files": [
+    {
+      "path": "blocks/devops-uptime-history.tsx",
+      "content": "\"use client\";\n\nimport { CalendarClock } from \"lucide-react\";\nimport { UptimeBars, uptimePercent, type UptimeDay, type UptimeStatus } from \"../ui/uptime-bars\";\n\n/* Devops uptime history: 90-day uptime bars per service with each service's overall percentage. A full-width section, or 1/2 width. */\n\nexport interface ServiceUptime {\n  name: string;\n  days: UptimeDay[];\n}\n\nexport interface DevopsUptimeHistoryProps {\n  services?: ServiceUptime[];\n  className?: string;\n}\n\nconst MONTHS = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"];\n\n/** Build `count` days ending at `end`, with the given day offsets (0 = today) marked degraded or down. */\nexport function buildDays(count: number, end: Date, marks: Record<number, UptimeStatus> = {}): UptimeDay[] {\n  return Array.from({ length: count }, (_, i) => {\n    const ago = count - 1 - i;\n    const d = new Date(end.getFullYear(), end.getMonth(), end.getDate() - ago);\n    return { date: `${MONTHS[d.getMonth()]} ${d.getDate()}`, status: marks[ago] ?? \"up\" };\n  });\n}\n\n/** Lowest overall uptime among the services, or null when none have data. */\nexport function worstUptime(services: ServiceUptime[]): number | null {\n  const all = services.map((s) => uptimePercent(s.days)).filter((n): n is number => n !== null);\n  return all.length ? Math.min(...all) : null;\n}\n\nconst END = new Date(2026, 10, 18);\nconst DEMO: ServiceUptime[] = [\n  { name: \"API gateway\", days: buildDays(90, END, { 4: \"degraded\", 33: \"degraded\", 61: \"down\" }) },\n  { name: \"Payments API\", days: buildDays(90, END, { 0: \"down\", 2: \"degraded\", 19: \"degraded\", 47: \"degraded\", 48: \"degraded\", 70: \"down\" }) },\n  { name: \"Search\", days: buildDays(90, END, { 1: \"degraded\", 12: \"degraded\", 55: \"degraded\" }) },\n  { name: \"Media workers\", days: buildDays(90, END, { 8: \"degraded\", 9: \"degraded\", 28: \"down\", 66: \"degraded\" }) },\n];\n\nexport function DevopsUptimeHistory({ services = DEMO, className = \"\" }: DevopsUptimeHistoryProps) {\n  const worst = worstUptime(services);\n  return (\n    <section aria-labelledby=\"devops-uptime-title\" className={`@container rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] ${className}`}>\n      <header className=\"mb-4 flex items-center justify-between gap-3\">\n        <h3 id=\"devops-uptime-title\" className=\"flex items-center gap-2 text-[15px] font-semibold text-fg\"><CalendarClock className=\"size-4 text-fg-muted\" aria-hidden /> Uptime, last 90 days</h3>\n        {worst !== null && <span className=\"text-xs tabular-nums text-fg-muted\">Lowest {worst.toFixed(2)}%</span>}\n      </header>\n      <div className=\"grid gap-5 @[900px]:grid-cols-2\">\n        {services.map((s) => <UptimeBars key={s.name} name={s.name} days={s.days} />)}\n      </div>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

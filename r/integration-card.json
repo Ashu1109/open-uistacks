@@ -1,0 +1,19 @@
+{
+  "name": "integration-card",
+  "title": "Integration card",
+  "kind": "component",
+  "group": "Data display",
+  "description": "A connectable service tile with icon, name, description and a connect/disconnect button that shows a pending state while the async handler runs.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/integration-card.tsx",
+      "content": "\"use client\";\n\nimport { useState, type ReactNode } from \"react\";\nimport { Check, LoaderCircle } from \"lucide-react\";\n\n/* IntegrationCard: a connectable service tile with icon, name, description and a connect/disconnect button that shows a pending state while the async handler runs. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface IntegrationCardProps {\n  name: string;\n  description: string;\n  icon: ReactNode;\n  connected?: boolean;\n  defaultConnected?: boolean;\n  /** May return a promise; the button stays pending until it settles. */\n  onConnect?: () => void | Promise<void>;\n  onDisconnect?: () => void | Promise<void>;\n  className?: string;\n}\n\nexport function IntegrationCard({ name, description, icon, connected, defaultConnected = false, onConnect, onDisconnect, className = \"\" }: IntegrationCardProps) {\n  const [inner, setInner] = useState(defaultConnected);\n  const [pending, setPending] = useState(false);\n  const on = connected ?? inner;\n\n  const toggle = async () => {\n    setPending(true);\n    try {\n      await (on ? onDisconnect : onConnect)?.();\n      if (connected === undefined) setInner(!on);\n    } finally {\n      setPending(false);\n    }\n  };\n\n  return (\n    <article aria-label={name} className={`flex w-full max-w-xs flex-col gap-3 rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] ${className}`}>\n      <div className=\"flex items-center justify-between\">\n        <span className=\"grid size-10 place-items-center rounded-[12px] bg-subtle text-fg\" aria-hidden>{icon}</span>\n        {on && <span className=\"inline-flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-text\"><Check size={12} aria-hidden />Connected</span>}\n      </div>\n      <div>\n        <h4 className=\"text-[15px] font-semibold text-fg\">{name}</h4>\n        <p className=\"mt-1 text-[13px] leading-[18px] text-fg-muted\">{description}</p>\n      </div>\n      <button\n        type=\"button\"\n        onClick={toggle}\n        disabled={pending}\n        aria-busy={pending}\n        aria-label={`${on ? \"Disconnect\" : \"Connect\"} ${name}`}\n        className={`mt-1 inline-flex h-9 items-center justify-center gap-2 rounded-[12px] text-sm font-medium disabled:opacity-70 ${ring} ${on ? \"bg-subtle text-fg hover:bg-track\" : \"bg-[image:var(--grad-primary)] text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)]\"}`}\n      >\n        {pending && <LoaderCircle size={14} className=\"animate-spin\" aria-hidden />}\n        {on ? \"Disconnect\" : \"Connect\"}\n      </button>\n    </article>\n  );\n}\n"
+    }
+  ]
+}

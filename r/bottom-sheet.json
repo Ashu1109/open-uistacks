@@ -1,0 +1,21 @@
+{
+  "name": "bottom-sheet",
+  "title": "Bottom sheet",
+  "kind": "component",
+  "group": "Overlays",
+  "description": "A modal panel that slides up from the screen edge and can be dragged down by its handle to dismiss; it also closes on Escape or a backdrop click and returns focus to the trigger.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [
+    "dialog"
+  ],
+  "files": [
+    {
+      "path": "ui/bottom-sheet.tsx",
+      "content": "\"use client\";\n\nimport { useId, type ReactElement, type ReactNode } from \"react\";\nimport { motion, useDragControls } from \"motion/react\";\nimport { ModalFrame, cloneTrigger, useControlled } from \"./dialog\";\n\n/* Bottom sheet: a modal panel that slides up from the screen edge and can be dragged down by its handle to dismiss; it also closes on Escape or a backdrop click and returns focus to the trigger. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\n/** True when a drag released at `offsetY` pixels down (or flicked faster than `velocity`) should close the sheet. */\nexport function shouldDismiss(offsetY: number, velocityY: number, distance = 120, velocity = 500): boolean {\n  return offsetY > distance || velocityY > velocity;\n}\n\nexport interface BottomSheetProps {\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  /** An element (usually a button) that opens the sheet when clicked. */\n  trigger?: ReactElement;\n  title: ReactNode;\n  description?: ReactNode;\n  children?: ReactNode;\n  className?: string;\n}\n\nexport function BottomSheet({ open, defaultOpen, onOpenChange, trigger, title, description, children, className = \"\" }: BottomSheetProps) {\n  const id = useId();\n  const controls = useDragControls();\n  const [isOpen, setOpen] = useControlled(open, defaultOpen ?? false, onOpenChange);\n  return (\n    <>\n      {trigger && cloneTrigger(trigger, { onClick: () => setOpen(true), \"aria-haspopup\": \"dialog\", \"aria-expanded\": isOpen })}\n      <ModalFrame\n        open={isOpen}\n        onClose={() => setOpen(false)}\n        placement=\"bottom\"\n        labelledBy={`${id}-title`}\n        describedBy={description ? `${id}-description` : undefined}\n        className={`flex max-h-[85vh] w-full max-w-lg flex-col rounded-t-[24px] bg-surface shadow-[var(--shadow-overlay)] dark:bg-raised ${className}`}\n        panelProps={{\n          drag: \"y\",\n          dragControls: controls,\n          dragListener: false,\n          dragConstraints: { top: 0, bottom: 0 },\n          dragElastic: { top: 0, bottom: 0.6 },\n          onDragEnd: (_, info) => shouldDismiss(info.offset.y, info.velocity.y) && setOpen(false),\n        }}\n      >\n        <div onPointerDown={(e) => controls.start(e)} className=\"flex shrink-0 cursor-grab touch-none justify-center pb-2 pt-3 active:cursor-grabbing\">\n          <motion.span aria-hidden className=\"h-1.5 w-10 rounded-full bg-track-strong\" whileHover={{ width: 48 }} whileTap={{ width: 56, scaleY: 1.2 }} transition={{ type: \"spring\", stiffness: 500, damping: 30 }} />\n        </div>\n        <div className=\"shrink-0 px-5 pb-3\">\n          <h2 id={`${id}-title`} tabIndex={-1} data-autofocus className=\"text-base font-semibold text-fg outline-none\">{title}</h2>\n          {description && <p id={`${id}-description`} className=\"mt-1 text-sm leading-5 text-fg-muted\">{description}</p>}\n        </div>\n        <div className=\"min-h-0 flex-1 overflow-y-auto px-5 pb-6 text-sm text-fg\">{children}</div>\n        <button type=\"button\" onClick={() => setOpen(false)} className={`sr-only focus:not-sr-only focus:m-3 focus:rounded-full focus:bg-subtle focus:px-3 focus:py-1.5 focus:text-sm ${ring}`}>\n          Close sheet\n        </button>\n      </ModalFrame>\n    </>\n  );\n}\n"
+    }
+  ]
+}

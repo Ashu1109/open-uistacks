@@ -1,0 +1,28 @@
+{
+  "name": "stacks-crm",
+  "title": "CRM",
+  "kind": "template",
+  "group": "Templates",
+  "description": "A sales CRM screen for the fictional Orchard product. Overview combines KPIs, today's work, deals closing soon and the pipeline; Pipeline and Contacts are focused views.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "button",
+    "contact-record",
+    "customers-summary",
+    "deal-pipeline-board",
+    "deals-closing-soon",
+    "sales-kpi-row",
+    "sales-today"
+  ],
+  "files": [
+    {
+      "path": "templates/stacks-crm.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Handshake, LayoutDashboard, Plus, Sprout, Users } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { Button } from \"../ui/button\";\nimport { ContactRecord } from \"../blocks/contact-record\";\nimport { CustomersSummary } from \"../blocks/customers-summary\";\nimport { DealPipelineBoard } from \"../blocks/deal-pipeline-board\";\nimport { DealsClosingSoon } from \"../blocks/deals-closing-soon\";\nimport { SalesKpiRow } from \"../blocks/sales-kpi-row\";\nimport { SalesToday } from \"../blocks/sales-today\";\n\n/* Stacks CRM: a sales CRM screen for the fictional Orchard product. Overview combines KPIs, today's work, deals closing soon and the pipeline; Pipeline and Contacts are focused views. */\n\nconst SECTIONS = [\n  {\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: <LayoutDashboard size={16} /> },\n      { id: \"pipeline\", label: \"Pipeline\", icon: <Handshake size={16} /> },\n      { id: \"contacts\", label: \"Contacts\", icon: <Users size={16} /> },\n    ],\n  },\n];\n\nconst VIEWS = {\n  overview: { title: \"Overview\", subtitle: \"November 2026\" },\n  pipeline: { title: \"Pipeline\", subtitle: \"Deals by stage\" },\n  contacts: { title: \"Contacts\", subtitle: \"Customers and people\" },\n} as const;\n\ntype ViewId = keyof typeof VIEWS;\n\nexport interface StacksCrmProps {\n  className?: string;\n}\n\nexport function StacksCrm({ className = \"\" }: StacksCrmProps) {\n  const [view, setView] = useState<ViewId>(\"overview\");\n  const { title, subtitle } = VIEWS[view];\n  return (\n    <AppShell\n      className={className}\n      product={{ name: \"Orchard\", mark: <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\"><Sprout size={17} aria-hidden /></span> }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={(id) => setView(id as ViewId)}\n      title={title}\n      subtitle={subtitle}\n      actions={<Button size=\"sm\" leadingIcon={<Plus />}>New deal</Button>}\n    >\n      <div className=\"@container\">\n        {view === \"overview\" && (\n          <div className=\"grid gap-4\">\n            <SalesKpiRow />\n            <div className=\"grid gap-4 @[960px]:grid-cols-2\">\n              <SalesToday />\n              <DealsClosingSoon />\n            </div>\n            <DealPipelineBoard />\n          </div>\n        )}\n        {view === \"pipeline\" && <DealPipelineBoard />}\n        {view === \"contacts\" && (\n          <div className=\"grid gap-4\">\n            <CustomersSummary />\n            <ContactRecord />\n          </div>\n        )}\n      </div>\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

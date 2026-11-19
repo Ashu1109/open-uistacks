@@ -1,0 +1,19 @@
+{
+  "name": "dot-map",
+  "title": "Dot map",
+  "kind": "component",
+  "group": "Charts",
+  "description": "A dotted world-ish map built from an invented coarse lat/long grid (not real geography) with highlighted, focusable locations that pulse and show a tooltip.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "chart-utils"
+  ],
+  "files": [
+    {
+      "path": "ui/dot-map.tsx",
+      "content": "\"use client\";\n\nimport { useMemo, useState } from \"react\";\nimport { ChartTip, Live, focusRing, formatNumber, worldDots } from \"./chart-utils\";\n\n/* Dot map: a dotted world-ish map built from an invented coarse lat/long grid (not real geography) with highlighted, focusable locations that pulse and show a tooltip. */\n\nexport interface MapLocation {\n  label: string;\n  lat: number;\n  lon: number;\n  value?: number;\n}\n\nexport interface DotMapProps {\n  locations: MapLocation[];\n  format?: (n: number) => string;\n  label?: string;\n  className?: string;\n}\n\nconst W = 720;\nconst LAT_TOP = 85;\nconst LAT_BOTTOM = -58;\nconst H = (W * (LAT_TOP - LAT_BOTTOM)) / 360;\n\nexport const projectMap = (lat: number, lon: number) => ({ x: ((lon + 180) / 360) * W, y: ((LAT_TOP - lat) / (LAT_TOP - LAT_BOTTOM)) * H });\n\nexport function DotMap({ locations, format = formatNumber, label, className = \"\" }: DotMapProps) {\n  const [active, setActive] = useState<number | null>(null);\n  const dots = useMemo(() => worldDots(4).filter((d) => d.lat > LAT_BOTTOM && d.lat < LAT_TOP), []);\n  const loc = active === null ? null : locations[active];\n  const at = loc ? projectMap(loc.lat, loc.lon) : null;\n  const text = (m: MapLocation) => `${m.label}${m.value === undefined ? \"\" : `: ${format(m.value)}`}`;\n\n  return (\n    <figure className={`relative m-0 ${className}`}>\n      <svg viewBox={`0 0 ${W} ${H}`} role=\"group\" aria-label={label ?? `Dot map with ${locations.length} highlighted locations.`} className=\"block h-auto w-full\">\n        <g aria-hidden fill=\"var(--track-strong)\">\n          {dots.map((d) => {\n            const p = projectMap(d.lat, d.lon);\n            return <circle key={`${d.lat}:${d.lon}`} cx={p.x} cy={p.y} r={2} />;\n          })}\n        </g>\n        {locations.map((m, i) => {\n          const p = projectMap(m.lat, m.lon);\n          return (\n            <g\n              key={m.label}\n              role=\"img\"\n              tabIndex={0}\n              aria-label={text(m)}\n              className={`cursor-pointer ${focusRing}`}\n              onPointerEnter={() => setActive(i)}\n              onPointerLeave={() => setActive(null)}\n              onFocus={() => setActive(i)}\n              onBlur={() => setActive(null)}\n            >\n              <circle cx={p.x} cy={p.y} r={5} fill=\"var(--select)\" opacity={0.35} className=\"origin-center motion-safe:animate-ping [transform-box:fill-box]\" />\n              <circle cx={p.x} cy={p.y} r={active === i ? 6 : 4.5} fill=\"var(--select)\" stroke=\"var(--surface)\" strokeWidth={1.5} />\n              <circle cx={p.x} cy={p.y} r={12} fill=\"transparent\" />\n            </g>\n          );\n        })}\n      </svg>\n      {loc && at && <ChartTip x={at.x} y={at.y} w={W} h={H}><div className=\"font-medium\">{loc.label}</div>{loc.value !== undefined && <div className=\"tabular-nums text-fg-muted\">{format(loc.value)}</div>}</ChartTip>}\n      <Live>{loc ? text(loc) : \"\"}</Live>\n    </figure>\n  );\n}\n"
+    }
+  ]
+}

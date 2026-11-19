@@ -1,0 +1,17 @@
+{
+  "name": "live-pill",
+  "title": "Live pill",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "A small status pill with a pulsing dot for live, working, idle or offline, an optional label and a trailing detail such as a viewer count.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/live-pill.tsx",
+      "content": "\"use client\";\n\n/* Live pill: a small status pill with a pulsing dot for live, working, idle or offline, an optional label and a trailing detail such as a viewer count. */\n\nexport type LiveState = \"live\" | \"working\" | \"idle\" | \"offline\";\n\nexport interface LivePillProps {\n  state?: LiveState;\n  /** Defaults to the state name. */\n  label?: string;\n  /** Trailing text, e.g. \"1.2k watching\". */\n  detail?: string;\n  className?: string;\n}\n\nexport const DEFAULT_LABEL: Record<LiveState, string> = { live: \"Live\", working: \"Working\", idle: \"Idle\", offline: \"Offline\" };\n\nconst TONE: Record<LiveState, { pill: string; dot: string; pulse: boolean }> = {\n  live: { pill: \"bg-danger-soft text-danger-text\", dot: \"bg-danger\", pulse: true },\n  working: { pill: \"bg-select-soft text-select-text\", dot: \"bg-select\", pulse: true },\n  idle: { pill: \"bg-warning-soft text-warning-text\", dot: \"bg-warning\", pulse: false },\n  offline: { pill: \"bg-subtle text-fg-subtle\", dot: \"bg-track-strong\", pulse: false },\n};\n\nexport function LivePill({ state = \"live\", label, detail, className = \"\" }: LivePillProps) {\n  const tone = TONE[state];\n  return (\n    <span role=\"status\" className={`inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium ${tone.pill} ${className}`}>\n      <span aria-hidden className=\"relative flex size-2\">\n        {tone.pulse && <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 motion-reduce:animate-none ${tone.dot}`} />}\n        <span className={`relative inline-flex size-2 rounded-full ${tone.dot}`} />\n      </span>\n      {label ?? DEFAULT_LABEL[state]}\n      {detail && <span className=\"font-normal opacity-80\">· {detail}</span>}\n    </span>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "stacks-agents",
+  "title": "Agents",
+  "kind": "template",
+  "group": "Templates",
+  "description": "An operations app for an AI-agent fleet, with the fleet overview, a full run trace, and an approvals inbox, switched from the sidebar.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "agents-overview",
+    "app-shell",
+    "approval-with-history",
+    "approvals-inbox",
+    "run-trace"
+  ],
+  "files": [
+    {
+      "path": "templates/stacks-agents.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Bot, Inbox, LayoutDashboard, Route } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { AgentsOverview } from \"../blocks/agents-overview\";\nimport { RunTrace } from \"../blocks/run-trace\";\nimport { ApprovalsInbox } from \"../blocks/approvals-inbox\";\nimport { ApprovalWithHistory } from \"../blocks/approval-with-history\";\n\n/* Stacks Agents template: an operations app for an AI-agent fleet, with the fleet overview, a full run trace, and an approvals inbox, switched from the sidebar. */\n\nexport interface StacksAgentsProps {\n  className?: string;\n}\n\ntype View = \"overview\" | \"trace\" | \"approvals\";\n\nconst TITLES: Record<View, { title: string; subtitle: string }> = {\n  overview: { title: \"Fleet overview\", subtitle: \"Live status of every agent\" },\n  trace: { title: \"Run trace\", subtitle: \"Steps, tool calls and timing\" },\n  approvals: { title: \"Approvals\", subtitle: \"Requests waiting on a human\" },\n};\n\nconst SECTIONS = [\n  {\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: <LayoutDashboard size={18} aria-hidden /> },\n      { id: \"trace\", label: \"Run trace\", icon: <Route size={18} aria-hidden /> },\n      { id: \"approvals\", label: \"Approvals\", icon: <Inbox size={18} aria-hidden />, badge: 4 },\n    ],\n  },\n];\n\nconst mark = (\n  <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\">\n    <Bot size={18} aria-hidden />\n  </span>\n);\n\nexport function StacksAgents({ className = \"\" }: StacksAgentsProps) {\n  const [view, setView] = useState<View>(\"overview\");\n  const { title, subtitle } = TITLES[view];\n\n  return (\n    <div className={`@container h-full w-full ${className}`}>\n      <AppShell product={{ name: \"Relay Ops\", mark }} sections={SECTIONS} activeId={view} onNavigate={(id) => setView(id as View)} title={title} subtitle={subtitle}>\n        {view === \"overview\" && (\n          <div className=\"grid gap-6\">\n            <AgentsOverview onOpenRun={() => setView(\"trace\")} />\n            <div className=\"grid gap-6 @[900px]:grid-cols-2\">\n              <ApprovalWithHistory />\n            </div>\n          </div>\n        )}\n        {view === \"trace\" && <RunTrace />}\n        {view === \"approvals\" && <ApprovalsInbox />}\n      </AppShell>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

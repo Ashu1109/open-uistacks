@@ -1,0 +1,19 @@
+{
+  "name": "connectors-strip",
+  "title": "Connectors strip",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "A row of toggleable data-source chips (drive, calendar, repo) showing connected, off or error state; each chip is a switch.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/connectors-strip.tsx",
+      "content": "\"use client\";\n\nimport { CircleAlert } from \"lucide-react\";\nimport { useState, type ReactNode } from \"react\";\n\n/* Connectors strip: a row of toggleable data-source chips (drive, calendar, repo) showing connected, off or error state; each chip is a switch. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface Connector {\n  id: string;\n  name: string;\n  icon?: ReactNode;\n  /** Shown as the chip's error line; the chip cannot be toggled on while set. */\n  error?: string;\n}\n\n/** Ids that are on after flipping `id`; unknown or errored connectors never turn on. */\nexport function toggleConnector(active: string[], id: string, connectors: Connector[]): string[] {\n  if (active.includes(id)) return active.filter((a) => a !== id);\n  return connectors.some((c) => c.id === id && !c.error) ? [...active, id] : active;\n}\n\nexport interface ConnectorsStripProps {\n  connectors: Connector[];\n  /** Ids of the connectors that are on. */\n  value?: string[];\n  defaultValue?: string[];\n  onValueChange?: (ids: string[]) => void;\n  className?: string;\n}\n\nexport function ConnectorsStrip({ connectors, value, defaultValue = [], onValueChange, className = \"\" }: ConnectorsStripProps) {\n  const [inner, setInner] = useState(defaultValue);\n  const active = value ?? inner;\n  const toggle = (id: string) => {\n    const next = toggleConnector(active, id, connectors);\n    if (value === undefined) setInner(next);\n    onValueChange?.(next);\n  };\n  return (\n    <ul aria-label=\"Connectors\" className={`flex flex-wrap gap-2 ${className}`}>\n      {connectors.map((c) => {\n        const on = active.includes(c.id) && !c.error;\n        return (\n          <li key={c.id}>\n            <button\n              type=\"button\"\n              role=\"switch\"\n              aria-checked={on}\n              title={c.error}\n              onClick={() => toggle(c.id)}\n              className={`inline-flex items-center gap-2 rounded-full py-1.5 pl-2.5 pr-3 text-[13px] font-medium transition-colors ${on ? \"bg-select-soft text-select-text\" : \"bg-surface text-fg-muted shadow-[var(--shadow-btn-secondary)]\"} ${c.error ? \"text-danger-text\" : \"\"} ${ring}`}\n            >\n              <span aria-hidden className=\"grid size-4 place-items-center\">{c.error ? <CircleAlert size={14} /> : (c.icon ?? c.name.charAt(0))}</span>\n              {c.name}\n              <span aria-hidden className={`size-1.5 rounded-full ${c.error ? \"bg-danger\" : on ? \"bg-success\" : \"bg-track-strong\"}`} />\n              {c.error && <span className=\"sr-only\">Error: {c.error}</span>}\n            </button>\n          </li>\n        );\n      })}\n    </ul>\n  );\n}\n"
+    }
+  ]
+}

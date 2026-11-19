@@ -44,18 +44,24 @@ function Introduction() {
   );
 }
 
+const CLI = "npx github:Ashu1109/open-uistacks";
+
 function Installation() {
   return (
     <div className="grid gap-10">
-      <PageHeader title="Installation">Set up React with Tailwind CSS v4, then copy in the components you need.</PageHeader>
+      <PageHeader title="Installation">Start from a React project with Tailwind CSS v4, then add components with the open-uistacks CLI.</PageHeader>
       <Prose>
-        <h2>1. Install the dependencies</h2>
-        <CodeBlock code="npm install motion lucide-react" language="bash" title="Terminal" lineNumbers={false} />
-        <h2>2. Add the theme</h2>
-        <p>Copy <strong>theme.css</strong> next to your global stylesheet and import it after Tailwind. Dark mode follows a <strong>dark</strong> class on the root element.</p>
+        <h2>1. Set up the theme</h2>
+        <p>Run <strong>init</strong> once. It creates <strong>open-uistacks.json</strong>, writes the theme tokens to <strong>components/open-uistacks.css</strong> (or <strong>src/components</strong> when you have a src folder) and imports them right after Tailwind in your global stylesheet.</p>
+        <CodeBlock code={`${CLI} init`} language="bash" title="Terminal" lineNumbers={false} />
+        <h2>2. Add components</h2>
+        <p>Name one or more components, blocks or templates. Each one arrives with everything it imports: components go in <strong>ui/</strong>, blocks in <strong>blocks/</strong> and templates in <strong>templates/</strong>. The npm packages they need (motion and lucide-react) are installed with your package manager.</p>
+        <CodeBlock code={`${CLI} add prompt-input model-picker\n${CLI} add revenue-overview\n${CLI} add devops`} language="bash" title="Terminal" lineNumbers={false} />
+        <p>Use <strong>list</strong> to see every name, <strong>--dry-run</strong> to preview the changes, and <strong>--overwrite</strong> to update files you already added. Dark mode follows a <strong>dark</strong> class on the root element.</p>
+        <CodeBlock code={`${CLI} list\n${CLI} add kanban-board --dry-run`} language="bash" title="Terminal" lineNumbers={false} />
+        <h2>Or copy by hand</h2>
+        <p>Install <strong>motion</strong> and <strong>lucide-react</strong>, copy <strong>theme.css</strong> next to your global stylesheet and import it after Tailwind, then paste a component from its <strong>Code</strong> tab into <strong>components/ui</strong>.</p>
         <CodeBlock code={`@import "tailwindcss";\n@import "./theme.css";\n@custom-variant dark (&:where(.dark, .dark *));`} language="text" title="globals.css" lineNumbers={false} />
-        <h2>3. Copy a component</h2>
-        <p>Open any component, switch to the <strong>Code</strong> tab and paste the file into <strong>components/ui</strong>. The installation section on each page lists the npm packages and sibling files it needs. Free components can also be added with the shadcn command shown on their page.</p>
       </Prose>
     </div>
   );

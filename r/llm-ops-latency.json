@@ -1,0 +1,20 @@
+{
+  "name": "llm-ops-latency",
+  "title": "Latency",
+  "kind": "block",
+  "group": "LLM ops",
+  "description": "A full-width or 1/2-width (6 of 12 columns) section with p50, p95 and p99 stat cards for either time to first token or total latency, each with a trend line against the previous period.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "segmented-control",
+    "stat-card"
+  ],
+  "files": [
+    {
+      "path": "blocks/llm-ops-latency.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { StatCard } from \"../ui/stat-card\";\nimport { SegmentedControl } from \"../ui/segmented-control\";\n\n/* LLM ops latency: a full-width or 1/2-width (6 of 12 columns) section with p50, p95 and p99 stat cards for either time to first token or total latency, each with a trend line against the previous period. */\n\nexport type LatencyMetric = \"ttft\" | \"total\";\n\nexport interface LatencyPercentile {\n  label: string;\n  /** Milliseconds, one per time bucket, oldest first. */\n  current: number[];\n  previous: number[];\n}\n\nexport type LatencyData = Record<LatencyMetric, LatencyPercentile[]>;\n\nconst line = (base: number, wobble: number, seed: number) => Array.from({ length: 12 }, (_, i) => Math.round(base + Math.sin(i * 1.3 + seed) * wobble + i * (wobble / 8)));\n\nexport const DEMO_LATENCY: LatencyData = {\n  ttft: [\n    { label: \"p50\", current: line(310, 28, 1), previous: line(340, 30, 2) },\n    { label: \"p95\", current: line(720, 90, 3), previous: line(810, 95, 4) },\n    { label: \"p99\", current: line(1380, 180, 5), previous: line(1420, 170, 6) },\n  ],\n  total: [\n    { label: \"p50\", current: line(2100, 160, 1), previous: line(2300, 170, 2) },\n    { label: \"p95\", current: line(5400, 520, 3), previous: line(5200, 500, 4) },\n    { label: \"p99\", current: line(9800, 900, 5), previous: line(10400, 950, 6) },\n  ],\n};\n\nexport function latestAndChange(p: LatencyPercentile): { value: number; changePct: number } {\n  const value = p.current[p.current.length - 1] ?? 0;\n  const prev = p.previous[p.previous.length - 1] ?? 0;\n  return { value, changePct: prev > 0 ? Math.round(((value - prev) / prev) * 1000) / 10 : 0 };\n}\n\nexport const formatMs = (ms: number) => (ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${Math.round(ms)} ms`);\n\nexport interface LlmOpsLatencyProps {\n  data?: LatencyData;\n  className?: string;\n}\n\nexport function LlmOpsLatency({ data = DEMO_LATENCY, className = \"\" }: LlmOpsLatencyProps) {\n  const [metric, setMetric] = useState<LatencyMetric>(\"ttft\");\n  const labels = Array.from({ length: 12 }, (_, i) => `${i * 2}:00`);\n  return (\n    <section aria-label=\"Latency\" className={`@container ${className}`}>\n      <div className=\"mb-3 flex flex-wrap items-center justify-between gap-3\">\n        <h3 className=\"text-[15px] font-semibold text-fg\">{metric === \"ttft\" ? \"Time to first token\" : \"Total latency\"}</h3>\n        <SegmentedControl\n          label=\"Latency metric\"\n          size=\"sm\"\n          options={[\n            { value: \"ttft\", label: \"First token\" },\n            { value: \"total\", label: \"Total\" },\n          ]}\n          value={metric}\n          onValueChange={(v) => setMetric(v as LatencyMetric)}\n        />\n      </div>\n      <div className=\"grid gap-3 @[560px]:grid-cols-3\">\n        {data[metric].map((p) => {\n          const { value, changePct } = latestAndChange(p);\n          return (\n            <StatCard\n              key={`${metric}-${p.label}`}\n              label={p.label}\n              value={value}\n              format={formatMs}\n              delta={changePct}\n              goodDirection=\"down\"\n              comparison=\"vs last period\"\n              data={p.current}\n              previous={p.previous}\n              labels={labels}\n            />\n          );\n        })}\n      </div>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

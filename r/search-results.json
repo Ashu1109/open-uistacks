@@ -1,0 +1,19 @@
+{
+  "name": "search-results",
+  "title": "Search results",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "The web results an assistant found for a query, each with a domain badge, title link and snippet; shows a searching state and an empty state.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/search-results.tsx",
+      "content": "\"use client\";\n\nimport { Search } from \"lucide-react\";\n\n/* Search results: the web results an assistant found for a query, each with a domain badge, title link and snippet; shows a searching state and an empty state. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface SearchResult {\n  id: string;\n  title: string;\n  url: string;\n  snippet: string;\n}\n\n/** example.com for https://www.example.com/a/b; the input back when it is not a URL. */\nexport function hostname(url: string): string {\n  try {\n    return new URL(url).hostname.replace(/^www\\./, \"\");\n  } catch {\n    return url;\n  }\n}\n\nexport interface SearchResultsProps {\n  query: string;\n  results: SearchResult[];\n  loading?: boolean;\n  className?: string;\n}\n\nexport function SearchResults({ query, results, loading = false, className = \"\" }: SearchResultsProps) {\n  return (\n    <section aria-label=\"Search results\" className={`w-full max-w-xl ${className}`}>\n      <p role=\"status\" className=\"mb-2 flex items-center gap-2 text-[13px] text-fg-muted\">\n        <Search size={14} className={loading ? \"animate-pulse\" : \"\"} aria-hidden />\n        {loading ? `Searching for \"${query}\"…` : `${results.length} ${results.length === 1 ? \"result\" : \"results\"} for \"${query}\"`}\n      </p>\n      {loading ? (\n        <ul aria-hidden className=\"grid gap-2\">\n          {[0, 1, 2].map((i) => <li key={i} className=\"h-20 animate-pulse rounded-[14px] bg-subtle\" />)}\n        </ul>\n      ) : (\n        <ol className=\"grid gap-2\">\n          {results.map((r) => (\n            <li key={r.id} className=\"rounded-[14px] bg-surface p-3 shadow-[var(--shadow-card)]\">\n              <p className=\"flex items-center gap-2 text-xs text-fg-subtle\">\n                <span aria-hidden className=\"grid size-4 place-items-center rounded-full bg-select-soft text-[10px] font-semibold uppercase text-select-text\">{hostname(r.url).charAt(0)}</span>\n                {hostname(r.url)}\n              </p>\n              <a href={r.url} target=\"_blank\" rel=\"noreferrer\" className={`mt-1 block rounded text-[14px] font-medium text-select-text hover:underline ${ring}`}>{r.title}</a>\n              <p className=\"mt-0.5 line-clamp-2 text-[13px] leading-5 text-fg-muted\">{r.snippet}</p>\n            </li>\n          ))}\n        </ol>\n      )}\n      {!loading && results.length === 0 && <p className=\"rounded-[14px] bg-subtle p-4 text-center text-[13px] text-fg-muted\">Nothing found</p>}\n    </section>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "llm-ops-cost-by-provider",
+  "title": "Cost by provider",
+  "kind": "block",
+  "group": "LLM ops",
+  "description": "A card (1/2 or 1/3 width of 12 columns) with a donut of spend split across model providers; hover or pick a slice to read its amount and share.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "donut-chart"
+  ],
+  "files": [
+    {
+      "path": "blocks/llm-ops-cost-by-provider.tsx",
+      "content": "\"use client\";\n\nimport { DonutChart } from \"../ui/donut-chart\";\n\n/* LLM ops cost by provider: a card (1/2 or 1/3 width of 12 columns) with a donut of spend split across model providers; hover or pick a slice to read its amount and share. */\n\nexport interface ProviderCost {\n  provider: string;\n  costUsd: number;\n}\n\nexport const DEMO_PROVIDER_COSTS: ProviderCost[] = [\n  { provider: \"Northwind AI\", costUsd: 6240 },\n  { provider: \"Lumen Labs\", costUsd: 3980 },\n  { provider: \"Orbital Models\", costUsd: 1860 },\n  { provider: \"Self-hosted\", costUsd: 925 },\n];\n\nexport interface LlmOpsCostByProviderProps {\n  items?: ProviderCost[];\n  period?: string;\n  className?: string;\n}\n\nexport function LlmOpsCostByProvider({ items = DEMO_PROVIDER_COSTS, period = \"November\", className = \"\" }: LlmOpsCostByProviderProps) {\n  return (\n    <section aria-label=\"Cost by provider\" className={`@container ${className}`}>\n      <DonutChart\n        title=\"Cost by provider\"\n        description={period}\n        totalLabel=\"Total spend\"\n        slices={items.map((i) => ({ label: i.provider, value: i.costUsd }))}\n        format={(v) => `$${Math.round(v).toLocaleString(\"en-US\")}`}\n        className=\"w-full\"\n      />\n    </section>\n  );\n}\n"
+    }
+  ]
+}

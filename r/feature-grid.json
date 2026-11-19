@@ -1,0 +1,19 @@
+{
+  "name": "feature-grid",
+  "title": "Feature grid",
+  "kind": "component",
+  "group": "Marketing",
+  "description": "A responsive grid of feature tiles, each with an icon, a title and a short description.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/feature-grid.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore, type ReactNode } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n/* FeatureGrid: a responsive grid of feature tiles, each with an icon, a title and a short description. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport interface Feature {\n  id: string;\n  icon: ReactNode;\n  title: string;\n  description: string;\n}\n\nexport interface FeatureGridProps {\n  features: readonly Feature[];\n  /** Columns at the widest breakpoint. */\n  columns?: 2 | 3 | 4;\n  className?: string;\n}\n\nconst COLUMNS = { 2: \"sm:grid-cols-2\", 3: \"sm:grid-cols-2 lg:grid-cols-3\", 4: \"sm:grid-cols-2 lg:grid-cols-4\" } as const;\n\nexport function FeatureGrid({ features, columns = 3, className = \"\" }: FeatureGridProps) {\n  const reduce = useReduce();\n  return (\n    <ul className={`grid gap-4 ${COLUMNS[columns]} ${className}`}>\n      {features.map((f, i) => (\n        <motion.li key={f.id} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: \"spring\", stiffness: 480, damping: 34, delay: Math.min(i * 0.05, 0.4) }} whileHover={reduce ? undefined : { y: -3 }} className=\"group rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[0_8px_24px_-8px_color-mix(in_srgb,var(--fg)_22%,transparent)]\">\n          <span aria-hidden className=\"grid size-10 place-items-center rounded-[12px] bg-select-soft text-select-text transition-transform duration-200 group-hover:scale-110\">{f.icon}</span>\n          <h4 className=\"mt-4 text-[15px] font-semibold text-fg\">{f.title}</h4>\n          <p className=\"mt-1 text-[13px] leading-5 text-fg-muted\">{f.description}</p>\n        </motion.li>\n      ))}\n    </ul>\n  );\n}\n"
+    }
+  ]
+}

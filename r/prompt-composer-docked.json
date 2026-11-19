@@ -1,0 +1,23 @@
+{
+  "name": "prompt-composer-docked",
+  "title": "Docked composer",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "The chat composer pinned to the bottom of its container with suggestion chips above, a model picker, a context meter and a fade so messages scroll under it.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "context-meter",
+    "model-picker",
+    "prompt-input"
+  ],
+  "files": [
+    {
+      "path": "ui/prompt-composer-docked.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Paperclip } from \"lucide-react\";\nimport { PromptInput, PromptInputAction } from \"./prompt-input\";\nimport { ModelPicker, type ModelOption } from \"./model-picker\";\nimport { ContextMeter } from \"./context-meter\";\n\n/* Prompt composer, docked: the chat composer pinned to the bottom of its container with suggestion chips above, a model picker, a context meter and a fade so messages scroll under it. */\n\nexport interface PromptComposerDockedProps {\n  onSubmit?: (text: string) => void;\n  onStop?: () => void;\n  busy?: boolean;\n  /** Quick prompts shown above the field while it is empty. */\n  suggestions?: string[];\n  models?: ModelOption[];\n  model?: string;\n  onModelChange?: (id: string) => void;\n  contextUsed?: number;\n  contextLimit?: number;\n  onAttach?: () => void;\n  disclaimer?: string;\n  className?: string;\n}\n\nexport function PromptComposerDocked({ onSubmit, onStop, busy = false, suggestions = [], models, model, onModelChange, contextUsed, contextLimit, onAttach, disclaimer, className = \"\" }: PromptComposerDockedProps) {\n  const [value, setValue] = useState(\"\");\n  return (\n    <div className={`sticky bottom-0 w-full bg-gradient-to-t from-[var(--bg)] from-70% to-transparent px-3 pb-3 pt-6 ${className}`}>\n      <div className=\"mx-auto grid max-w-2xl gap-2\">\n        {value === \"\" && suggestions.length > 0 && (\n          <ul aria-label=\"Suggested prompts\" className=\"flex flex-wrap gap-1.5\">\n            {suggestions.map((s) => (\n              <li key={s}>\n                <button type=\"button\" onClick={() => setValue(s)} className=\"rounded-full bg-surface px-3 py-1.5 text-[13px] text-fg-muted shadow-[var(--shadow-btn-secondary)] outline-none transition-colors hover:text-fg focus-visible:ring-2 focus-visible:ring-[var(--select)]\">{s}</button>\n              </li>\n            ))}\n          </ul>\n        )}\n        <PromptInput\n          value={value}\n          onValueChange={setValue}\n          onSubmit={onSubmit}\n          onStop={onStop}\n          busy={busy}\n          leading={onAttach && <PromptInputAction label=\"Attach file\" onClick={onAttach}><Paperclip size={17} aria-hidden /></PromptInputAction>}\n          trailing={\n            <>\n              {contextUsed !== undefined && contextLimit !== undefined && <ContextMeter used={contextUsed} limit={contextLimit} />}\n              {models && <ModelPicker models={models} value={model} onValueChange={onModelChange} placement=\"top\" align=\"end\" />}\n            </>\n          }\n        />\n        {disclaimer && <p className=\"text-center text-xs text-fg-subtle\">{disclaimer}</p>}\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

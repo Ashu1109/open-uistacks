@@ -1,0 +1,19 @@
+{
+  "name": "text-scramble",
+  "title": "Text scramble",
+  "kind": "component",
+  "group": "Effects",
+  "description": "Letters resolve left to right out of random glyphs on mount, on text change and on hover; the real text stays in a visually hidden copy and the scrambled one is hidden from screen readers.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/text-scramble.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useRef, useSyncExternalStore } from \"react\";\nimport { useReducedMotion } from \"motion/react\";\n\n/* Text scramble: letters resolve left to right out of random glyphs on mount, on text change and on hover; the real text stays in a visually hidden copy and the scrambled one is hidden from screen readers. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport const DEFAULT_CHARSET = \"!<>-_\\\\/[]{}=+*^?#abcdefghijklmnopqrstuvwxyz\";\n\n/** The text at `progress` 0..1: the first share of characters are final, the rest random; whitespace is kept. */\nexport function scrambleFrame(text: string, progress: number, charset = DEFAULT_CHARSET, random: () => number = Math.random): string {\n  const chars = [...text];\n  const settled = Math.floor(Math.min(Math.max(progress, 0), 1) * chars.length);\n  return chars.map((ch, i) => (i < settled || /\\s/.test(ch) ? ch : (charset[Math.floor(random() * charset.length)] ?? ch))).join(\"\");\n}\n\nexport interface TextScrambleProps {\n  text: string;\n  /** Milliseconds from fully scrambled to settled. */\n  duration?: number;\n  /** Play when the element mounts or the text changes. */\n  playOnMount?: boolean;\n  /** Replay when hovered. */\n  playOnHover?: boolean;\n  charset?: string;\n  className?: string;\n}\n\nexport function TextScramble({ text, duration = 900, playOnMount = true, playOnHover = true, charset = DEFAULT_CHARSET, className = \"\" }: TextScrambleProps) {\n  const reduce = useReduce();\n  const visible = useRef<HTMLSpanElement>(null);\n  const raf = useRef(0);\n\n  const play = () => {\n    cancelAnimationFrame(raf.current);\n    if (reduce || typeof requestAnimationFrame === \"undefined\") {\n      if (visible.current) visible.current.textContent = text;\n      return;\n    }\n    const start = performance.now();\n    const step = (now: number) => {\n      const progress = (now - start) / duration;\n      if (visible.current) visible.current.textContent = scrambleFrame(text, progress, charset);\n      if (progress < 1) raf.current = requestAnimationFrame(step);\n    };\n    raf.current = requestAnimationFrame(step);\n  };\n\n  useEffect(() => {\n    if (playOnMount) play();\n    else if (visible.current) visible.current.textContent = text;\n    return () => cancelAnimationFrame(raf.current);\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [text, duration, playOnMount, reduce]);\n\n  return (\n    <span className={className} onPointerEnter={playOnHover ? play : undefined}>\n      <span className=\"sr-only\">{text}</span>\n      <span ref={visible} aria-hidden>{text}</span>\n    </span>\n  );\n}\n"
+    }
+  ]
+}

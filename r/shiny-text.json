@@ -1,0 +1,19 @@
+{
+  "name": "shiny-text",
+  "title": "Shiny text",
+  "kind": "component",
+  "group": "Effects",
+  "description": "Text with a soft highlight that sweeps across it on a loop, optionally pausing on hover; the text is real, so screen readers read it as is.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/shiny-text.tsx",
+      "content": "\"use client\";\n\nimport { useState, useSyncExternalStore, type CSSProperties } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n/* Shiny text: text with a soft highlight that sweeps across it on a loop, optionally pausing on hover; the text is real, so screen readers read it as is. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\n/** The clipped gradient style: `base` text color with a `shine` band `width` percent wide. */\nexport function shineStyle(base: string, shine: string, width = 20): CSSProperties {\n  const half = width / 2;\n  return {\n    backgroundImage: `linear-gradient(110deg, ${base} ${50 - half}%, ${shine} 50%, ${base} ${50 + half}%)`,\n    backgroundSize: \"250% 100%\",\n    WebkitBackgroundClip: \"text\",\n    backgroundClip: \"text\",\n    WebkitTextFillColor: \"transparent\",\n    color: \"transparent\",\n  };\n}\n\nexport interface ShinyTextProps {\n  children: string;\n  /** Seconds per sweep. */\n  duration?: number;\n  pauseOnHover?: boolean;\n  disabled?: boolean;\n  /** Resting text color. */\n  base?: string;\n  /** Highlight color. */\n  shine?: string;\n  className?: string;\n}\n\nexport function ShinyText({ children, duration = 2.4, pauseOnHover = false, disabled = false, base = \"var(--fg-muted)\", shine = \"var(--fg)\", className = \"\" }: ShinyTextProps) {\n  const reduce = useReduce();\n  const [paused, setPaused] = useState(false);\n  const still = disabled || reduce || paused;\n  return (\n    <motion.span\n      className={`inline-block ${className}`}\n      style={shineStyle(base, shine)}\n      initial={{ backgroundPosition: \"150% 0\" }}\n      animate={still ? { backgroundPosition: \"150% 0\" } : { backgroundPosition: [\"150% 0\", \"-50% 0\"] }}\n      transition={still ? { duration: 0 } : { duration, repeat: Infinity, ease: \"linear\" }}\n      onPointerEnter={pauseOnHover ? () => setPaused(true) : undefined}\n      onPointerLeave={pauseOnHover ? () => setPaused(false) : undefined}\n    >\n      {children}\n    </motion.span>\n  );\n}\n"
+    }
+  ]
+}

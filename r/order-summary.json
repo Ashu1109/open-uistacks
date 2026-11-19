@@ -1,0 +1,21 @@
+{
+  "name": "order-summary",
+  "title": "Order summary",
+  "kind": "component",
+  "group": "Commerce",
+  "description": "A read-only list of purchased lines (name, quantity, price) above subtotal, discount, shipping, tax and total.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [
+    "cart-summary"
+  ],
+  "files": [
+    {
+      "path": "ui/order-summary.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { computeTotals, Money, TotalsList, type Discount } from \"./cart-summary\";\n\n/* Order summary: a read-only list of purchased lines (name, quantity, price) above subtotal, discount, shipping, tax and total. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst spring = { type: \"spring\", stiffness: 480, damping: 34 } as const;\n\nexport interface OrderLine {\n  id: string;\n  name: string;\n  variant?: string;\n  unitPrice: number;\n  quantity: number;\n}\n\nexport interface OrderSummaryProps {\n  lines: OrderLine[];\n  currency?: string;\n  discount?: Discount;\n  taxRate?: number;\n  shipping?: number;\n  title?: string;\n  className?: string;\n}\n\nexport function OrderSummary({ lines, currency = \"USD\", discount, taxRate, shipping, title = \"Order summary\", className = \"\" }: OrderSummaryProps) {\n  const reduce = useReduce();\n  const totals = computeTotals({ lines, discount, taxRate, shipping });\n  return (\n    <motion.section initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={spring} aria-label={title} className={`grid gap-4 rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <h4 className=\"text-[15px] font-medium text-fg\">{title}</h4>\n      <ul className=\"grid gap-3\">\n        <AnimatePresence>\n        {lines.map((l, i) => (\n          <motion.li key={l.id} layout={!reduce} initial={reduce ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ ...spring, delay: i * 0.04 }} className=\"flex items-start justify-between gap-3 text-sm\">\n            <span className=\"min-w-0\">\n              <span className=\"block truncate text-fg\">{l.name}</span>\n              <span className=\"block text-xs text-fg-muted\">{[l.variant, `Qty ${l.quantity}`].filter(Boolean).join(\" · \")}</span>\n            </span>\n            <span className=\"tabular-nums text-fg\"><Money minor={l.unitPrice * l.quantity} currency={currency} /></span>\n          </motion.li>\n        ))}\n        </AnimatePresence>\n      </ul>\n      <TotalsList totals={totals} currency={currency} discountLabel={discount?.label} className=\"border-t border-track pt-4\" />\n    </motion.section>\n  );\n}\n"
+    }
+  ]
+}

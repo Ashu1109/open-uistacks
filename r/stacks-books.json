@@ -1,0 +1,24 @@
+{
+  "name": "stacks-books",
+  "title": "Books",
+  "kind": "template",
+  "group": "Templates",
+  "description": "A small-business accounting screen with an Overview (profit and loss beside treasury) and an Invoices workspace, switched from the sidebar.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "invoices-workspace",
+    "pnl-overview",
+    "treasury-overview"
+  ],
+  "files": [
+    {
+      "path": "templates/stacks-books.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { BookOpen, FileText, LayoutDashboard, Plus } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { InvoicesWorkspace, type Invoice } from \"../blocks/invoices-workspace\";\nimport { PnlOverview } from \"../blocks/pnl-overview\";\nimport { TreasuryOverview } from \"../blocks/treasury-overview\";\n\n/* Stacks Books template: a small-business accounting screen with an Overview (profit and loss beside treasury) and an Invoices workspace, switched from the sidebar. */\n\nconst SECTIONS = [{ items: [{ id: \"overview\", label: \"Overview\", icon: <LayoutDashboard size={16} aria-hidden /> }, { id: \"invoices\", label: \"Invoices\", icon: <FileText size={16} aria-hidden />, badge: 2 }] }];\n\nexport interface StacksBooksProps {\n  invoices?: Invoice[];\n  onNewInvoice?: () => void;\n  className?: string;\n}\n\nexport function StacksBooks({ invoices, onNewInvoice, className = \"\" }: StacksBooksProps) {\n  const [view, setView] = useState(\"overview\");\n  return (\n    <AppShell\n      className={className}\n      product={{ name: \"Stacks Books\", mark: <span className=\"grid size-8 place-items-center rounded-[10px] bg-select text-[var(--inverse-fg)]\"><BookOpen size={16} aria-hidden /></span> }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={setView}\n      title={view === \"overview\" ? \"Overview\" : \"Invoices\"}\n      subtitle=\"Juniper Works LLC\"\n      actions={<button type=\"button\" onClick={onNewInvoice} className=\"inline-flex items-center gap-1.5 rounded-full bg-[image:var(--grad-primary)] px-4 py-2 text-sm font-medium text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)]\"><Plus size={14} aria-hidden />New invoice</button>}\n    >\n      {view === \"overview\" ? (\n        <div className=\"@container grid gap-4 @[900px]:grid-cols-12\">\n          <PnlOverview className=\"@[900px]:col-span-7\" />\n          <TreasuryOverview className=\"@[900px]:col-span-5\" />\n        </div>\n      ) : (\n        <InvoicesWorkspace invoices={invoices} />\n      )}\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

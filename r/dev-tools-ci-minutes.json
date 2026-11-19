@@ -1,0 +1,20 @@
+{
+  "name": "dev-tools-ci-minutes",
+  "title": "CI minutes",
+  "kind": "block",
+  "group": "Dev tools",
+  "description": "Minutes used against the monthly quota with a month-end projection and the heaviest workflows. A card, 1/3 width of a 12-column grid (4 columns), responsive to its container.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "chart-utils",
+    "progress"
+  ],
+  "files": [
+    {
+      "path": "blocks/dev-tools-ci-minutes.tsx",
+      "content": "\"use client\";\n\nimport { Progress } from \"../ui/progress\";\nimport { CountUp } from \"../ui/chart-utils\";\n\n/* Dev tools CI minutes: minutes used against the monthly quota with a month-end projection and the heaviest workflows. A card, 1/3 width of a 12-column grid (4 columns), responsive to its container. */\n\nexport interface WorkflowUsage {\n  name: string;\n  minutes: number;\n}\n\nexport interface DevToolsCiMinutesProps {\n  used?: number;\n  quota?: number;\n  /** Day of the month today is, 1-based. */\n  day?: number;\n  daysInMonth?: number;\n  workflows?: WorkflowUsage[];\n  className?: string;\n}\n\nconst DEMO_WORKFLOWS: WorkflowUsage[] = [\n  { name: \"web-e2e\", minutes: 4120 },\n  { name: \"build-and-test\", minutes: 3380 },\n  { name: \"docker-images\", minutes: 1760 },\n  { name: \"nightly-audit\", minutes: 640 },\n];\n\nexport function projectMonthEnd(used: number, day: number, daysInMonth: number): number {\n  return day <= 0 ? used : Math.round((used / day) * daysInMonth);\n}\n\nexport const formatMinutes = (n: number) => new Intl.NumberFormat(\"en-US\").format(Math.round(n));\n\nexport function DevToolsCiMinutes({ used = 9900, quota = 15000, day = 17, daysInMonth = 30, workflows = DEMO_WORKFLOWS, className = \"\" }: DevToolsCiMinutesProps) {\n  const projected = projectMonthEnd(used, day, daysInMonth);\n  const over = projected > quota;\n  const top = Math.max(...workflows.map((w) => w.minutes), 1);\n  return (\n    <section aria-label=\"CI minutes\" className={`@container rounded-[20px] bg-surface p-4 shadow-[var(--shadow-card)] @[480px]:p-5 ${className}`}>\n      <h2 className=\"text-[15px] font-semibold text-fg\">CI minutes</h2>\n      <p className=\"mt-2 text-[28px] font-semibold leading-8 tabular-nums text-fg\">\n        <CountUp text={formatMinutes(used)} />\n        <span className=\"ml-1.5 text-[14px] font-normal text-fg-muted\">of {formatMinutes(quota)}</span>\n      </p>\n      <Progress className=\"mt-3\" value={used} max={quota} showValue={false} tone={used / quota > 0.85 ? \"danger\" : \"accent\"} aria-label=\"Minutes used this month\" valueText={`${formatMinutes(used)} of ${formatMinutes(quota)} minutes`} />\n      <p className={`mt-2 text-[13px] ${over ? \"text-danger-text\" : \"text-fg-muted\"}`}>\n        {over ? `On pace for ${formatMinutes(projected)}, ${formatMinutes(projected - quota)} over quota` : `On pace for ${formatMinutes(projected)}, within quota`}\n      </p>\n      <ul className=\"mt-4 grid gap-2.5\" aria-label=\"Minutes by workflow\">\n        {workflows.map((w) => (\n          <li key={w.name} className=\"grid gap-1\">\n            <div className=\"flex justify-between text-[13px]\">\n              <span className=\"truncate font-medium text-fg\">{w.name}</span>\n              <span className=\"tabular-nums text-fg-muted\">{formatMinutes(w.minutes)}</span>\n            </div>\n            <div aria-hidden className=\"h-1.5 overflow-hidden rounded-full bg-track\">\n              <div className=\"h-full rounded-full\" style={{ width: `${(w.minutes / top) * 100}%`, background: \"var(--series-1)\" }} />\n            </div>\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "cohort-table",
+  "title": "Cohort table",
+  "kind": "component",
+  "group": "Data display",
+  "description": "A retention heatmap where each row is a cohort and each column a period; cell tint scales with the retained share.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/cohort-table.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n/* CohortTable: a retention heatmap where each row is a cohort and each column a period; cell tint scales with the retained share. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport function formatPercent(value: number): string {\n  return `${Math.round(value * 100)}%`;\n}\n\n/** Background for a 0..1 retention value, blending the accent into the surface. */\nexport function cellTint(value: number): string {\n  const strength = Math.round(Math.min(Math.max(value, 0), 1) * 85);\n  return `color-mix(in srgb, var(--select) ${strength}%, var(--surface))`;\n}\n\nexport interface CohortRow {\n  label: string;\n  size: number;\n  /** Retained share per period, 0 to 1; shorter rows leave later cells empty. */\n  values: readonly number[];\n}\n\nexport interface CohortTableProps {\n  rows: readonly CohortRow[];\n  periodLabel?: string;\n  caption?: string;\n  className?: string;\n}\n\nexport function CohortTable({ rows, periodLabel = \"Week\", caption = \"Cohort retention\", className = \"\" }: CohortTableProps) {\n  const reduce = useReduce();\n  const periods = Math.max(0, ...rows.map((r) => r.values.length));\n  return (\n    <div className={`overflow-x-auto rounded-[20px] bg-surface p-3 shadow-[var(--shadow-card)] ${className}`}>\n      <table className=\"w-full border-separate border-spacing-1 text-xs\">\n        <caption className=\"sr-only\">{caption}</caption>\n        <thead>\n          <tr className=\"text-fg-muted\">\n            <th scope=\"col\" className=\"px-2 py-1 text-left font-medium\">Cohort</th>\n            <th scope=\"col\" className=\"px-2 py-1 text-right font-medium\">Users</th>\n            {Array.from({ length: periods }, (_, i) => (\n              <th key={i} scope=\"col\" className=\"px-2 py-1 font-medium\">{periodLabel} {i}</th>\n            ))}\n          </tr>\n        </thead>\n        <tbody>\n          {rows.map((row, r) => (\n            <tr key={row.label}>\n              <th scope=\"row\" className=\"whitespace-nowrap px-2 py-1 text-left font-medium text-fg\">{row.label}</th>\n              <td className=\"px-2 py-1 text-right tabular-nums text-fg-muted\">{row.size.toLocaleString(\"en-US\")}</td>\n              {Array.from({ length: periods }, (_, i) => {\n                const v = row.values[i];\n                return v === undefined ? (\n                  <td key={i} />\n                ) : (\n                  <motion.td key={i} initial={reduce ? false : { opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: \"spring\", stiffness: 480, damping: 34, delay: Math.min((r + i) * 0.04, 0.5) }} style={{ background: cellTint(v) }} className={`rounded-[8px] px-2 py-1.5 text-center font-medium tabular-nums ${v > 0.55 ? \"text-white\" : \"text-fg\"}`}>\n                    {formatPercent(v)}\n                  </motion.td>\n                );\n              })}\n            </tr>\n          ))}\n        </tbody>\n      </table>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

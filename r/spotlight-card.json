@@ -1,0 +1,17 @@
+{
+  "name": "spotlight-card",
+  "title": "Spotlight card",
+  "kind": "component",
+  "group": "Effects",
+  "description": "A card whose surface and border glow under a soft radial light that follows the pointer, and sit centered while a child has keyboard focus.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/spotlight-card.tsx",
+      "content": "\"use client\";\n\nimport { useRef, type CSSProperties, type ReactNode } from \"react\";\n\n/* Spotlight card: a card whose surface and border glow under a soft radial light that follows the pointer, and sit centered while a child has keyboard focus. */\n\n/** A radial-gradient layer centered at (x, y) px. */\nexport function spotlightBackground(x: number, y: number, radius: number, color: string): string {\n  return `radial-gradient(${radius}px circle at ${x}px ${y}px, ${color}, transparent 70%)`;\n}\n\nexport interface SpotlightCardProps {\n  children: ReactNode;\n  /** Light radius in px. */\n  radius?: number;\n  /** Any CSS color; defaults to a soft tint of the selection color. */\n  color?: string;\n  className?: string;\n  style?: CSSProperties;\n}\n\nexport function SpotlightCard({ children, radius = 220, color = \"color-mix(in srgb, var(--select) 22%, transparent)\", className = \"\", style }: SpotlightCardProps) {\n  const glow = useRef<HTMLDivElement>(null);\n  const move = (x: number, y: number) => {\n    if (!glow.current) return;\n    glow.current.style.background = spotlightBackground(x, y, radius, color);\n    glow.current.style.opacity = \"1\";\n  };\n  const hide = () => {\n    if (glow.current) glow.current.style.opacity = \"0\";\n  };\n\n  return (\n    <div\n      className={`relative overflow-hidden rounded-[20px] bg-surface p-6 shadow-[var(--shadow-card)] ${className}`}\n      style={style}\n      onPointerMove={(e) => {\n        const rect = e.currentTarget.getBoundingClientRect();\n        move(e.clientX - rect.left, e.clientY - rect.top);\n      }}\n      onPointerLeave={hide}\n      onFocus={(e) => move(e.currentTarget.offsetWidth / 2, e.currentTarget.offsetHeight / 2)}\n      onBlur={hide}\n    >\n      <div ref={glow} aria-hidden data-spotlight className=\"pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300\" />\n      <div className=\"relative\">{children}</div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

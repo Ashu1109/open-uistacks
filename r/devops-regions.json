@@ -1,0 +1,21 @@
+{
+  "name": "devops-regions",
+  "title": "Regions",
+  "kind": "block",
+  "group": "DevOps",
+  "description": "Per-region health on a dot map beside a status list with latency, plus counts by status. A card, 1/2 width or full width.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "dot-map"
+  ],
+  "files": [
+    {
+      "path": "blocks/devops-regions.tsx",
+      "content": "\"use client\";\n\nimport { Globe } from \"lucide-react\";\nimport { DotMap } from \"../ui/dot-map\";\n\n/* Devops regions: per-region health on a dot map beside a status list with latency, plus counts by status. A card, 1/2 width or full width. */\n\nexport type RegionStatus = \"healthy\" | \"degraded\" | \"down\";\n\nexport interface Region {\n  id: string;\n  name: string;\n  lat: number;\n  lon: number;\n  status: RegionStatus;\n  latencyMs: number;\n}\n\nexport interface DevopsRegionsProps {\n  regions?: Region[];\n  className?: string;\n}\n\nconst COLOR: Record<RegionStatus, string> = { healthy: \"var(--success)\", degraded: \"var(--warning)\", down: \"var(--danger)\" };\nconst TEXT: Record<RegionStatus, string> = { healthy: \"Healthy\", degraded: \"Degraded\", down: \"Down\" };\n\nexport function regionCounts(regions: Region[]): Record<RegionStatus, number> {\n  return regions.reduce((acc, r) => ({ ...acc, [r.status]: acc[r.status] + 1 }), { healthy: 0, degraded: 0, down: 0 });\n}\n\nconst DEMO: Region[] = [\n  { id: \"us-east\", name: \"US East\", lat: 38.9, lon: -77.4, status: \"healthy\", latencyMs: 82 },\n  { id: \"us-west\", name: \"US West\", lat: 45.6, lon: -121.2, status: \"healthy\", latencyMs: 91 },\n  { id: \"sa-east\", name: \"Sao Paulo\", lat: -23.5, lon: -46.6, status: \"degraded\", latencyMs: 246 },\n  { id: \"eu-west\", name: \"Dublin\", lat: 53.3, lon: -6.3, status: \"healthy\", latencyMs: 74 },\n  { id: \"eu-central\", name: \"Frankfurt\", lat: 50.1, lon: 8.7, status: \"healthy\", latencyMs: 69 },\n  { id: \"ap-south\", name: \"Mumbai\", lat: 19.1, lon: 72.9, status: \"down\", latencyMs: 0 },\n  { id: \"ap-se\", name: \"Singapore\", lat: 1.35, lon: 103.8, status: \"healthy\", latencyMs: 118 },\n  { id: \"ap-ne\", name: \"Tokyo\", lat: 35.7, lon: 139.7, status: \"degraded\", latencyMs: 203 },\n];\n\nexport function DevopsRegions({ regions = DEMO, className = \"\" }: DevopsRegionsProps) {\n  const counts = regionCounts(regions);\n  return (\n    <section aria-labelledby=\"devops-regions-title\" className={`@container rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] ${className}`}>\n      <header className=\"mb-3 flex flex-wrap items-center justify-between gap-2\">\n        <h3 id=\"devops-regions-title\" className=\"flex items-center gap-2 text-[15px] font-semibold text-fg\"><Globe className=\"size-4 text-fg-muted\" aria-hidden /> Regions</h3>\n        <p className=\"m-0 flex gap-3 text-xs text-fg-muted\" aria-label=\"Regions by status\">\n          {([\"healthy\", \"degraded\", \"down\"] as const).map((s) => (\n            <span key={s} className=\"inline-flex items-center gap-1 tabular-nums\"><span aria-hidden className=\"size-2 rounded-full\" style={{ background: COLOR[s] }} />{counts[s]} {TEXT[s].toLowerCase()}</span>\n          ))}\n        </p>\n      </header>\n      <div className=\"grid gap-4 @[640px]:grid-cols-[1.4fr_1fr] @[640px]:items-center\">\n        <DotMap label=\"Region health map\" locations={regions.map((r) => ({ label: r.name, lat: r.lat, lon: r.lon, value: r.latencyMs }))} format={(n) => (n ? `${n} ms` : \"unreachable\")} />\n        <ul className=\"m-0 grid list-none gap-1.5 p-0\">\n          {regions.map((r) => (\n            <li key={r.id} className=\"flex items-center gap-2 text-[13px]\">\n              <span aria-hidden className=\"size-2 shrink-0 rounded-full\" style={{ background: COLOR[r.status] }} />\n              <span className=\"flex-1 truncate text-fg\">{r.name}</span>\n              <span className=\"sr-only\">{TEXT[r.status]}</span>\n              <span className=\"tabular-nums text-fg-muted\">{r.status === \"down\" ? \"no response\" : `${r.latencyMs} ms`}</span>\n            </li>\n          ))}\n        </ul>\n      </div>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

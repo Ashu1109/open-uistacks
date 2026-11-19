@@ -1,0 +1,29 @@
+{
+  "name": "data-pipelines",
+  "title": "Data pipelines",
+  "kind": "template",
+  "group": "Templates",
+  "description": "Conduit, a fictional ELT observability product. Overview shows rows loaded, spend, freshness and the nightly run; Connectors adds health and failed syncs; Quality adds data tests.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "button",
+    "data-pipelines-connector-health",
+    "data-pipelines-data-tests",
+    "data-pipelines-failed-sync",
+    "data-pipelines-freshness",
+    "data-pipelines-nightly-run",
+    "data-pipelines-rows-loaded",
+    "data-pipelines-warehouse-spend"
+  ],
+  "files": [
+    {
+      "path": "templates/data-pipelines.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Activity, Cable, Download, FlaskConical, GitBranch, LayoutDashboard } from \"lucide-react\";\nimport { Button } from \"../ui/button\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { DataPipelinesConnectorHealth } from \"../blocks/data-pipelines-connector-health\";\nimport { DataPipelinesDataTests } from \"../blocks/data-pipelines-data-tests\";\nimport { DataPipelinesFailedSync } from \"../blocks/data-pipelines-failed-sync\";\nimport { DataPipelinesFreshness } from \"../blocks/data-pipelines-freshness\";\nimport { DataPipelinesNightlyRun } from \"../blocks/data-pipelines-nightly-run\";\nimport { DataPipelinesRowsLoaded } from \"../blocks/data-pipelines-rows-loaded\";\nimport { DataPipelinesWarehouseSpend } from \"../blocks/data-pipelines-warehouse-spend\";\n\n/* Data pipelines template: Conduit, a fictional ELT observability product. Overview shows rows loaded, spend, freshness and the nightly run; Connectors adds health and failed syncs; Quality adds data tests. */\n\nexport interface DataPipelinesProps {\n  className?: string;\n}\n\nconst SECTIONS = [\n  {\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: <LayoutDashboard size={16} /> },\n      { id: \"connectors\", label: \"Connectors\", icon: <Cable size={16} />, badge: 6 },\n      { id: \"quality\", label: \"Quality\", icon: <FlaskConical size={16} /> },\n    ],\n  },\n];\n\nconst TITLES: Record<string, string> = { overview: \"Overview\", connectors: \"Connectors\", quality: \"Quality\" };\n\nconst mark = (\n  <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\" aria-hidden>\n    <GitBranch size={16} />\n  </span>\n);\n\nconst grid = \"grid grid-cols-1 gap-4 @[900px]:grid-cols-12\";\n\nexport function DataPipelines({ className = \"\" }: DataPipelinesProps) {\n  const [view, setView] = useState(\"overview\");\n  return (\n    <AppShell\n      className={className}\n      product={{ name: \"Conduit\", mark }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={setView}\n      title={TITLES[view]}\n      subtitle=\"Production warehouse · last 24 hours\"\n      actions={\n        <Button size=\"sm\" variant=\"secondary\" leadingIcon={<Download size={14} aria-hidden />}>\n          Export\n        </Button>\n      }\n      sidebarFooter={\n        <p className=\"flex items-center gap-2 px-3 py-2 text-[13px] text-fg-muted\">\n          <Activity size={14} aria-hidden /> Pipeline status: degraded\n        </p>\n      }\n    >\n      <div className=\"@container\">\n        {view === \"overview\" && (\n          <div className={grid}>\n            <DataPipelinesRowsLoaded className=\"@[900px]:col-span-8\" />\n            <DataPipelinesWarehouseSpend className=\"@[900px]:col-span-4\" />\n            <DataPipelinesFreshness className=\"@[900px]:col-span-4\" />\n            <DataPipelinesFailedSync className=\"@[900px]:col-span-8\" />\n            <DataPipelinesNightlyRun className=\"@[900px]:col-span-12\" />\n          </div>\n        )}\n        {view === \"connectors\" && (\n          <div className={grid}>\n            <DataPipelinesConnectorHealth className=\"@[900px]:col-span-7\" />\n            <DataPipelinesFailedSync className=\"@[900px]:col-span-5\" />\n            <DataPipelinesRowsLoaded className=\"@[900px]:col-span-12\" />\n          </div>\n        )}\n        {view === \"quality\" && (\n          <div className={grid}>\n            <DataPipelinesDataTests className=\"@[900px]:col-span-7\" />\n            <DataPipelinesFreshness className=\"@[900px]:col-span-5\" />\n            <DataPipelinesNightlyRun className=\"@[900px]:col-span-12\" />\n          </div>\n        )}\n      </div>\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "llm-ops-provider-health",
+  "title": "Provider health",
+  "kind": "block",
+  "group": "LLM ops",
+  "description": "A full-width or 1/2-width (6 of 12 columns) card listing each model provider with a 30-day uptime strip, error rate and current status.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "uptime-bars"
+  ],
+  "files": [
+    {
+      "path": "blocks/llm-ops-provider-health.tsx",
+      "content": "\"use client\";\n\nimport { UptimeBars, type UptimeDay, type UptimeStatus } from \"../ui/uptime-bars\";\n\n/* LLM ops provider health: a full-width or 1/2-width (6 of 12 columns) card listing each model provider with a 30-day uptime strip, error rate and current status. */\n\nexport interface ProviderHealthRow {\n  provider: string;\n  days: UptimeDay[];\n  /** Share of requests that errored, 0 to 1. */\n  errorRate: number;\n}\n\nexport type ProviderState = \"healthy\" | \"degraded\" | \"down\";\n\nexport function providerState(row: ProviderHealthRow): ProviderState {\n  const last = row.days[row.days.length - 1]?.status;\n  if (last === \"down\" || row.errorRate >= 0.05) return \"down\";\n  if (last === \"degraded\" || row.errorRate >= 0.01) return \"degraded\";\n  return \"healthy\";\n}\n\nfunction strip(pattern: Record<number, UptimeStatus>): UptimeDay[] {\n  return Array.from({ length: 30 }, (_, i) => ({ date: i < 12 ? `Oct ${i + 20}` : `Nov ${i - 11}`, status: pattern[i] ?? \"up\" }));\n}\n\nexport const DEMO_PROVIDER_HEALTH: ProviderHealthRow[] = [\n  { provider: \"Northwind AI\", days: strip({ 6: \"degraded\" }), errorRate: 0.004 },\n  { provider: \"Lumen Labs\", days: strip({ 12: \"down\", 13: \"degraded\", 29: \"degraded\" }), errorRate: 0.017 },\n  { provider: \"Orbital Models\", days: strip({ 3: \"degraded\", 21: \"degraded\", 22: \"degraded\", 28: \"down\", 29: \"down\" }), errorRate: 0.062 },\n  { provider: \"Self-hosted\", days: strip({}), errorRate: 0.001 },\n];\n\nconst STATE = {\n  healthy: { text: \"Healthy\", tone: \"text-success-text\" },\n  degraded: { text: \"Degraded\", tone: \"text-warning-text\" },\n  down: { text: \"Outage\", tone: \"text-danger-text\" },\n} as const;\n\nexport interface LlmOpsProviderHealthProps {\n  providers?: ProviderHealthRow[];\n  className?: string;\n}\n\nexport function LlmOpsProviderHealth({ providers = DEMO_PROVIDER_HEALTH, className = \"\" }: LlmOpsProviderHealthProps) {\n  return (\n    <section aria-label=\"Provider health\" className={`@container rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <h3 className=\"text-[15px] font-semibold text-fg\">Provider health</h3>\n      <p className=\"text-[13px] text-fg-muted\">Last 30 days</p>\n      <ul className=\"mt-4 grid gap-5\">\n        {providers.map((p) => {\n          const state = STATE[providerState(p)];\n          return (\n            <li key={p.provider}>\n              <div className=\"mb-1 flex items-center justify-between text-[12px]\">\n                <span className={`font-medium ${state.tone}`}>{state.text}</span>\n                <span className=\"tabular-nums text-fg-muted\">\n                  {(p.errorRate * 100).toFixed(1)}% errors\n                </span>\n              </div>\n              <UptimeBars name={p.provider} days={p.days} />\n            </li>\n          );\n        })}\n      </ul>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

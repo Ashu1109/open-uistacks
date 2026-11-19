@@ -1,0 +1,22 @@
+{
+  "name": "document-card",
+  "title": "Document card",
+  "kind": "component",
+  "group": "Collaboration",
+  "description": "A file tile with a text preview, owner, relative edit time and an avatar stack of collaborators; becomes a link or button when given href or onOpen.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "activity-feed",
+    "board-card"
+  ],
+  "files": [
+    {
+      "path": "ui/document-card.tsx",
+      "content": "\"use client\";\n\nimport type { ReactNode } from \"react\";\nimport { FileText } from \"lucide-react\";\nimport { formatRelativeTime } from \"./activity-feed\";\nimport { initials } from \"./board-card\";\n\n/* Document card: a file tile with a text preview, owner, relative edit time and an avatar stack of collaborators; becomes a link or button when given href or onOpen. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface DocumentCardProps {\n  title: string;\n  /** First lines of the document. */\n  preview?: string;\n  owner?: string;\n  editedAt?: Date | number;\n  collaborators?: string[];\n  icon?: ReactNode;\n  href?: string;\n  onOpen?: () => void;\n  now?: Date | number;\n  className?: string;\n}\n\nconst MAX_AVATARS = 3;\n\nexport function DocumentCard({ title, preview, owner, editedAt, collaborators = [], icon, href, onOpen, now, className = \"\" }: DocumentCardProps) {\n  const shown = collaborators.slice(0, MAX_AVATARS);\n  const extra = collaborators.length - shown.length;\n  const name = <span className=\"line-clamp-1 text-sm font-medium text-fg\">{title}</span>;\n  const heading = href ? (\n    <a href={href} className={`rounded after:absolute after:inset-0 after:rounded-[18px] ${ring}`}>{name}</a>\n  ) : onOpen ? (\n    <button type=\"button\" onClick={onOpen} className={`rounded text-left after:absolute after:inset-0 after:rounded-[18px] ${ring}`}>{name}</button>\n  ) : name;\n  const interactive = Boolean(href || onOpen);\n\n  return (\n    <article className={`relative grid gap-3 rounded-[18px] bg-surface p-4 shadow-[var(--shadow-card)] dark:bg-raised ${interactive ? \"transition-transform hover:-translate-y-0.5\" : \"\"} ${className}`}>\n      <div className=\"flex items-center gap-2.5\">\n        <span className=\"grid size-8 shrink-0 place-items-center rounded-[10px] bg-select-soft text-select-text\">{icon ?? <FileText size={16} aria-hidden />}</span>\n        <h4 className=\"min-w-0\">{heading}</h4>\n      </div>\n      {preview && <p className=\"line-clamp-3 rounded-[12px] bg-subtle px-3 py-2 text-xs leading-5 text-fg-muted\">{preview}</p>}\n      <div className=\"flex items-center justify-between gap-2 text-xs text-fg-muted\">\n        <span className=\"truncate\">\n          {owner}{owner && editedAt !== undefined && \" · \"}\n          {editedAt !== undefined && <>Edited <time dateTime={new Date(editedAt).toISOString()}>{formatRelativeTime(editedAt, now)}</time></>}\n        </span>\n        {collaborators.length > 0 && (\n          <ul aria-label={`${collaborators.length} collaborators`} className=\"flex shrink-0 -space-x-1.5\">\n            {shown.map((c) => (\n              <li key={c} title={c} className=\"grid size-6 place-items-center rounded-full bg-select-soft text-[10px] font-medium text-select-text ring-2 ring-[var(--surface)]\">\n                <span aria-hidden>{initials(c)}</span><span className=\"sr-only\">{c}</span>\n              </li>\n            ))}\n            {extra > 0 && <li className=\"grid h-6 min-w-6 place-items-center rounded-full bg-subtle px-1 text-[10px] font-medium text-fg-muted ring-2 ring-[var(--surface)]\">+{extra}</li>}\n          </ul>\n        )}\n      </div>\n    </article>\n  );\n}\n"
+    }
+  ]
+}

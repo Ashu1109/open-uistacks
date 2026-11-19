@@ -1,0 +1,23 @@
+{
+  "name": "receipt",
+  "title": "Receipt",
+  "kind": "component",
+  "group": "Commerce",
+  "description": "A paper-style proof of payment with merchant, receipt number, date, itemised lines, totals and the masked payment method; offers print when asked.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [
+    "cart-summary",
+    "order-summary"
+  ],
+  "files": [
+    {
+      "path": "ui/receipt.tsx",
+      "content": "\"use client\";\n\nimport { CircleCheck, Printer } from \"lucide-react\";\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\nimport { computeTotals, formatMoney, TotalsList, type Discount } from \"./cart-summary\";\nimport type { OrderLine } from \"./order-summary\";\n\n/* Receipt: a paper-style proof of payment with merchant, receipt number, date, itemised lines, totals and the masked payment method; offers print when asked. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst spring = { type: \"spring\", stiffness: 480, damping: 34 } as const;\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface ReceiptProps {\n  merchant: string;\n  number: string;\n  /** ISO date or Date. */\n  paidAt: Date | string;\n  lines: OrderLine[];\n  currency?: string;\n  discount?: Discount;\n  taxRate?: number;\n  shipping?: number;\n  /** Already masked, e.g. \"Visa •••• 4242\". */\n  paymentMethod?: string;\n  onPrint?: () => void;\n  className?: string;\n}\n\nexport function Receipt({ merchant, number, paidAt, lines, currency = \"USD\", discount, taxRate, shipping, paymentMethod, onPrint, className = \"\" }: ReceiptProps) {\n  const reduce = useReduce();\n  const totals = computeTotals({ lines, discount, taxRate, shipping });\n  const date = new Date(paidAt);\n  return (\n    <motion.article initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={spring} aria-label={`Receipt ${number}`} className={`mx-auto grid w-full max-w-sm gap-4 rounded-[18px] bg-surface p-6 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <header className=\"grid justify-items-center gap-1 text-center\">\n        <motion.span initial={reduce ? false : { scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ ...spring, delay: 0.1 }} className=\"grid\"><CircleCheck size={28} className=\"text-success\" aria-hidden /></motion.span>\n        <h4 className=\"text-base font-semibold text-fg\">{merchant}</h4>\n        <p className=\"text-sm text-fg-muted\">Payment of {formatMoney(totals.total, currency)} received</p>\n        <p className=\"text-xs tabular-nums text-fg-subtle\">\n          #{number} · <time dateTime={date.toISOString()}>{date.toLocaleDateString(\"en\", { dateStyle: \"medium\" })}</time>\n        </p>\n      </header>\n      <ul className=\"grid gap-2 border-y border-dashed border-track-strong py-4\">\n        {lines.map((l, i) => (\n          <motion.li key={l.id} initial={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.2 + i * 0.07 }} className=\"flex justify-between gap-3 text-sm\">\n            <span className=\"min-w-0 truncate text-fg\">{l.name}{l.quantity > 1 && <span className=\"text-fg-muted\"> × {l.quantity}</span>}</span>\n            <span className=\"tabular-nums text-fg\">{formatMoney(l.unitPrice * l.quantity, currency)}</span>\n          </motion.li>\n        ))}\n      </ul>\n      <TotalsList totals={totals} currency={currency} discountLabel={discount?.label} />\n      {paymentMethod && <p className=\"text-center text-xs text-fg-muted\">Paid with {paymentMethod}</p>}\n      {onPrint && (\n        <motion.button type=\"button\" onClick={onPrint} whileTap={reduce ? undefined : { scale: 0.97 }} className={`mx-auto flex h-9 items-center gap-2 rounded-[10px] bg-subtle px-3.5 text-sm font-medium text-fg transition-colors hover:bg-track ${ring}`}>\n          <Printer size={15} aria-hidden /> Print receipt\n        </motion.button>\n      )}\n    </motion.article>\n  );\n}\n"
+    }
+  ]
+}

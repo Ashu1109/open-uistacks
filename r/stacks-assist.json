@@ -1,0 +1,28 @@
+{
+  "name": "stacks-assist",
+  "title": "Assistant",
+  "kind": "template",
+  "group": "Templates",
+  "description": "An AI assistant product screen. Navigation switches between Home, New chat, a Chat thread, a cited Answer and the Knowledge sources manager.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "assistant-home",
+    "assistant-start",
+    "button",
+    "chat-answer-sources",
+    "chat-thread-composer",
+    "knowledge-sources",
+    "sidebar-nav"
+  ],
+  "files": [
+    {
+      "path": "templates/stacks-assist.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { BookOpen, Home, MessageSquare, Quote, Sparkles, SquarePen } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { AssistantHome } from \"../blocks/assistant-home\";\nimport { AssistantStart } from \"../blocks/assistant-start\";\nimport { ChatAnswerSources } from \"../blocks/chat-answer-sources\";\nimport { ChatThreadComposer } from \"../blocks/chat-thread-composer\";\nimport { KnowledgeSources } from \"../blocks/knowledge-sources\";\nimport { Button } from \"../ui/button\";\nimport type { NavSection } from \"../ui/sidebar-nav\";\n\n/* Stacks Assist: an AI assistant product screen. Navigation switches between Home, New chat, a Chat thread, a cited Answer and the Knowledge sources manager. */\n\nexport interface StacksAssistProps {\n  className?: string;\n}\n\nconst SECTIONS: NavSection[] = [\n  {\n    items: [\n      { id: \"home\", label: \"Home\", icon: <Home size={18} /> },\n      { id: \"new\", label: \"New chat\", icon: <SquarePen size={18} /> },\n      { id: \"chat\", label: \"Chat\", icon: <MessageSquare size={18} /> },\n      { id: \"answer\", label: \"Answer\", icon: <Quote size={18} /> },\n    ],\n  },\n  { title: \"Workspace\", items: [{ id: \"knowledge\", label: \"Knowledge\", icon: <BookOpen size={18} /> }] },\n];\n\nconst TITLES: Record<string, string> = {\n  home: \"Home\",\n  new: \"New chat\",\n  chat: \"Chat\",\n  answer: \"Answer\",\n  knowledge: \"Knowledge\",\n};\n\nexport function StacksAssist({ className = \"\" }: StacksAssistProps) {\n  const [view, setView] = useState(\"home\");\n  return (\n    <AppShell\n      className={className}\n      product={{\n        name: \"Stacks Assist\",\n        mark: (\n          <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\" aria-hidden>\n            <Sparkles size={16} />\n          </span>\n        ),\n      }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={setView}\n      title={TITLES[view]}\n      actions={\n        <Button size=\"sm\" variant=\"secondary\" leadingIcon={<SquarePen />} onClick={() => setView(\"new\")}>\n          New chat\n        </Button>\n      }\n    >\n      {view === \"home\" ? <AssistantHome onPrompt={() => setView(\"chat\")} onOpenChat={() => setView(\"chat\")} /> : null}\n      {view === \"new\" ? <AssistantStart onSend={() => setView(\"chat\")} /> : null}\n      {view === \"chat\" ? <div className=\"h-full min-h-[480px]\"><ChatThreadComposer /></div> : null}\n      {view === \"answer\" ? <div className=\"mx-auto w-full max-w-[720px] p-4\"><ChatAnswerSources /></div> : null}\n      {view === \"knowledge\" ? <div className=\"mx-auto w-full max-w-[880px] p-4\"><KnowledgeSources /></div> : null}\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

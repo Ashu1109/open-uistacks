@@ -1,18 +1,27 @@
 {
   "name": "open-uistacks",
+  "version": "0.1.0",
+  "description": "An animated React component kit: 282 components, 54 blocks and 10 templates, added to your project with one command.",
+  "license": "MIT",
   "private": true,
   "type": "module",
+  "bin": {
+    "open-uistacks": "bin/open-uistacks.mjs"
+  },
+  "files": [
+    "bin",
+    "r"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
   "scripts": {
     "dev": "vite",
     "check": "tsc",
     "test": "vitest run",
-    "build": "tsc && vite build"
-  },
-  "dependencies": {
-    "lucide-react": "^1.75.0",
-    "motion": "^14.14.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "build": "tsc && vite build",
+    "registry": "node scripts/build-registry.mjs",
+    "registry:check": "node scripts/build-registry.mjs --check"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.5",
@@ -22,6 +31,10 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "jsdom": "^31.0.1",
+    "lucide-react": "^1.75.0",
+    "motion": "^14.14.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",

@@ -1,0 +1,19 @@
+{
+  "name": "llm-ops-model-spend",
+  "title": "Model spend",
+  "kind": "block",
+  "group": "LLM ops",
+  "description": "A full-width or 2/3-width (8 of 12 columns) card charting cumulative daily spend with a forecast to month end, summarised against the monthly budget.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "forecast-chart"
+  ],
+  "files": [
+    {
+      "path": "blocks/llm-ops-model-spend.tsx",
+      "content": "\"use client\";\n\nimport { ForecastChart } from \"../ui/forecast-chart\";\n\n/* LLM ops model spend: a full-width or 2/3-width (8 of 12 columns) card charting cumulative daily spend with a forecast to month end, summarised against the monthly budget. */\n\nexport interface ModelSpendProps {\n  /** Cumulative spend in USD, one value per elapsed day. */\n  actual?: number[];\n  /** Projected cumulative spend for the remaining days. */\n  forecast?: number[];\n  budgetUsd?: number;\n  className?: string;\n}\n\nconst DEMO_ACTUAL = Array.from({ length: 18 }, (_, i) => Math.round(((i + 1) * 640 + Math.sin(i) * 120) * 1));\nconst DEMO_FORECAST = Array.from({ length: 12 }, (_, i) => Math.round(DEMO_ACTUAL[17] + (i + 1) * 690));\n\nexport interface BudgetStatus {\n  projected: number;\n  usedRatio: number;\n  state: \"on-track\" | \"at-risk\" | \"over\";\n}\n\nexport function budgetStatus(actual: number[], forecast: number[], budgetUsd: number): BudgetStatus {\n  const spent = actual[actual.length - 1] ?? 0;\n  const projected = forecast[forecast.length - 1] ?? spent;\n  const state = projected > budgetUsd ? \"over\" : projected > budgetUsd * 0.9 ? \"at-risk\" : \"on-track\";\n  return { projected, usedRatio: budgetUsd > 0 ? spent / budgetUsd : 0, state };\n}\n\nconst usd = (n: number) => `$${Math.round(n).toLocaleString(\"en-US\")}`;\nconst STATE = {\n  \"on-track\": { text: \"On track\", tone: \"text-success-text\" },\n  \"at-risk\": { text: \"Near budget\", tone: \"text-warning-text\" },\n  over: { text: \"Projected over budget\", tone: \"text-danger-text\" },\n} as const;\n\nexport function LlmOpsModelSpend({ actual = DEMO_ACTUAL, forecast = DEMO_FORECAST, budgetUsd = 20_000, className = \"\" }: ModelSpendProps) {\n  const status = budgetStatus(actual, forecast, budgetUsd);\n  const spent = actual[actual.length - 1] ?? 0;\n  const labels = Array.from({ length: actual.length + forecast.length }, (_, i) => `Nov ${i + 1}`);\n  const s = STATE[status.state];\n  return (\n    <section aria-label=\"Model spend against budget\" className={`@container rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <div className=\"flex flex-wrap items-end justify-between gap-3\">\n        <div>\n          <h3 className=\"text-[15px] font-semibold text-fg\">Model spend</h3>\n          <p className=\"text-[13px] text-fg-muted\">\n            <span className=\"tabular-nums text-fg\">{usd(spent)}</span> of {usd(budgetUsd)} budget ({Math.round(status.usedRatio * 100)}%)\n          </p>\n        </div>\n        <p className={`text-[13px] font-medium ${s.tone}`} role=\"status\">\n          {s.text} · <span className=\"tabular-nums\">{usd(status.projected)}</span> projected\n        </p>\n      </div>\n      <ForecastChart className=\"mt-3\" actual={actual} forecast={forecast} labels={labels} format={usd} label=\"Cumulative model spend with month-end forecast\" />\n    </section>\n  );\n}\n"
+    }
+  ]
+}

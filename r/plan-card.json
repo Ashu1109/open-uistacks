@@ -1,0 +1,19 @@
+{
+  "name": "plan-card",
+  "title": "Plan card",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "The steps an agent intends to take, each with a status, and Approve / Reject buttons while the plan awaits a decision.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/plan-card.tsx",
+      "content": "\"use client\";\n\nimport { Check, Circle, Loader2, X } from \"lucide-react\";\n\n/* Plan card: the steps an agent intends to take, each with a status, and Approve / Reject buttons while the plan awaits a decision. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport type PlanStepStatus = \"pending\" | \"active\" | \"done\" | \"skipped\";\nexport interface PlanStep {\n  id: string;\n  title: string;\n  detail?: string;\n  status: PlanStepStatus;\n}\n\nexport function planProgress(steps: PlanStep[]): { done: number; total: number } {\n  return { done: steps.filter((s) => s.status === \"done\").length, total: steps.length };\n}\n\nexport interface PlanCardProps {\n  title: string;\n  steps: PlanStep[];\n  /** Shows the decision buttons when provided. */\n  onApprove?: () => void;\n  onReject?: () => void;\n  className?: string;\n}\n\nfunction StepIcon({ status }: { status: PlanStepStatus }) {\n  if (status === \"done\") return <span className=\"grid size-5 place-items-center rounded-full bg-success text-[var(--inverse-fg)]\"><Check size={12} aria-hidden /></span>;\n  if (status === \"active\") return <Loader2 size={20} aria-hidden className=\"animate-spin text-select motion-reduce:animate-none\" />;\n  if (status === \"skipped\") return <X size={20} aria-hidden className=\"text-fg-subtle\" />;\n  return <Circle size={20} aria-hidden className=\"text-track-strong\" />;\n}\n\nexport function PlanCard({ title, steps, onApprove, onReject, className = \"\" }: PlanCardProps) {\n  const { done, total } = planProgress(steps);\n  return (\n    <section aria-label={title} className={`rounded-[16px] bg-surface p-4 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <div className=\"flex items-baseline justify-between\">\n        <h4 className=\"text-sm font-medium text-fg\">{title}</h4>\n        <span className=\"text-xs tabular-nums text-fg-subtle\">{done}/{total}</span>\n      </div>\n      <ol className=\"mt-3 space-y-3\">\n        {steps.map((s) => (\n          <li key={s.id} aria-current={s.status === \"active\" ? \"step\" : undefined} className=\"flex gap-3\">\n            <StepIcon status={s.status} />\n            <div className=\"min-w-0\">\n              <p className={`text-[13px] ${s.status === \"done\" || s.status === \"skipped\" ? \"text-fg-muted\" : \"text-fg\"} ${s.status === \"skipped\" ? \"line-through\" : \"\"}`}>\n                {s.title}\n                <span className=\"sr-only\"> ({s.status})</span>\n              </p>\n              {s.detail && <p className=\"text-xs text-fg-subtle\">{s.detail}</p>}\n            </div>\n          </li>\n        ))}\n      </ol>\n      {(onApprove || onReject) && (\n        <div className=\"mt-4 flex justify-end gap-2\">\n          {onReject && <button type=\"button\" onClick={onReject} className={`h-8 rounded-[10px] px-3 text-[13px] text-fg-muted hover:bg-subtle ${ring}`}>Reject</button>}\n          {onApprove && (\n            <button type=\"button\" onClick={onApprove} className={`h-8 rounded-[10px] bg-[image:var(--grad-primary)] px-3 text-[13px] text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)] ${ring}`}>Approve plan</button>\n          )}\n        </div>\n      )}\n    </section>\n  );\n}\n"
+    }
+  ]
+}

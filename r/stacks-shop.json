@@ -1,0 +1,26 @@
+{
+  "name": "stacks-shop",
+  "title": "Shop",
+  "kind": "template",
+  "group": "Templates",
+  "description": "An e-commerce admin template for a fictional store; Overview shows revenue and shipments, Orders, Products and Shipments each give their block the full screen.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "orders-workspace",
+    "product-catalog",
+    "revenue-overview",
+    "shipment-tracking",
+    "sidebar-nav"
+  ],
+  "files": [
+    {
+      "path": "templates/stacks-shop.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { BarChart3, Package, ShoppingBag, Store, Truck } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { OrdersWorkspace } from \"../blocks/orders-workspace\";\nimport { ProductCatalog } from \"../blocks/product-catalog\";\nimport { RevenueOverview } from \"../blocks/revenue-overview\";\nimport { ShipmentTracking } from \"../blocks/shipment-tracking\";\nimport type { NavSection } from \"../ui/sidebar-nav\";\n\n/* Stacks Shop: an e-commerce admin template for a fictional store; Overview shows revenue and shipments, Orders, Products and Shipments each give their block the full screen. */\n\nconst SECTIONS: NavSection[] = [\n  {\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: <BarChart3 size={16} aria-hidden /> },\n      { id: \"orders\", label: \"Orders\", icon: <ShoppingBag size={16} aria-hidden /> },\n      { id: \"products\", label: \"Products\", icon: <Package size={16} aria-hidden /> },\n      { id: \"shipments\", label: \"Shipments\", icon: <Truck size={16} aria-hidden /> },\n    ],\n  },\n];\n\nconst TITLES: Record<string, string> = { overview: \"Overview\", orders: \"Orders\", products: \"Products\", shipments: \"Shipments\" };\n\nexport interface StacksShopProps {\n  className?: string;\n}\n\nexport function StacksShop({ className = \"\" }: StacksShopProps) {\n  const [view, setView] = useState(\"overview\");\n  return (\n    <AppShell\n      className={className}\n      product={{ name: \"Stacks Shop\", mark: <span className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\"><Store size={16} aria-hidden /></span> }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={setView}\n      title={TITLES[view]}\n      subtitle=\"Harbor & Pine · Last 28 days\"\n    >\n      {view === \"overview\" && (\n        <div className=\"@container grid gap-4\">\n          <RevenueOverview />\n          <ShipmentTracking />\n        </div>\n      )}\n      {view === \"orders\" && <OrdersWorkspace />}\n      {view === \"products\" && <ProductCatalog />}\n      {view === \"shipments\" && <ShipmentTracking />}\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

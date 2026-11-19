@@ -1,0 +1,22 @@
+{
+  "name": "hover-card",
+  "title": "Hover card",
+  "kind": "component",
+  "group": "Overlays",
+  "description": "A rich preview that opens after a short delay when the pointer rests on, or keyboard focus lands on, its trigger; it stays open while the pointer is over the card, closes on Escape and flips to stay in the viewport.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [
+    "dialog",
+    "model-picker"
+  ],
+  "files": [
+    {
+      "path": "ui/hover-card.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useId, useRef, useSyncExternalStore, type KeyboardEvent, type ReactElement, type ReactNode } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { cloneTrigger, useControlled } from \"./dialog\";\nimport { pickSide } from \"./model-picker\";\n\n/* Hover card: a rich preview that opens after a short delay when the pointer rests on, or keyboard focus lands on, its trigger; it stays open while the pointer is over the card, closes on Escape and flips to stay in the viewport. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport interface HoverCardProps {\n  /** The element that reveals the card; it receives aria-describedby while open. */\n  trigger: ReactElement;\n  children: ReactNode;\n  /** Milliseconds the pointer must rest before the card opens. */\n  openDelay?: number;\n  closeDelay?: number;\n  placement?: \"top\" | \"bottom\";\n  align?: \"start\" | \"center\" | \"end\";\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  /** Accessible name for the card. */\n  label?: string;\n  className?: string;\n}\n\nconst ALIGN = { start: \"left-0\", center: \"left-1/2 -translate-x-1/2\", end: \"right-0\" };\n\nexport function HoverCard({ trigger, children, openDelay = 300, closeDelay = 150, placement = \"bottom\", align = \"start\", open, defaultOpen, onOpenChange, label = \"Preview\", className = \"\" }: HoverCardProps) {\n  const id = useId();\n  const reduce = useReduce();\n  const [isOpen, setOpen] = useControlled(open, defaultOpen ?? false, onOpenChange);\n  const timer = useRef(0);\n  const side = useRef(placement);\n  const root = useRef<HTMLSpanElement>(null);\n\n  useEffect(() => () => window.clearTimeout(timer.current), []);\n\n  const schedule = (next: boolean, delay: number) => {\n    window.clearTimeout(timer.current);\n    timer.current = window.setTimeout(() => {\n      if (next) {\n        const rect = root.current?.getBoundingClientRect();\n        if (rect) side.current = pickSide(placement, rect.top, window.innerHeight - rect.bottom, 200);\n      }\n      setOpen(next);\n    }, delay);\n  };\n\n  const onKeyDown = (e: KeyboardEvent) => {\n    if (e.key !== \"Escape\" || !isOpen) return;\n    window.clearTimeout(timer.current);\n    setOpen(false);\n  };\n\n  const top = side.current === \"top\";\n  const hidden = reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, y: top ? 4 : -4 };\n  return (\n    <span\n      ref={root}\n      className=\"relative inline-block\"\n      onPointerEnter={(e) => e.pointerType !== \"touch\" && schedule(true, openDelay)}\n      onPointerLeave={() => schedule(false, closeDelay)}\n      onFocus={() => schedule(true, 0)}\n      onBlur={(e) => !root.current?.contains(e.relatedTarget as Node | null) && schedule(false, 0)}\n      onKeyDown={onKeyDown}\n    >\n      {cloneTrigger(trigger, { \"aria-describedby\": isOpen ? id : undefined })}\n      <AnimatePresence>\n        {isOpen && (\n          <motion.div\n            id={id}\n            role=\"group\"\n            aria-label={label}\n            initial={hidden}\n            animate={{ opacity: 1, scale: 1, y: 0 }}\n            exit={hidden}\n            transition={{ type: \"spring\", stiffness: 520, damping: 34 }}\n            style={{ transformOrigin: `${top ? \"bottom\" : \"top\"} ${align === \"center\" ? \"center\" : align === \"end\" ? \"right\" : \"left\"}` }}\n            className={`absolute z-50 w-72 rounded-[16px] bg-surface p-4 text-sm text-fg shadow-[var(--shadow-overlay)] dark:bg-raised ${top ? \"bottom-full mb-2\" : \"top-full mt-2\"} ${ALIGN[align]} ${className}`}\n          >\n            {children}\n          </motion.div>\n        )}\n      </AnimatePresence>\n    </span>\n  );\n}\n"
+    }
+  ]
+}

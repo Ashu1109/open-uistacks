@@ -1,0 +1,19 @@
+{
+  "name": "gantt-chart",
+  "title": "Gantt chart",
+  "kind": "component",
+  "group": "Data display",
+  "description": "A timeline of tasks as bars across a date range, with week gridlines, a month header and a vertical line for today.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "gantt-row"
+  ],
+  "files": [
+    {
+      "path": "ui/gantt-chart.tsx",
+      "content": "\"use client\";\n\nimport { GanttRow, barGeometry, daysBetween } from \"./gantt-row\";\n\n/* GanttChart: a timeline of tasks as bars across a date range, with week gridlines, a month header and a vertical line for today. */\n\nexport interface GanttTask {\n  id: string;\n  label: string;\n  start: Date;\n  end: Date;\n  progress?: number;\n  color?: string;\n}\n\n/** The earliest start and latest end across tasks. */\nexport function taskRange(tasks: readonly GanttTask[]): { start: Date; end: Date } {\n  const starts = tasks.map((t) => t.start.getTime());\n  const ends = tasks.map((t) => t.end.getTime());\n  return { start: new Date(Math.min(...starts)), end: new Date(Math.max(...ends)) };\n}\n\nconst addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);\nconst weekFmt = new Intl.DateTimeFormat(\"en-US\", { month: \"short\", day: \"numeric\" });\n\nexport interface GanttChartProps {\n  tasks: readonly GanttTask[];\n  /** Visible range; defaults to the span of the tasks. */\n  rangeStart?: Date;\n  rangeEnd?: Date;\n  /** Draws the today line; defaults to the current date. */\n  today?: Date;\n  labelWidth?: number;\n  className?: string;\n}\n\nexport function GanttChart({ tasks, rangeStart, rangeEnd, today = new Date(), labelWidth = 160, className = \"\" }: GanttChartProps) {\n  if (tasks.length === 0) return <p className=\"text-sm text-fg-muted\">No tasks</p>;\n  const span = taskRange(tasks);\n  const start = rangeStart ?? span.start;\n  const end = rangeEnd ?? span.end;\n  const total = daysBetween(start, end) + 1;\n  const ticks = Array.from({ length: Math.ceil(total / 7) }, (_, i) => addDays(start, i * 7));\n  const todayLeft = barGeometry(today, today, start, end);\n  const todayVisible = today >= start && today <= addDays(end, 1);\n\n  return (\n    <div role=\"table\" aria-label=\"Project timeline\" className={`overflow-x-auto rounded-[20px] bg-surface p-4 shadow-[var(--shadow-card)] ${className}`}>\n      <div className=\"relative min-w-[560px]\">\n        <div role=\"row\" className=\"flex h-7 text-[11px] text-fg-subtle\">\n          <div role=\"columnheader\" style={{ width: labelWidth }} className=\"shrink-0\">Task</div>\n          <div role=\"columnheader\" className=\"relative flex-1\">\n            {ticks.map((t) => (\n              <span key={t.toISOString()} style={{ left: `${(daysBetween(start, t) / total) * 100}%` }} className=\"absolute whitespace-nowrap pl-1.5\">{weekFmt.format(t)}</span>\n            ))}\n          </div>\n        </div>\n        <div style={{ left: labelWidth }} className=\"pointer-events-none absolute inset-y-7 right-0\" aria-hidden>\n          {ticks.map((t) => <span key={t.toISOString()} style={{ left: `${(daysBetween(start, t) / total) * 100}%` }} className=\"absolute inset-y-0 w-px bg-track\" />)}\n          {todayVisible && (\n            <span data-testid=\"today-line\" style={{ left: `${todayLeft.left}%` }} className=\"absolute inset-y-0 w-0.5 bg-danger\">\n              <span className=\"absolute -top-1 left-1/2 size-2 -translate-x-1/2 rounded-full bg-danger\" />\n            </span>\n          )}\n        </div>\n        {tasks.map((t, i) => (\n          <GanttRow key={t.id} label={t.label} start={t.start} end={t.end} rangeStart={start} rangeEnd={end} progress={t.progress} color={t.color} labelWidth={labelWidth} delay={i * 0.06} />\n        ))}\n      </div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "testimonial-card",
+  "title": "Testimonial card",
+  "kind": "component",
+  "group": "Marketing",
+  "description": "A quote with an optional star rating and an author line with initials avatar, name and role.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/testimonial-card.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\nimport { Star } from \"lucide-react\";\n\n/* TestimonialCard: a quote with an optional star rating and an author line with initials avatar, name and role. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport function initials(name: string): string {\n  return name.split(/\\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join(\"\");\n}\n\nexport interface TestimonialCardProps {\n  quote: string;\n  author: string;\n  role?: string;\n  /** 0 to 5; omit to hide the stars. */\n  rating?: number;\n  className?: string;\n}\n\nexport function TestimonialCard({ quote, author, role, rating, className = \"\" }: TestimonialCardProps) {\n  const reduce = useReduce();\n  return (\n    <motion.figure initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ type: \"spring\", stiffness: 420, damping: 36 }} className={`flex w-full max-w-sm flex-col gap-4 rounded-[20px] bg-surface p-6 shadow-[var(--shadow-card)] ${className}`}>\n      {rating !== undefined && (\n        <div role=\"img\" aria-label={`Rated ${rating} out of 5`} className=\"flex gap-0.5\">\n          {Array.from({ length: 5 }, (_, i) => (\n            <motion.span key={i} initial={reduce ? false : { opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: \"spring\", stiffness: 520, damping: 22, delay: 0.15 + i * 0.06 }} className=\"inline-flex\">\n              <Star size={15} aria-hidden className={i < Math.round(rating) ? \"fill-[var(--warning)] text-warning\" : \"text-track-strong\"} />\n            </motion.span>\n          ))}\n        </div>\n      )}\n      <blockquote className=\"text-[15px] leading-6 text-fg\">“{quote}”</blockquote>\n      <figcaption className=\"flex items-center gap-3\">\n        <span aria-hidden className=\"grid size-9 place-items-center rounded-full bg-select-soft text-xs font-semibold text-select-text\">{initials(author)}</span>\n        <span>\n          <span className=\"block text-sm font-medium text-fg\">{author}</span>\n          {role && <span className=\"block text-xs text-fg-muted\">{role}</span>}\n        </span>\n      </figcaption>\n    </motion.figure>\n  );\n}\n"
+    }
+  ]
+}

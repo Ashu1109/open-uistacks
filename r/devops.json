@@ -1,0 +1,32 @@
+{
+  "name": "devops",
+  "title": "DevOps",
+  "kind": "template",
+  "group": "Templates",
+  "description": "Pulsegrid, a fictional SRE monitoring app with an Overview dashboard and a Services view, built from the devops blocks.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "app-shell",
+    "avatar",
+    "button",
+    "devops-active-incidents",
+    "devops-error-budget",
+    "devops-hot-hosts",
+    "devops-latency",
+    "devops-on-call",
+    "devops-regions",
+    "devops-service-status",
+    "devops-uptime-history",
+    "sidebar-nav"
+  ],
+  "files": [
+    {
+      "path": "templates/devops.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Activity, AlertTriangle, LayoutDashboard, Radar } from \"lucide-react\";\nimport { AppShell } from \"../blocks/app-shell\";\nimport { Button } from \"../ui/button\";\nimport { Avatar } from \"../ui/avatar\";\nimport type { NavSection } from \"../ui/sidebar-nav\";\nimport { DevopsActiveIncidents } from \"../blocks/devops-active-incidents\";\nimport { DevopsErrorBudget } from \"../blocks/devops-error-budget\";\nimport { DevopsHotHosts } from \"../blocks/devops-hot-hosts\";\nimport { DevopsLatency } from \"../blocks/devops-latency\";\nimport { DevopsOnCall } from \"../blocks/devops-on-call\";\nimport { DevopsRegions } from \"../blocks/devops-regions\";\nimport { DevopsServiceStatus } from \"../blocks/devops-service-status\";\nimport { DevopsUptimeHistory } from \"../blocks/devops-uptime-history\";\n\n/* Devops template: Pulsegrid, a fictional SRE monitoring app with an Overview dashboard and a Services view, built from the devops blocks. */\n\nexport interface DevopsProps {\n  className?: string;\n}\n\ntype View = \"overview\" | \"services\";\n\nconst SECTIONS: NavSection[] = [\n  {\n    title: \"Monitor\",\n    items: [\n      { id: \"overview\", label: \"Overview\", icon: <LayoutDashboard size={16} aria-hidden /> },\n      { id: \"services\", label: \"Services\", icon: <Activity size={16} aria-hidden /> },\n    ],\n  },\n];\n\nconst VIEW_TITLE: Record<View, { title: string; subtitle: string }> = {\n  overview: { title: \"Overview\", subtitle: \"Production · live\" },\n  services: { title: \"Services\", subtitle: \"Status, uptime and regional health\" },\n};\n\nconst Mark = (\n  <span aria-hidden className=\"grid size-8 place-items-center rounded-[10px] bg-[image:var(--grad-primary)] text-[var(--inverse-fg)]\">\n    <Radar size={18} />\n  </span>\n);\n\nexport function Devops({ className = \"\" }: DevopsProps) {\n  const [view, setView] = useState<View>(\"overview\");\n  const head = VIEW_TITLE[view];\n\n  return (\n    <AppShell\n      className={className}\n      product={{ name: \"Pulsegrid\", mark: Mark }}\n      sections={SECTIONS}\n      activeId={view}\n      onNavigate={(id) => setView(id as View)}\n      title={head.title}\n      subtitle={head.subtitle}\n      actions={<Button size=\"sm\" variant=\"outline\" leadingIcon={<AlertTriangle />}>Declare incident</Button>}\n      sidebarFooter={\n        <div className=\"flex items-center gap-2.5 rounded-[14px] px-3 py-2\">\n          <Avatar name=\"Priya Nair\" size=\"sm\" />\n          <span className=\"truncate text-[13px] text-fg-muted\">Priya Nair</span>\n        </div>\n      }\n    >\n      <div className=\"@container\">\n        {view === \"overview\" ? (\n          <div className=\"grid grid-cols-1 gap-4 @[900px]:grid-cols-12\">\n            <DevopsActiveIncidents className=\"@[900px]:col-span-8\" />\n            <DevopsOnCall className=\"@[900px]:col-span-4\" />\n            <DevopsLatency className=\"@[900px]:col-span-8\" />\n            <DevopsErrorBudget className=\"@[900px]:col-span-4\" />\n            <DevopsHotHosts className=\"@[900px]:col-span-6\" />\n            <DevopsServiceStatus className=\"@[900px]:col-span-6\" />\n          </div>\n        ) : (\n          <div className=\"grid grid-cols-1 gap-4 @[900px]:grid-cols-12\">\n            <DevopsRegions className=\"@[900px]:col-span-12\" />\n            <DevopsServiceStatus className=\"@[900px]:col-span-5\" />\n            <DevopsUptimeHistory className=\"@[900px]:col-span-7\" />\n          </div>\n        )}\n      </div>\n    </AppShell>\n  );\n}\n"
+    }
+  ]
+}

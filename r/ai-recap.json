@@ -1,0 +1,20 @@
+{
+  "name": "ai-recap",
+  "title": "AI recap",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "A dismissible \"while you were away\" card that lists what changed in the conversation since the last visit, with a jump-to-latest action.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/ai-recap.tsx",
+      "content": "\"use client\";\n\nimport { AnimatePresence, motion } from \"motion/react\";\nimport { ArrowDown, Sparkles, X } from \"lucide-react\";\nimport { useState, useSyncExternalStore } from \"react\";\nimport { useReducedMotion } from \"motion/react\";\n\n/* AI recap: a dismissible \"while you were away\" card that lists what changed in the conversation since the last visit, with a jump-to-latest action. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface RecapItem {\n  id: string;\n  text: string;\n}\n\nexport interface AiRecapProps {\n  items: RecapItem[];\n  /** Phrase after \"Since\", such as \"9:40 AM\" or \"yesterday\". */\n  since?: string;\n  onJump?: () => void;\n  onDismiss?: () => void;\n  className?: string;\n}\n\nexport function AiRecap({ items, since = \"you left\", onJump, onDismiss, className = \"\" }: AiRecapProps) {\n  const reduce = useReduce();\n  const [open, setOpen] = useState(true);\n  const dismiss = () => {\n    setOpen(false);\n    onDismiss?.();\n  };\n  return (\n    <AnimatePresence>\n      {open && (\n        <motion.section\n          aria-label=\"Recap\"\n          initial={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}\n          animate={{ opacity: 1, y: 0 }}\n          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8, height: 0 }}\n          transition={{ type: \"spring\", stiffness: 500, damping: 34 }}\n          className={`rounded-[20px] bg-select-soft p-4 shadow-[var(--shadow-hairline)] ${className}`}\n        >\n          <header className=\"flex items-center gap-2\">\n            <Sparkles size={15} className=\"text-select-text\" aria-hidden />\n            <h3 className=\"flex-1 text-sm font-medium text-fg\">Since {since}</h3>\n            <button type=\"button\" onClick={dismiss} aria-label=\"Dismiss recap\" className={`grid size-7 place-items-center rounded-full text-fg-muted hover:bg-subtle ${ring}`}>\n              <X size={14} aria-hidden />\n            </button>\n          </header>\n          <ul className=\"mt-2 grid gap-1.5 pl-1\">\n            {items.map((item) => (\n              <li key={item.id} className=\"flex gap-2 text-[13px] leading-5 text-fg-muted\">\n                <span aria-hidden className=\"mt-2 size-1 shrink-0 rounded-full bg-select\" />\n                {item.text}\n              </li>\n            ))}\n          </ul>\n          {onJump && (\n            <button type=\"button\" onClick={onJump} className={`mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-medium text-fg shadow-[var(--shadow-btn-secondary)] ${ring}`}>\n              <ArrowDown size={14} aria-hidden /> Jump to latest\n            </button>\n          )}\n        </motion.section>\n      )}\n    </AnimatePresence>\n  );\n}\n"
+    }
+  ]
+}

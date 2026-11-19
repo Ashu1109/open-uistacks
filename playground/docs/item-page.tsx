@@ -50,30 +50,39 @@ function Heading({ children }: { children: ReactNode }) {
   return <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-fg">{children}</h2>;
 }
 
+const CLI = "npx github:Ashu1109/open-uistacks";
+const inlineCode = "rounded bg-subtle px-1.5 py-0.5 text-[13px] text-fg";
+
 function Installation({ item, code }: { item: Item; code: string }) {
-  if (item.tier === "Free") {
-    return <CodeBlock code={`npx shadcn@latest add https://uistacks.dev/r/${item.slug}`} language="bash" title="Terminal" lineNumbers={false} />;
-  }
   const deps = npmDependencies(code);
   const siblings = siblingFiles(code);
   return (
-    <ol className="grid gap-4 text-[14px] leading-6 text-fg-muted [counter-reset:step]">
-      {deps.length > 0 && (
-        <li className="grid gap-2">
-          <span>1. Install the dependencies.</span>
-          <CodeBlock code={`npm install ${deps.join(" ")}`} language="bash" title="Terminal" lineNumbers={false} />
-        </li>
-      )}
-      <li>
-        {deps.length > 0 ? "2" : "1"}. Copy the source from the Code tab into <code className="rounded bg-subtle px-1.5 py-0.5 text-[13px] text-fg">{installPath(item)}</code>.
-        {siblings.length > 0 && (
-          <span> It imports {siblings.map((s, i) => <span key={s}>{i > 0 && ", "}<code className="rounded bg-subtle px-1.5 py-0.5 text-[13px] text-fg">{s}</code></span>)}, so copy those too.</span>
-        )}
-      </li>
-      <li>
-        {deps.length > 0 ? "3" : "2"}. Add the theme tokens once, as described in <a className="text-select-text underline-offset-2 hover:underline" href={href("docs", "theming")}>Theming</a>.
-      </li>
-    </ol>
+    <div className="grid gap-4 text-[14px] leading-6 text-fg-muted">
+      <CodeBlock code={`${CLI} add ${item.slug}`} language="bash" title="Terminal" lineNumbers={false} />
+      <p>
+        This copies the file to <code className={inlineCode}>{installPath(item)}</code> with everything it imports, and installs its npm packages. The first run also adds the theme; see <a className="text-select-text underline-offset-2 hover:underline" href={href("docs", "installation")}>Installation</a>.
+      </p>
+      <details className="group rounded-[16px] ring-1 ring-track">
+        <summary className={`cursor-pointer list-none rounded-[16px] px-4 py-3 font-medium text-fg ${ring}`}>Or copy it by hand</summary>
+        <ol className="grid gap-4 px-4 pb-4">
+          {deps.length > 0 && (
+            <li className="grid gap-2">
+              <span>1. Install the dependencies.</span>
+              <CodeBlock code={`npm install ${deps.join(" ")}`} language="bash" title="Terminal" lineNumbers={false} />
+            </li>
+          )}
+          <li>
+            {deps.length > 0 ? "2" : "1"}. Copy the source from the Code tab into <code className={inlineCode}>{installPath(item)}</code>.
+            {siblings.length > 0 && (
+              <span> It imports {siblings.map((s, i) => <span key={s}>{i > 0 && ", "}<code className={inlineCode}>{s}</code></span>)}, so copy those too.</span>
+            )}
+          </li>
+          <li>
+            {deps.length > 0 ? "3" : "2"}. Add the theme tokens once, as described in <a className="text-select-text underline-offset-2 hover:underline" href={href("docs", "theming")}>Theming</a>.
+          </li>
+        </ol>
+      </details>
+    </div>
   );
 }
 

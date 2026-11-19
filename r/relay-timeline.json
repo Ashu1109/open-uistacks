@@ -1,0 +1,20 @@
+{
+  "name": "relay-timeline",
+  "title": "Relay timeline",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "The chain of handoffs between agents on a task, newest last, each showing who passed what to whom and when.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/relay-timeline.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\nimport { ArrowRight } from \"lucide-react\";\n\n/* Relay timeline: the chain of handoffs between agents on a task, newest last, each showing who passed what to whom and when. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\nconst spring = { type: \"spring\", stiffness: 480, damping: 36 } as const;\n\nexport interface RelayEvent {\n  id: string;\n  from: string;\n  to: string;\n  message: string;\n  at: string;\n}\n\n/** Distinct agents in order of first appearance. */\nexport function participants(events: RelayEvent[]): string[] {\n  const seen: string[] = [];\n  for (const e of events) for (const n of [e.from, e.to]) if (!seen.includes(n)) seen.push(n);\n  return seen;\n}\n\nexport interface RelayTimelineProps {\n  events: RelayEvent[];\n  className?: string;\n}\n\nexport function RelayTimeline({ events, className = \"\" }: RelayTimelineProps) {\n  const names = participants(events);\n  const reduce = useReduce();\n  return (\n    <section aria-label=\"Handoffs\" className={`rounded-[16px] bg-surface p-4 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <p className=\"mb-3 text-xs text-fg-subtle\">{events.length} handoffs across {names.length} agents</p>\n      <ol className=\"relative space-y-4 border-l border-track pl-5\">\n        {events.map((e, i) => (\n          <motion.li key={e.id} initial={reduce ? false : { opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ ...spring, delay: i * 0.06 }} className=\"relative\">\n            <motion.span aria-hidden initial={reduce ? false : { scale: 0 }} animate={{ scale: 1 }} transition={{ ...spring, delay: 0.05 + i * 0.06 }} className=\"absolute -left-[25px] top-1.5 size-2 rounded-full bg-select ring-4 ring-surface dark:ring-raised\" />\n            <p className=\"flex flex-wrap items-center gap-1.5 text-[13px] font-medium text-fg\">\n              {e.from}<ArrowRight size={12} aria-hidden className=\"text-fg-subtle\" /><span className=\"sr-only\">hands off to</span>{e.to}\n              <time className=\"ml-auto text-xs font-normal tabular-nums text-fg-subtle\">{e.at}</time>\n            </p>\n            <p className=\"mt-0.5 text-xs text-fg-muted\">{e.message}</p>\n          </motion.li>\n        ))}\n      </ol>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "faq-list",
+  "title": "FAQ list",
+  "kind": "component",
+  "group": "Marketing",
+  "description": "An accessible disclosure list; each question is a button with aria-expanded controlling its answer region, one open at a time unless `multiple`.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/faq-list.tsx",
+      "content": "\"use client\";\n\nimport { useId, useState, type ReactNode } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { ChevronDown } from \"lucide-react\";\n\n/* FaqList: an accessible disclosure list; each question is a button with aria-expanded controlling its answer region, one open at a time unless `multiple`. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-inset\";\n\n/** Next set of open ids after toggling `id`. */\nexport function toggleOpen(open: readonly string[], id: string, multiple: boolean): string[] {\n  if (open.includes(id)) return open.filter((x) => x !== id);\n  return multiple ? [...open, id] : [id];\n}\n\nexport interface FaqItem {\n  id: string;\n  question: string;\n  answer: ReactNode;\n}\n\nexport interface FaqListProps {\n  items: readonly FaqItem[];\n  multiple?: boolean;\n  defaultOpen?: readonly string[];\n  className?: string;\n}\n\nexport function FaqList({ items, multiple = false, defaultOpen = [], className = \"\" }: FaqListProps) {\n  const base = useId();\n  const reduce = Boolean(useReducedMotion());\n  const [open, setOpen] = useState<readonly string[]>(defaultOpen);\n\n  return (\n    <div className={`w-full max-w-2xl divide-y divide-[var(--track)] overflow-hidden rounded-[20px] bg-surface shadow-[var(--shadow-card)] ${className}`}>\n      {items.map((item) => {\n        const expanded = open.includes(item.id);\n        return (\n          <div key={item.id}>\n            <h4>\n              <button\n                type=\"button\"\n                id={`${base}-${item.id}-q`}\n                aria-expanded={expanded}\n                aria-controls={`${base}-${item.id}-a`}\n                onClick={() => setOpen(toggleOpen(open, item.id, multiple))}\n                className={`flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-medium text-fg hover:bg-[color-mix(in_srgb,var(--fg)_3%,var(--surface))] ${ring}`}\n              >\n                {item.question}\n                <ChevronDown size={18} aria-hidden className={`shrink-0 text-fg-muted transition-transform ${expanded ? \"rotate-180\" : \"\"}`} />\n              </button>\n            </h4>\n            <AnimatePresence initial={false}>\n              {expanded && (\n                <motion.div\n                  key=\"answer\"\n                  role=\"region\"\n                  id={`${base}-${item.id}-a`}\n                  aria-labelledby={`${base}-${item.id}-q`}\n                  initial={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}\n                  animate={reduce ? { opacity: 1 } : { height: \"auto\", opacity: 1 }}\n                  exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}\n                  transition={{ type: \"spring\", stiffness: 500, damping: 34 }}\n                  className=\"overflow-hidden\"\n                >\n                  <div className=\"px-5 pb-4 text-[14px] leading-6 text-fg-muted\">{item.answer}</div>\n                </motion.div>\n              )}\n            </AnimatePresence>\n          </div>\n        );\n      })}\n    </div>\n  );\n}\n"
+    }
+  ]
+}

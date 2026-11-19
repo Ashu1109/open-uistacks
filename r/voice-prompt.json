@@ -1,0 +1,20 @@
+{
+  "name": "voice-prompt",
+  "title": "Voice prompt",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "A mic button inside a pulsing ring and level bars driven by a 0 to 1 `level` prop, so it renders and animates without touching the microphone.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/voice-prompt.tsx",
+      "content": "\"use client\";\n\nimport { Mic, Square } from \"lucide-react\";\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n/* Voice prompt: a mic button inside a pulsing ring and level bars driven by a 0 to 1 `level` prop, so it renders and animates without touching the microphone. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport type VoiceState = \"idle\" | \"listening\" | \"processing\";\n\nexport const BAR_COUNT = 5;\n\n/** Bar heights (0.15 to 1) shaped like a soft hill around the middle, scaled by level. */\nexport function barHeights(level: number, count = BAR_COUNT): number[] {\n  const l = Math.min(Math.max(level, 0), 1);\n  const mid = (count - 1) / 2;\n  return Array.from({ length: count }, (_, i) => 0.15 + 0.85 * l * (1 - Math.abs(i - mid) / (mid + 1)));\n}\n\nconst CAPTION: Record<VoiceState, string> = { idle: \"Tap to speak\", listening: \"Listening…\", processing: \"Working on it…\" };\n\nexport interface VoicePromptProps {\n  state?: VoiceState;\n  /** Current input loudness, 0 to 1. */\n  level?: number;\n  onStart?: () => void;\n  onStop?: () => void;\n  className?: string;\n}\n\nexport function VoicePrompt({ state = \"idle\", level = 0, onStart, onStop, className = \"\" }: VoicePromptProps) {\n  const reduce = useReduce();\n  const listening = state === \"listening\";\n  const heights = barHeights(listening ? level : 0);\n  return (\n    <div className={`flex flex-col items-center gap-3 ${className}`}>\n      <div className=\"relative grid size-24 place-items-center\">\n        {listening && !reduce && (\n          <motion.span aria-hidden className=\"absolute inset-0 rounded-full bg-select-soft\" animate={{ scale: 1 + level * 0.35, opacity: 0.6 + level * 0.4 }} transition={{ type: \"spring\", stiffness: 300, damping: 20 }} />\n        )}\n        <button\n          type=\"button\"\n          aria-label={listening ? \"Stop listening\" : \"Start voice input\"}\n          aria-pressed={listening}\n          disabled={state === \"processing\"}\n          onClick={listening ? onStop : onStart}\n          className={`relative grid size-16 place-items-center rounded-full bg-[image:var(--grad-primary)] text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)] disabled:opacity-50 ${ring}`}\n        >\n          {listening ? (\n            <span aria-hidden className=\"flex h-6 items-center gap-[3px]\">\n              {heights.map((h, i) => <span key={i} className=\"w-[3px] rounded-full bg-current transition-[height]\" style={{ height: `${h * 100}%` }} />)}\n            </span>\n          ) : state === \"processing\" ? <Square size={14} fill=\"currentColor\" strokeWidth={0} aria-hidden /> : <Mic size={22} aria-hidden />}\n        </button>\n      </div>\n      <p role=\"status\" className=\"text-[13px] text-fg-muted\">{CAPTION[state]}</p>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

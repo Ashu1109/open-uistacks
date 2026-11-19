@@ -1,0 +1,19 @@
+{
+  "name": "border-beam",
+  "title": "Border beam",
+  "kind": "component",
+  "group": "Actions",
+  "description": "Wraps any content in a hairline border with a soft gradient beam that travels around the edge; the beam holds still under reduced motion.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/border-beam.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore, type CSSProperties, type ReactNode } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n/* Border beam: wraps any content in a hairline border with a soft gradient beam that travels around the edge; the beam holds still under reduced motion. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport function beamGradient(arc: number, from: string, to: string): string {\n  const start = 360 - Math.min(Math.max(arc, 10), 340);\n  return `conic-gradient(from 0deg, transparent ${start}deg, ${from} ${start + (360 - start) * 0.6}deg, ${to} 360deg)`;\n}\n\nexport interface BorderBeamProps {\n  children: ReactNode;\n  /** Seconds for one lap. */\n  duration?: number;\n  /** Length of the beam in degrees of the loop. */\n  arc?: number;\n  /** Border thickness in px. */\n  borderWidth?: number;\n  colorFrom?: string;\n  colorTo?: string;\n  /** Turn the beam off without unmounting. */\n  active?: boolean;\n  className?: string;\n}\n\nconst MASK: CSSProperties = {\n  WebkitMask: \"linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)\",\n  WebkitMaskComposite: \"xor\",\n  mask: \"linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)\",\n};\n\nexport function BorderBeam({ children, duration = 4, arc = 90, borderWidth = 1.5, colorFrom = \"var(--select)\", colorTo = \"var(--series-3)\", active = true, className = \"\" }: BorderBeamProps) {\n  const reduce = useReduce();\n  return (\n    <div className={`relative rounded-[20px] bg-surface shadow-[var(--shadow-card)] ${className}`}>\n      {active && (\n        <div aria-hidden className=\"pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]\" style={{ ...MASK, padding: borderWidth }}>\n          <motion.div\n            className=\"absolute left-1/2 top-1/2 aspect-square w-[200%]\"\n            style={{ x: \"-50%\", y: \"-50%\", background: beamGradient(arc, colorFrom, colorTo) }}\n            animate={reduce ? undefined : { rotate: 360 }}\n            transition={{ repeat: Infinity, ease: \"linear\", duration }}\n          />\n        </div>\n      )}\n      <div className=\"relative rounded-[inherit]\">{children}</div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

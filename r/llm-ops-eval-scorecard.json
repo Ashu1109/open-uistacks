@@ -1,0 +1,20 @@
+{
+  "name": "llm-ops-eval-scorecard",
+  "title": "Eval scorecard",
+  "kind": "block",
+  "group": "LLM ops",
+  "description": "A card (1/2 or 1/3 width of 12 columns) showing one model's evaluation scores against its baseline, with a switcher to compare models.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "eval-scorecard",
+    "segmented-control"
+  ],
+  "files": [
+    {
+      "path": "blocks/llm-ops-eval-scorecard.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { EvalScorecard, type EvalMetric } from \"../ui/eval-scorecard\";\nimport { SegmentedControl } from \"../ui/segmented-control\";\n\n/* LLM ops eval scorecard: a card (1/2 or 1/3 width of 12 columns) showing one model's evaluation scores against its baseline, with a switcher to compare models. */\n\nexport interface ModelEval {\n  id: string;\n  name: string;\n  metrics: EvalMetric[];\n}\n\nexport const DEMO_MODEL_EVALS: ModelEval[] = [\n  {\n    id: \"halo-2\",\n    name: \"Halo 2\",\n    metrics: [\n      { label: \"Answer accuracy\", score: 0.91, baseline: 0.88 },\n      { label: \"Groundedness\", score: 0.86, baseline: 0.89 },\n      { label: \"Instruction following\", score: 0.93, baseline: 0.9 },\n      { label: \"Safety\", score: 0.98, baseline: 0.98 },\n    ],\n  },\n  {\n    id: \"lumen-m\",\n    name: \"Lumen M\",\n    metrics: [\n      { label: \"Answer accuracy\", score: 0.84, baseline: 0.8 },\n      { label: \"Groundedness\", score: 0.79, baseline: 0.75 },\n      { label: \"Instruction following\", score: 0.88, baseline: 0.87 },\n      { label: \"Safety\", score: 0.96, baseline: 0.97 },\n    ],\n  },\n  {\n    id: \"orbit-s\",\n    name: \"Orbit S\",\n    metrics: [\n      { label: \"Answer accuracy\", score: 0.72, baseline: 0.74 },\n      { label: \"Groundedness\", score: 0.7, baseline: 0.66 },\n      { label: \"Instruction following\", score: 0.81, baseline: 0.78 },\n      { label: \"Safety\", score: 0.94, baseline: 0.94 },\n    ],\n  },\n];\n\nexport interface LlmOpsEvalScorecardProps {\n  models?: ModelEval[];\n  threshold?: number;\n  className?: string;\n}\n\nexport function LlmOpsEvalScorecard({ models = DEMO_MODEL_EVALS, threshold = 0.85, className = \"\" }: LlmOpsEvalScorecardProps) {\n  const [id, setId] = useState(models[0]?.id);\n  const model = models.find((m) => m.id === id) ?? models[0];\n  if (!model) return null;\n  return (\n    <section aria-label=\"Evaluation scorecard by model\" className={`@container grid gap-3 ${className}`}>\n      <SegmentedControl label=\"Model\" size=\"sm\" options={models.map((m) => ({ value: m.id, label: m.name }))} value={model.id} onValueChange={setId} />\n      <EvalScorecard title={`${model.name} evaluation`} metrics={model.metrics} threshold={threshold} />\n    </section>\n  );\n}\n"
+    }
+  ]
+}

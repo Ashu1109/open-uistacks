@@ -1,0 +1,21 @@
+{
+  "name": "checks-list",
+  "title": "Checks list",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "CI-style results for an agent's work, one row per check with state and duration, failing rows expanded with their detail and a tally header.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "tool-call"
+  ],
+  "files": [
+    {
+      "path": "ui/checks-list.tsx",
+      "content": "\"use client\";\n\nimport { Check, Loader2, Minus, X } from \"lucide-react\";\nimport { formatMs } from \"./tool-call\";\n\n/* Checks list: CI-style results for an agent's work, one row per check with state and duration, failing rows expanded with their detail and a tally header. */\n\nexport type CheckState = \"pass\" | \"fail\" | \"running\" | \"skipped\";\nexport interface CheckItem {\n  id: string;\n  name: string;\n  state: CheckState;\n  durationMs?: number;\n  detail?: string;\n}\n\nexport function tallyChecks(items: CheckItem[]): Record<CheckState, number> {\n  const t: Record<CheckState, number> = { pass: 0, fail: 0, running: 0, skipped: 0 };\n  for (const i of items) t[i.state] += 1;\n  return t;\n}\n\nconst LABEL: Record<CheckState, string> = { pass: \"Passed\", fail: \"Failed\", running: \"Running\", skipped: \"Skipped\" };\n\nfunction StateIcon({ state }: { state: CheckState }) {\n  if (state === \"pass\") return <Check size={14} aria-hidden className=\"text-success\" />;\n  if (state === \"fail\") return <X size={14} aria-hidden className=\"text-danger\" />;\n  if (state === \"running\") return <Loader2 size={14} aria-hidden className=\"animate-spin text-select motion-reduce:animate-none\" />;\n  return <Minus size={14} aria-hidden className=\"text-fg-subtle\" />;\n}\n\nexport interface ChecksListProps {\n  items: CheckItem[];\n  className?: string;\n}\n\nexport function ChecksList({ items, className = \"\" }: ChecksListProps) {\n  const t = tallyChecks(items);\n  return (\n    <section aria-label=\"Checks\" className={`overflow-hidden rounded-[16px] bg-surface shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <p aria-live=\"polite\" className={`px-4 py-2.5 text-[13px] font-medium ${t.fail ? \"bg-danger-soft text-danger-text\" : t.running ? \"bg-select-soft text-select-text\" : \"bg-success-soft text-success-text\"}`}>\n        {t.fail ? `${t.fail} failing` : t.running ? `${t.running} still running` : \"All checks passed\"}\n        <span className=\"font-normal opacity-80\"> · {t.pass} passed{t.skipped ? `, ${t.skipped} skipped` : \"\"}</span>\n      </p>\n      <ul className=\"divide-y divide-track\">\n        {items.map((i) => (\n          <li key={i.id} className=\"px-4 py-2.5\">\n            <div className=\"flex items-center gap-2.5\">\n              <StateIcon state={i.state} />\n              <span className=\"flex-1 text-[13px] text-fg\">{i.name}<span className=\"sr-only\"> — {LABEL[i.state]}</span></span>\n              {i.durationMs !== undefined && <span className=\"text-xs tabular-nums text-fg-subtle\">{formatMs(i.durationMs)}</span>}\n            </div>\n            {i.state === \"fail\" && i.detail && <pre className=\"mt-2 overflow-x-auto rounded-[8px] bg-danger-soft p-2 font-mono text-xs text-danger-text\">{i.detail}</pre>}\n          </li>\n        ))}\n      </ul>\n    </section>\n  );\n}\n"
+    }
+  ]
+}

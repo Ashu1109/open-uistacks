@@ -1,0 +1,19 @@
+{
+  "name": "automation-card",
+  "title": "Automation card",
+  "kind": "component",
+  "group": "AI agents",
+  "description": "A trigger-to-action rule with an on/off switch, last run time and run count; the switch is controlled or uncontrolled.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/automation-card.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { ArrowRight, Zap } from \"lucide-react\";\n\n/* Automation card: a trigger-to-action rule with an on/off switch, last run time and run count; the switch is controlled or uncontrolled. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface AutomationCardProps {\n  name: string;\n  trigger: string;\n  action: string;\n  lastRun?: string;\n  runCount?: number;\n  enabled?: boolean;\n  defaultEnabled?: boolean;\n  onEnabledChange?: (enabled: boolean) => void;\n  className?: string;\n}\n\nexport function AutomationCard({ name, trigger, action, lastRun, runCount, enabled, defaultEnabled = true, onEnabledChange, className = \"\" }: AutomationCardProps) {\n  const [inner, setInner] = useState(defaultEnabled);\n  const on = enabled ?? inner;\n  const toggle = () => {\n    setInner(!on);\n    onEnabledChange?.(!on);\n  };\n  return (\n    <article aria-label={name} className={`rounded-[16px] bg-surface p-4 shadow-[var(--shadow-card)] dark:bg-raised ${className}`}>\n      <div className=\"flex items-center justify-between gap-3\">\n        <h4 className=\"flex items-center gap-2 text-sm font-medium text-fg\"><Zap size={14} aria-hidden className={on ? \"text-warning\" : \"text-fg-subtle\"} />{name}</h4>\n        <button\n          type=\"button\"\n          role=\"switch\"\n          aria-checked={on}\n          aria-label={`${name} enabled`}\n          onClick={toggle}\n          className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? \"bg-select\" : \"bg-track-strong\"} ${ring}`}\n        >\n          <span className={`absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow transition-transform ${on ? \"translate-x-4\" : \"\"}`} />\n        </button>\n      </div>\n      <div className={`mt-3 flex items-center gap-2 text-[13px] ${on ? \"text-fg\" : \"text-fg-subtle\"}`}>\n        <span className=\"rounded-[8px] bg-subtle px-2 py-1\">{trigger}</span>\n        <ArrowRight size={13} aria-hidden className=\"shrink-0 text-fg-subtle\" />\n        <span className=\"rounded-[8px] bg-subtle px-2 py-1\">{action}</span>\n      </div>\n      {(lastRun || runCount !== undefined) && (\n        <p className=\"mt-3 text-xs tabular-nums text-fg-subtle\">{lastRun && `Last run ${lastRun}`}{lastRun && runCount !== undefined && \" · \"}{runCount !== undefined && `${runCount} runs`}</p>\n      )}\n    </article>\n  );\n}\n"
+    }
+  ]
+}

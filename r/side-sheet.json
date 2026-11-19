@@ -1,0 +1,21 @@
+{
+  "name": "side-sheet",
+  "title": "Side sheet",
+  "kind": "component",
+  "group": "Overlays",
+  "description": "A modal panel that slides in from the left or right edge with a title, scrolling body and pinned footer; it traps focus, closes on Escape or a backdrop click and returns focus to the trigger.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0"
+  ],
+  "requires": [
+    "dialog"
+  ],
+  "files": [
+    {
+      "path": "ui/side-sheet.tsx",
+      "content": "\"use client\";\n\nimport { useId, type ReactElement, type ReactNode } from \"react\";\nimport { X } from \"lucide-react\";\nimport { ModalFrame, cloneTrigger, useControlled } from \"./dialog\";\n\n/* Side sheet: a modal panel that slides in from the left or right edge with a title, scrolling body and pinned footer; it traps focus, closes on Escape or a backdrop click and returns focus to the trigger. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface SideSheetProps {\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  /** An element (usually a button) that opens the sheet when clicked. */\n  trigger?: ReactElement;\n  title: ReactNode;\n  description?: ReactNode;\n  children?: ReactNode;\n  footer?: ReactNode;\n  side?: \"left\" | \"right\";\n  /** Tailwind max-width class for the panel. */\n  width?: string;\n  className?: string;\n}\n\nexport function SideSheet({ open, defaultOpen, onOpenChange, trigger, title, description, children, footer, side = \"right\", width = \"max-w-md\", className = \"\" }: SideSheetProps) {\n  const id = useId();\n  const [isOpen, setOpen] = useControlled(open, defaultOpen ?? false, onOpenChange);\n  return (\n    <>\n      {trigger && cloneTrigger(trigger, { onClick: () => setOpen(true), \"aria-haspopup\": \"dialog\", \"aria-expanded\": isOpen })}\n      <ModalFrame\n        open={isOpen}\n        onClose={() => setOpen(false)}\n        placement={side}\n        labelledBy={`${id}-title`}\n        describedBy={description ? `${id}-description` : undefined}\n        className={`flex h-full w-full ${width} flex-col bg-surface shadow-[var(--shadow-overlay)] dark:bg-raised ${side === \"right\" ? \"rounded-l-[24px]\" : \"rounded-r-[24px]\"} ${className}`}\n      >\n        <div className=\"flex shrink-0 items-start gap-3 border-b border-track p-5\">\n          <div className=\"min-w-0 flex-1\">\n            <h2 id={`${id}-title`} className=\"text-base font-semibold text-fg\">{title}</h2>\n            {description && <p id={`${id}-description`} className=\"mt-1 text-sm leading-5 text-fg-muted\">{description}</p>}\n          </div>\n          <button type=\"button\" aria-label=\"Close\" onClick={() => setOpen(false)} className={`grid size-8 shrink-0 place-items-center rounded-full text-fg-muted transition-colors hover:bg-subtle hover:text-fg ${ring}`}>\n            <X size={16} strokeWidth={2} aria-hidden />\n          </button>\n        </div>\n        <div className=\"min-h-0 flex-1 overflow-y-auto p-5 text-sm text-fg\">{children}</div>\n        {footer && <div className=\"flex shrink-0 justify-end gap-2 border-t border-track px-5 py-3\">{footer}</div>}\n      </ModalFrame>\n    </>\n  );\n}\n"
+    }
+  ]
+}

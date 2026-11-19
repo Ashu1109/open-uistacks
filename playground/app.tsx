@@ -189,7 +189,7 @@ export function App() {
             <Menu size={18} aria-hidden />
           </button>
           <a href={href("docs", "introduction")} className={`flex items-center gap-2.5 rounded-[10px] text-[16px] font-semibold text-fg ${ring}`}>
-            <Mark /> Component Kit
+            <Mark /> open-uistacks
           </a>
           <nav aria-label="Sections" className="hidden items-center gap-1 md:flex">
             {NAV.map((n) => (

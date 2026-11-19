@@ -1,0 +1,19 @@
+{
+  "name": "ascii-loader",
+  "title": "ASCII loader",
+  "kind": "component",
+  "group": "Effects",
+  "description": "A text-mode spinner, bouncing bar or wave for waiting states; it announces its label as a status and holds one frame under reduced motion.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "ascii-field"
+  ],
+  "files": [
+    {
+      "path": "ui/ascii-loader.tsx",
+      "content": "\"use client\";\n\nimport { useRef } from \"react\";\nimport { useFrameLoop } from \"./ascii-field\";\n\n/* ASCII loader: a text-mode spinner, bouncing bar or wave for waiting states; it announces its label as a status and holds one frame under reduced motion. */\n\nexport type LoaderVariant = \"spinner\" | \"bar\" | \"wave\" | \"dots\";\n\nconst SPINNER = [\"|\", \"/\", \"-\", \"\\\\\"];\nconst WAVE = \"▁▂▃▄▅▆▇█▇▆▅▄▃▂\";\nconst BRAILLE = [\"⠋\", \"⠙\", \"⠹\", \"⠸\", \"⠼\", \"⠴\", \"⠦\", \"⠧\", \"⠇\", \"⠏\"];\n\n/** The text of animation step `tick` for a variant, `width` characters wide where it has a width. */\nexport function loaderFrame(variant: LoaderVariant, tick: number, width = 12): string {\n  const t = Math.max(0, Math.floor(tick));\n  if (variant === \"spinner\") return SPINNER[t % SPINNER.length] ?? \"|\";\n  if (variant === \"dots\") return BRAILLE[t % BRAILLE.length] ?? \"\";\n  if (variant === \"wave\") return Array.from({ length: width }, (_, i) => WAVE[(t + i) % WAVE.length]).join(\"\");\n  const span = Math.max(width - 3, 1);\n  const cycle = span * 2;\n  const pos = t % cycle;\n  const head = pos <= span ? pos : cycle - pos;\n  return `[${\" \".repeat(head)}===${\" \".repeat(span - head)}]`;\n}\n\nexport interface AsciiLoaderProps {\n  variant?: LoaderVariant;\n  /** Accessible status text, also shown beside the animation when `showLabel`. */\n  label?: string;\n  showLabel?: boolean;\n  width?: number;\n  /** Milliseconds per step. */\n  interval?: number;\n  className?: string;\n}\n\nexport function AsciiLoader({ variant = \"spinner\", label = \"Loading\", showLabel = false, width = 12, interval = 90, className = \"\" }: AsciiLoaderProps) {\n  const box = useRef<HTMLSpanElement>(null);\n  const text = useRef<HTMLSpanElement>(null);\n  useFrameLoop(box, (t) => {\n    if (text.current) text.current.textContent = loaderFrame(variant, t / interval, width);\n  });\n  return (\n    <span ref={box} role=\"status\" aria-label={label} className={`inline-flex items-center gap-2 font-mono text-sm text-fg ${className}`}>\n      <span ref={text} aria-hidden className=\"whitespace-pre\" />\n      {showLabel && <span className=\"font-sans text-fg-muted\">{label}</span>}\n    </span>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,2442 @@
+{
+  "name": "open-uistacks",
+  "homepage": "https://github.com/Ashu1109/open-uistacks",
+  "items": [
+    {
+      "name": "prompt-input",
+      "title": "Prompt input",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A field that grows with its text, Enter sends, Shift+Enter breaks the line, and the send button turns into stop while a reply streams."
+    },
+    {
+      "name": "message",
+      "title": "Message",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "User and assistant messages. Assistant text streams in word by word with a soft blur, then shows whatever you put under it."
+    },
+    {
+      "name": "thinking-state",
+      "title": "Thinking state",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A shimmering \"Thinking\" with a running clock while the model reasons, then \"Thought for 8s\"; the reasoning folds open underneath."
+    },
+    {
+      "name": "citation",
+      "title": "Citation",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A numbered source chip. Hover it for a card with the title, the source and the exact passage the answer used."
+    },
+    {
+      "name": "suggestions",
+      "title": "Suggestions",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Follow-up prompts as chips that rise in one after another and lift on hover."
+    },
+    {
+      "name": "feedback",
+      "title": "Feedback",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Copy, thumbs up, thumbs down and retry under an answer. Thumbs down opens reason chips and a send button."
+    },
+    {
+      "name": "attachment",
+      "title": "Attachment",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A file chip with an image thumbnail or a type icon, size, upload progress, an error line and a remove button; AttachmentList lays chips in a row that animates them in and out."
+    },
+    {
+      "name": "context-meter",
+      "title": "Context meter",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A small ring for how full the model's context window is, amber from 70 %, red from 90 %, with a details card on hover or focus."
+    },
+    {
+      "name": "model-picker",
+      "title": "Model picker",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A pill button that opens a listbox of models with descriptions and badges; arrow keys, Home, End, Enter and Escape work as in a native select."
+    },
+    {
+      "name": "effort-slider",
+      "title": "Effort slider",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A stepped slider for how hard the model should think (Low to Max); arrows, Home and End step it, and each stop is clickable."
+    },
+    {
+      "name": "ai-recap",
+      "title": "AI recap",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A dismissible \"while you were away\" card that lists what changed in the conversation since the last visit, with a jump-to-latest action."
+    },
+    {
+      "name": "suggested-edits",
+      "title": "Suggested edits",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A list of before/after text changes the assistant proposes, each accepted or rejected on its own or all at once, with a running tally."
+    },
+    {
+      "name": "clarifying-question",
+      "title": "Clarifying question",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "The assistant asks before it answers; pick one option or type your own, then send or skip."
+    },
+    {
+      "name": "correction",
+      "title": "Correction",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Shows an assistant statement with the user's fix beside it (original struck through), and lets the user edit the fix or undo it."
+    },
+    {
+      "name": "review-stack",
+      "title": "Review stack",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "AI drafts piled like cards; approve or reject the top one (buttons, or Right and Left arrows) and the next slides up, with a progress count."
+    },
+    {
+      "name": "ai-summary",
+      "title": "AI summary",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A labelled AI-generated summary card with a lead sentence, collapsible key points, copy, and thumbs feedback."
+    },
+    {
+      "name": "connectors-strip",
+      "title": "Connectors strip",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A row of toggleable data-source chips (drive, calendar, repo) showing connected, off or error state; each chip is a switch."
+    },
+    {
+      "name": "starter-cards",
+      "title": "Starter cards",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Prompt starters for an empty chat, as a grid of cards or a side-panel list, each with the app it uses. They fade up in turn and arrow keys move between them."
+    },
+    {
+      "name": "citation-row",
+      "title": "Citation row",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Every source behind an answer in one chip: stacked favicons and a count that open into a list of linked pages, with Show all for the rest."
+    },
+    {
+      "name": "prompt-composer-docked",
+      "title": "Docked composer",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "The chat composer pinned to the bottom of its container with suggestion chips above, a model picker, a context meter and a fade so messages scroll under it."
+    },
+    {
+      "name": "voice-prompt",
+      "title": "Voice prompt",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A mic button inside a pulsing ring and level bars driven by a 0 to 1 `level` prop, so it renders and animates without touching the microphone."
+    },
+    {
+      "name": "inline-ask",
+      "title": "Inline ask",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A small popover for asking the assistant about a selected passage; shows the quoted selection, quick actions and an input, Enter sends and Escape closes."
+    },
+    {
+      "name": "mention-prompt",
+      "title": "Mention prompt",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A text field where typing @ opens a filtered list of people, files or tools; arrows move, Enter or Tab inserts the mention, Escape closes."
+    },
+    {
+      "name": "prompt-attachments",
+      "title": "Prompt with attachments",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "The chat composer with a file picker and drag-and-drop; chosen files appear as removable chips above the field. The parent owns the list and any uploading."
+    },
+    {
+      "name": "mini-prompt",
+      "title": "Mini prompt",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A compact single-line pill for quick asks inside toolbars and cards; Enter sends, Escape clears."
+    },
+    {
+      "name": "conversation-list",
+      "title": "Conversation list",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Chat history grouped by Today, Yesterday, Previous 7 days and Older, with search, a new-chat button, a highlighted active row and per-row delete; Up and Down move between rows."
+    },
+    {
+      "name": "branch-switcher",
+      "title": "Branch switcher",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "‹ 2 / 3 › under an edited message; switching cross-fades the message and its answer together, so earlier replies can be compared."
+    },
+    {
+      "name": "artifact-panel",
+      "title": "Artifact panel",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A side panel for something the assistant made, with Preview and Code tabs, a version switcher, copy and close; the tabs follow the WAI-ARIA arrow-key pattern."
+    },
+    {
+      "name": "prompt-library",
+      "title": "Prompt library",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A searchable list of saved prompts with tag filter chips; choosing one hands its text to the composer."
+    },
+    {
+      "name": "image-generations",
+      "title": "Image generations",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A grid of images the model produced for a prompt; pending tiles shimmer, failed tiles offer retry, and a ready tile can be selected."
+    },
+    {
+      "name": "ghost-autocomplete",
+      "title": "Ghost autocomplete",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A text field that shows the assistant's suggested continuation as faded text after the caret; Tab accepts it, Escape dismisses it, typing the same letters keeps it."
+    },
+    {
+      "name": "live-transcript",
+      "title": "Live transcript",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A scrolling caption log of who said what and when, with an in-progress line shown faded; it stays pinned to the newest line and needs no microphone, only the text you pass in."
+    },
+    {
+      "name": "redacted-text",
+      "title": "Redacted text",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A passage where sensitive parts, marked [[like this]] in the source string, show as black bars; each can be revealed on click, or all at once."
+    },
+    {
+      "name": "share-chat",
+      "title": "Share chat",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "A share card with a visibility choice (private, anyone with the link, public), a read-only link field with copy, and a revoke action once shared."
+    },
+    {
+      "name": "search-results",
+      "title": "Search results",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "The web results an assistant found for a query, each with a domain badge, title link and snippet; shows a searching state and an empty state."
+    },
+    {
+      "name": "chart-answer",
+      "title": "Chart answer",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "An assistant reply that pairs a sentence with a small bar or line chart drawn in SVG, plus a \"Show data\" table for screen readers and checking the numbers."
+    },
+    {
+      "name": "source-viewer",
+      "title": "Source viewer",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Shows the document excerpt behind a citation with the cited passage highlighted, and steps between several sources."
+    },
+    {
+      "name": "prompt-enhancer",
+      "title": "Prompt enhancer",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Shows your draft prompt beside the assistant's improved rewrite with a shimmer while it works; accept to use the rewrite or discard to keep yours."
+    },
+    {
+      "name": "translate-panel",
+      "title": "Translate panel",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Two panes, source text on the left and the translation on the right, with language selects, a swap button and copy; the parent supplies the translated text."
+    },
+    {
+      "name": "assistant-picker",
+      "title": "Assistant picker",
+      "kind": "component",
+      "group": "AI chat",
+      "description": "Choose which assistant to talk to from a radio group of cards (avatar, name, one-line purpose); arrows move and select, as a radio group should."
+    },
+    {
+      "name": "approval-request",
+      "title": "Approval request",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Ask a person before an agent acts. Risk level, expiry and details, then Allow once or Deny, with the result animating in place."
+    },
+    {
+      "name": "tool-call",
+      "title": "Tool call",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "One tool invocation by an agent, showing name, argument summary, status and duration, expandable to the full arguments and result."
+    },
+    {
+      "name": "run-card",
+      "title": "Run card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Summary of one agent run with status, step progress, elapsed time and cost, plus Stop while running and Open details."
+    },
+    {
+      "name": "diff-block",
+      "title": "Diff block",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Unified line diff of two strings with added and removed lines tinted, old and new line numbers, and a +/- summary."
+    },
+    {
+      "name": "plan-card",
+      "title": "Plan card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "The steps an agent intends to take, each with a status, and Approve / Reject buttons while the plan awaits a decision."
+    },
+    {
+      "name": "agent-control-frame",
+      "title": "Agent control frame",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A bordered viewport around whatever the agent is operating, with a live state badge and Pause / Resume / Stop controls."
+    },
+    {
+      "name": "preflight-checks",
+      "title": "Preflight checks",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "The conditions verified before an agent run starts; the Start button stays disabled while any check fails or is still pending."
+    },
+    {
+      "name": "extracted-fields",
+      "title": "Extracted fields",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Key/value pairs an agent pulled out of a document, each with a confidence meter; low-confidence values are flagged and any value can be corrected inline."
+    },
+    {
+      "name": "model-card",
+      "title": "Model card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A selectable summary of a model with provider, description, context window, per-million-token prices and capability tags."
+    },
+    {
+      "name": "eval-scorecard",
+      "title": "Eval scorecard",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "An overall score plus per-metric bars for an evaluation run, marking each against a pass threshold and showing change from a baseline."
+    },
+    {
+      "name": "automation-card",
+      "title": "Automation card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A trigger-to-action rule with an on/off switch, last run time and run count; the switch is controlled or uncontrolled."
+    },
+    {
+      "name": "trace-waterfall",
+      "title": "Trace waterfall",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Spans of an agent run laid out on a shared time axis, indented by depth, each bar positioned by start and length with its duration."
+    },
+    {
+      "name": "browser-frame",
+      "title": "Browser frame",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A window chrome with address bar around a page preview, marking when an agent is driving the browser and which action it is taking."
+    },
+    {
+      "name": "change-preview",
+      "title": "Change preview",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Proposed edits shown as before and after, each accepted or rejected on its own, with an Apply button that reports the accepted ids."
+    },
+    {
+      "name": "checks-list",
+      "title": "Checks list",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "CI-style results for an agent's work, one row per check with state and duration, failing rows expanded with their detail and a tally header."
+    },
+    {
+      "name": "agent-roster",
+      "title": "Agent roster",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A keyboard-navigable listbox of agents with role, live status dot and current task; selection is controlled or uncontrolled."
+    },
+    {
+      "name": "relay-timeline",
+      "title": "Relay timeline",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "The chain of handoffs between agents on a task, newest last, each showing who passed what to whom and when."
+    },
+    {
+      "name": "trust-level",
+      "title": "Trust level",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A segmented radio group for how much autonomy an agent gets, from asking every time to fully autonomous, with the chosen level explained below."
+    },
+    {
+      "name": "restore-points",
+      "title": "Restore points",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Checkpoints an agent saved along the way; Restore asks for a second click to confirm before rolling back, and the newest is marked current."
+    },
+    {
+      "name": "attention-queue",
+      "title": "Attention queue",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Things agents are waiting on a human for, most severe first, each with Approve and Dismiss; resolved items animate out."
+    },
+    {
+      "name": "memory-list",
+      "title": "Memory list",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "What an agent remembers about you, searchable, with pin and forget actions; pinned memories float to the top."
+    },
+    {
+      "name": "spend-breakdown",
+      "title": "Spend breakdown",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A stacked bar and legend of what a run or period cost by category, measured against an optional budget that turns amber near the limit and red over it."
+    },
+    {
+      "name": "run-schedule",
+      "title": "Run schedule",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A plain-English summary of a five-field cron expression with the next few run times; unusual expressions fall back to the raw string."
+    },
+    {
+      "name": "attempt-compare",
+      "title": "Attempt compare",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Side-by-side cards for several agent attempts at the same task, with metrics per attempt and a radio-style \"keep this one\" choice."
+    },
+    {
+      "name": "model-fallback",
+      "title": "Model fallback",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "An ordered chain of models tried top to bottom when one fails; each can be switched off and moved up or down."
+    },
+    {
+      "name": "live-runs",
+      "title": "Live runs",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A list of agent runs with status, a ticking elapsed timer for running ones, an optional progress bar and a cancel button."
+    },
+    {
+      "name": "agent-map",
+      "title": "Agent map",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "An SVG graph of agents and the links between them; nodes are keyboard-focusable buttons, active links animate dashes, and selection is controlled or uncontrolled."
+    },
+    {
+      "name": "cost-estimate",
+      "title": "Cost estimate",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A before-you-run price breakdown from token counts, per-million prices and run count, with an optional budget bar that turns amber then red."
+    },
+    {
+      "name": "agent-permissions",
+      "title": "Agent permissions",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "One row per tool or scope with a Deny / Ask / Allow segmented choice (native radios, so arrows work) and a summary count."
+    },
+    {
+      "name": "mcp-servers",
+      "title": "MCP servers",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A list of Model Context Protocol servers with a live connection status, tool count, an error line with retry, and an on/off switch."
+    },
+    {
+      "name": "prompt-versions",
+      "title": "Prompt versions",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A version history list beside a word-level diff of the selected version against the one before it, with a restore button."
+    },
+    {
+      "name": "ai-form-fill",
+      "title": "AI form fill",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A form whose \"Fill with AI\" button types a suggestion into each empty field in turn, with a highlight on the active field and a status line; people can still edit everything."
+    },
+    {
+      "name": "session-replay",
+      "title": "Session replay",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A scrubber and play button over a timeline of agent events; only events up to the playhead are shown, newest last, and speed is switchable."
+    },
+    {
+      "name": "action-items",
+      "title": "Action items",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Tasks an AI extracted from a call or thread, as a checklist with owner, due date (overdue in red) and the source quote, plus a done counter."
+    },
+    {
+      "name": "interview-card",
+      "title": "Interview card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "An AI-written interview summary with an overall score, per-criterion bars, highlights and an advance / hold / pass decision."
+    },
+    {
+      "name": "nl-filter",
+      "title": "NL filter",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "Type a sentence like \"open bugs over 5 comments from last week\" and it becomes removable filter chips via a small rule-based parser over your field schema."
+    },
+    {
+      "name": "ai-column",
+      "title": "AI column",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A table with a computed column whose cells are generated per row by an async function, with a shimmer while loading, a per-cell error and a \"Run column\" header action."
+    },
+    {
+      "name": "agent-handoff",
+      "title": "Agent handoff",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A card showing one agent passing a task to another, with the reason, the context being carried over, and a status with approve / cancel actions while pending."
+    },
+    {
+      "name": "voice-call",
+      "title": "Voice call",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A call card for a voice agent with a ringing / live / ended state, a running timer, an animated level meter, mute and hang-up buttons and a live caption line."
+    },
+    {
+      "name": "email-draft",
+      "title": "Email draft",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "An editable email with AI suggestion chips (shorter, friendlier...) that rewrite the body, an undo for the last rewrite, and a send button."
+    },
+    {
+      "name": "policy-block",
+      "title": "Policy block",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A guardrail notice showing which policy fired, the matched text highlighted in context, a severity, and override or dismiss actions."
+    },
+    {
+      "name": "agent-card",
+      "title": "Agent card",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A profile card for an AI agent with initials avatar, status dot, role, model, a couple of stats and tags; clickable when onSelect is given."
+    },
+    {
+      "name": "live-pill",
+      "title": "Live pill",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A small status pill with a pulsing dot for live, working, idle or offline, an optional label and a trailing detail such as a viewer count."
+    },
+    {
+      "name": "connect-apps",
+      "title": "Connect apps",
+      "kind": "component",
+      "group": "AI agents",
+      "description": "A grid of integrations, each with a Connect / Disconnect button that shows a pending state while the async handler runs and reports failures inline."
+    },
+    {
+      "name": "button",
+      "title": "Button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "Primary, secondary, outline, ghost and destructive in five sizes. Loading swaps in a spinner without moving the layout."
+    },
+    {
+      "name": "icon-button",
+      "title": "Icon button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A one-glyph button in solid, outline, ghost or soft, circle or square, with a notification dot that pops in."
+    },
+    {
+      "name": "split-button",
+      "title": "Split button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A main action joined to a chevron that opens the related ones (Send | Schedule send, Send and archive, Save draft). Alt + ↓ opens the menu from either half and focus stays in it: arrows, Home / End and type-ahead move the highlight, Enter picks, Escape or Tab hand focus back to the chevron. The chevron turns, the menu grows from its corner and flips up when there is no room below."
+    },
+    {
+      "name": "border-beam",
+      "title": "Border beam",
+      "kind": "component",
+      "group": "Actions",
+      "description": "Wraps any content in a hairline border with a soft gradient beam that travels around the edge; the beam holds still under reduced motion."
+    },
+    {
+      "name": "morph-button",
+      "title": "Morph button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A button that runs an async action and morphs through idle, loading, success and error, resizing around its label and announcing each state."
+    },
+    {
+      "name": "hold-to-confirm",
+      "title": "Hold to confirm",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A destructive-action button that only fires after being held for a set time, with a fill that drains back if released early; Space and Enter work too."
+    },
+    {
+      "name": "speed-dial",
+      "title": "Speed dial",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A floating action button that fans out a short menu of labelled actions; arrow keys move between them, Escape and outside clicks close it."
+    },
+    {
+      "name": "bell-button",
+      "title": "Bell button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A quiet ghost bell for app headers that wakes up when something arrives: it tips, rings back and settles while the count pops in, or shows a dot when there is no number to read. A click clears the badge until the next arrival and can open your own panel under it, kept on screen, with focus moved in and handed back on Escape."
+    },
+    {
+      "name": "action-bar",
+      "title": "Action bar",
+      "kind": "component",
+      "group": "Actions",
+      "description": "A floating toolbar that appears when rows are selected, showing the count and bulk actions; arrow keys move between buttons (roving tab stop)."
+    },
+    {
+      "name": "reaction-button",
+      "title": "Reaction button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "An emoji toggle with a running count; reacting pops the emoji and releases a small burst of particles, and the count rolls to its new value."
+    },
+    {
+      "name": "copy-button",
+      "title": "Copy button",
+      "kind": "component",
+      "group": "Actions",
+      "description": "Copies a value in one click: the icon turns into a drawn check, the label reads Copied for two seconds, and when the browser blocks the clipboard the text is selected with a Press ⌘C hint."
+    },
+    {
+      "name": "input",
+      "title": "Input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A one-line field with its label, hint and error wired for screen readers, plus an icon, prefix, suffix, a clear button and status icons that pop in."
+    },
+    {
+      "name": "textarea",
+      "title": "Textarea",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "Multi-line text that grows as you type, with a character counter, validation and a footer slot for formatting buttons."
+    },
+    {
+      "name": "select",
+      "title": "Select",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A single-choice dropdown following the listbox pattern with arrows, Home/End, typeahead, Enter/Space to pick and Escape to close."
+    },
+    {
+      "name": "chip-input",
+      "title": "Chip input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "Invite people or tag things as chips: Return or a comma adds one, a pasted list splits itself, a bad email turns red and Backspace removes in two steps."
+    },
+    {
+      "name": "currency-input",
+      "title": "Currency input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A money field with a currency menu: it groups thousands as you type without losing the caret, pads the cents on blur and swaps the symbol with the currency."
+    },
+    {
+      "name": "password-input",
+      "title": "Password input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A password field with a show and hide toggle, a four-step strength meter and live rules that tick off as you type."
+    },
+    {
+      "name": "rich-text-toolbar",
+      "title": "Rich text toolbar",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A formatting toolbar of toggle buttons grouped by purpose; it reports commands and shows which formats are active, and arrows rove focus between buttons."
+    },
+    {
+      "name": "address-autocomplete",
+      "title": "Address autocomplete",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A combobox that asks getSuggestions(query) after a short debounce, ignores stale answers, and lets you pick with arrows and Enter."
+    },
+    {
+      "name": "card-input",
+      "title": "Card input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A payment card field group that formats and validates locally (brand by prefix, Luhn check, expiry and CVC masks); it only reports values to onChange and never sends them anywhere."
+    },
+    {
+      "name": "otp-input",
+      "title": "OTP input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "One-time code cells that advance as you type, fill from a paste or SMS autofill, step back on Backspace and shake once when the code is wrong."
+    },
+    {
+      "name": "file-upload",
+      "title": "File upload",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A drop zone that also opens the file picker from the keyboard, validates type, size and count, and lists the files you added with remove buttons."
+    },
+    {
+      "name": "inline-edit",
+      "title": "Inline edit",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "Text that turns into an input on click or Enter, with the same size and position so nothing jumps. Enter saves and Escape cancels; a save that returns a promise shows a small Saving spinner, then a check, and a failed save reopens the input with its message. Comes as a large title or a label and value row."
+    },
+    {
+      "name": "number-input",
+      "title": "Number input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A number field with round − and + steppers that repeat while held. Type over it, use the arrow keys, or hold Shift for ten steps; it clamps to min and max with a small nudge, keeps the step's decimals, and reads 1,250 with a unit or a $ in front. The digits roll as they change."
+    },
+    {
+      "name": "search-input",
+      "title": "Search input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A search field that ⌘K (Ctrl K) focuses from anywhere, with a clear button and a spinner while results load. On focus a Recent list opens: the arrow keys move through it, Enter searches, Delete or the round × removes a search, and Escape closes the list, then clears the text."
+    },
+    {
+      "name": "phone-input",
+      "title": "Phone input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A phone field with a country picker (flag, calling code, a searchable list you can drive with the keyboard) and the number formatted as you type, (415) 555-0132. A check pops in once the digit count fits the country; paste or autofill a +44 number and the country follows, with the flag flipping over."
+    },
+    {
+      "name": "time-input",
+      "title": "Time input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "Hour and minute segments you type into (4, 3, 0 gives 4:30) or step with the arrows, with an AM/PM toggle whose thumb slides, or a 24-hour mode. An optional list suggests times every 15 or 30 minutes, min and max explain the allowed window when a time falls outside it, and a relativeTo time adds an “In 2 hours” line. Paste “4:30 pm” to fill it at once."
+    },
+    {
+      "name": "signature-pad",
+      "title": "Signature pad",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A canvas you sign on with a pointer, finger or pen; undo and clear buttons, and the result is exported as a PNG data URL through onChange."
+    },
+    {
+      "name": "copy-field",
+      "title": "Copy field",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A read-only value people copy rather than type, like a share link, a webhook URL or an API key. Copy turns into a drawn check and Copied only once the clipboard write succeeds, in a button that keeps its width so nothing moves. Secrets stay masked as their prefix, dots and the last four, with an eye to show them, and copying a hidden key still copies the real one."
+    },
+    {
+      "name": "keypad",
+      "title": "Keypad",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A 3 by 4 numeric pad for PINs and codes with a masked readout; it also takes typed digits, Backspace and Enter from a physical keyboard."
+    },
+    {
+      "name": "amount-input",
+      "title": "Amount input",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A currency field that accepts only digits and one decimal separator while typing, shows a grouped, locale-formatted value on blur, and offers optional preset chips."
+    },
+    {
+      "name": "expanding-search",
+      "title": "Expanding search",
+      "kind": "component",
+      "group": "Text entry",
+      "description": "A search that waits as a round icon in a busy toolbar and opens into a field where it stands: the circle stretches into a pill with a grey edge (the glyph stays put when it grows to the right), a / keycap waits while it is empty, a result count shows as you type, and the close button or Esc clears and folds it back."
+    },
+    {
+      "name": "checkbox",
+      "title": "Checkbox",
+      "kind": "component",
+      "group": "Choice",
+      "description": "On, off or mixed, with a check mark that draws itself, a label, a description and a red error state."
+    },
+    {
+      "name": "radio-group",
+      "title": "Radio group",
+      "kind": "component",
+      "group": "Choice",
+      "description": "Pick one option from a list or from bordered cards with a price on the side. Arrow keys move the choice and the dot springs in."
+    },
+    {
+      "name": "switch",
+      "title": "Switch",
+      "kind": "component",
+      "group": "Choice",
+      "description": "An on/off setting that applies at once. The thumb springs across, and the label sits on either side."
+    },
+    {
+      "name": "segmented-control",
+      "title": "Segmented control",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A compact single-choice switch with a sliding highlight; it is a radio group, so arrows move and select, and Home/End jump to the ends."
+    },
+    {
+      "name": "slider",
+      "title": "Slider",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A single-value slider following the ARIA slider pattern, with drag, arrows, PageUp/PageDown, Home/End, optional tick marks and a live value readout."
+    },
+    {
+      "name": "date-picker",
+      "title": "Date picker",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A field that opens a month calendar built on the ARIA date picker grid pattern (arrows, Home/End, PageUp/PageDown, Shift for years, Enter to pick, Escape to close); all date maths uses the built-in Date and Intl APIs."
+    },
+    {
+      "name": "histogram-range",
+      "title": "Histogram range",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A distribution of buckets over a two-thumb range slider; bars inside the chosen range are highlighted and the readout shows how many items fall inside."
+    },
+    {
+      "name": "time-slot-picker",
+      "title": "Time slot picker",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A grid of bookable times as a radio group; unavailable slots are disabled and skipped by the arrow keys, which move in two dimensions."
+    },
+    {
+      "name": "combobox",
+      "title": "Combobox",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A select you can type into: it filters by label, description, meta and keywords, bolds the match, and keeps right-aligned meta such as GMT offsets lined up."
+    },
+    {
+      "name": "color-picker",
+      "title": "Color picker",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A saturation and brightness area, a hue slider and a hex field that stay in sync; the area is an ARIA slider you can drive with arrows (Shift for bigger steps)."
+    },
+    {
+      "name": "quantity-stepper",
+      "title": "Quantity stepper",
+      "kind": "component",
+      "group": "Choice",
+      "description": "Round minus and plus buttons around a number that rolls up or down, with press-and-hold repeat, typed quantities, and a remove button at the minimum for cart lines. Ships with RollingNumber for totals."
+    },
+    {
+      "name": "rating",
+      "title": "Rating",
+      "kind": "component",
+      "group": "Choice",
+      "description": "Stars with half steps: hover previews the value, a click on the left half of a star picks .5, and the arrows, Home, End and digit keys change it. A read-only mode reads “4.6 · 2,184 reviews”, and a compact pill shows one star with the number for lists and tables."
+    },
+    {
+      "name": "filter-chips",
+      "title": "Filter chips",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A wrapping row of toggle chips with counts, an All chip and a Clear link. Pick several (a check draws in and the row reflows) or one at a time as a radio group; selected chips sit on the selected pill, and the arrow keys move between chips."
+    },
+    {
+      "name": "permission-matrix",
+      "title": "Permission matrix",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A table of roles or members against permissions with checkboxes per cell, plus select-all for every row and column that shows a mixed state."
+    },
+    {
+      "name": "people-picker",
+      "title": "People picker",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A multi-select combobox that searches people by name or email, shows chosen people as removable chips, and handles arrows, Enter, Backspace and Escape."
+    },
+    {
+      "name": "wheel-picker",
+      "title": "Wheel picker",
+      "kind": "component",
+      "group": "Choice",
+      "description": "An iOS-style drum of options that you drag, scroll with the mouse wheel or step with the keyboard; it is exposed as a listbox with the centre row selected."
+    },
+    {
+      "name": "value-stepper",
+      "title": "Value stepper",
+      "kind": "component",
+      "group": "Choice",
+      "description": "Minus and plus buttons around a number that follows the spinbutton pattern; holding a button repeats, and arrows, PageUp/PageDown, Home and End work from the keyboard."
+    },
+    {
+      "name": "step-slider",
+      "title": "Step slider",
+      "kind": "component",
+      "group": "Choice",
+      "description": "One named level on a short ordered scale, like summary length or research depth: three to five stops on a rail, the level name above it and a word at each end. The thumb snaps stop by stop and the fill and the name move with it. A ring marks the recommended stop, and a Recommended tag joins the name while the thumb sits there."
+    },
+    {
+      "name": "date-strip",
+      "title": "Date strip",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A horizontal run of days for quick scheduling; it is a radio group with roving focus, arrows step day by day and scroll the strip, and the side buttons page by a whole strip."
+    },
+    {
+      "name": "color-swatch",
+      "title": "Color swatch",
+      "kind": "component",
+      "group": "Choice",
+      "description": "A palette of round colour chips as a radio group; the chosen one shows a check that stays readable on light and dark colours, and arrows move through the set."
+    },
+    {
+      "name": "theme-toggle",
+      "title": "Theme toggle",
+      "kind": "component",
+      "group": "Choice",
+      "description": "Light or Dark in one small pill: the thumb slides under the mode you pick, its glyph turns upright and the other steps back. Sun and moon icons for a site header or a sidebar, the mode names for a settings row. It only reports the choice, so you apply the theme your way, before first paint, and keep it per device."
+    },
+    {
+      "name": "tabs",
+      "title": "Tabs",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "Underline, pill or vertical tabs with icons and counts. The indicator slides to the chosen tab, panels fade in, and arrow keys move between tabs."
+    },
+    {
+      "name": "accordion",
+      "title": "Accordion",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "Questions or settings groups that open in place with a smooth height animation: plain rows, one card, or a card per item."
+    },
+    {
+      "name": "filter-bar",
+      "title": "Filter bar",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A row of filter chips, each opening a checkbox menu of options, with removable chips for every selected value and a Clear all button; selection is a map of filter id to chosen values."
+    },
+    {
+      "name": "app-switcher",
+      "title": "App switcher",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A grid-icon button that opens a popover of app tiles; arrow keys move across the grid, Escape closes and returns focus, and the current app is marked."
+    },
+    {
+      "name": "pagination",
+      "title": "Pagination",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "Previous and next, numbered pages with an ellipsis that jumps ahead, a rows-per-page select and a rolling “21–40 of 312” range. Arrow keys, Home and End move between pages, and a compact variant fits a toolbar."
+    },
+    {
+      "name": "breadcrumbs",
+      "title": "Breadcrumbs",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "The path to the current page, with an optional icon on the first crumb and the current page as plain text. Deep paths fold the middle into a “…” menu, and a narrow row folds further on its own."
+    },
+    {
+      "name": "sidebar-nav",
+      "title": "Sidebar nav",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A vertical navigation rail with titled sections, collapsible groups, badges and a current-page marker; it collapses to an icon-only rail, and Up/Down/Home/End move focus between items."
+    },
+    {
+      "name": "tree-view",
+      "title": "Tree view",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A file and folder tree with chevrons that turn, folders that open with an animated height and 1 px indent guides. The selected row sits on a soft pill that slides between rows, rows can carry small badges like M or +2, and the keyboard follows the tree pattern with arrows, Home and End, * and type-ahead."
+    },
+    {
+      "name": "form-wizard",
+      "title": "Form wizard",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A multi-step flow with a numbered stepper, animated step content, Back/Next/Finish buttons and per-step validation that blocks moving forward with an announced error."
+    },
+    {
+      "name": "scroll-spy-toc",
+      "title": "Scroll-spy TOC",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A list of in-page links that highlights the section currently in view using an IntersectionObserver (skipped where unavailable), animates its marker between entries and scrolls smoothly on click."
+    },
+    {
+      "name": "bottom-tab-bar",
+      "title": "Bottom tab bar",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A mobile-style navigation bar of icon-and-label tabs with an animated active pill, count badges and Left/Right/Home/End focus movement; it can sit in flow or pin to the bottom of the screen."
+    },
+    {
+      "name": "dock",
+      "title": "Dock",
+      "kind": "component",
+      "group": "Navigation",
+      "description": "A floating row of app icons that swell toward the pointer with a cosine falloff, show a label on hover or focus, mark running items with a dot and move focus with the arrow keys; magnification is off under reduced motion."
+    },
+    {
+      "name": "tooltip",
+      "title": "Tooltip",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A short hint on hover or keyboard focus, with optional shortcut keys. It flips to the other side when there’s no room and closes on Escape."
+    },
+    {
+      "name": "dialog",
+      "title": "Dialog",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A modal window rendered into document.body that traps focus, locks page scroll, closes on Escape or a backdrop click and returns focus to what opened it; ModalFrame is the shared shell the sheets, palette and lightbox build on."
+    },
+    {
+      "name": "dropdown-menu",
+      "title": "Dropdown menu",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A button-triggered menu following the WAI-ARIA menu pattern (arrow keys, Home/End, typeahead, Escape) that flips to stay inside the viewport; MenuItems is the shared list the context menu and filter bar reuse."
+    },
+    {
+      "name": "command-palette",
+      "title": "Command palette",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A modal search box that fuzzy-filters grouped commands as you type; arrow keys move, Enter runs, Escape closes, and an optional hotkey (default Cmd/Ctrl+K) toggles it."
+    },
+    {
+      "name": "notification-center",
+      "title": "Notification center",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A bell button with an unread badge that opens a popover feed with All and Unread tabs, mark-as-read per item or all at once, dismissal and relative timestamps; Escape and outside clicks close it."
+    },
+    {
+      "name": "bottom-sheet",
+      "title": "Bottom sheet",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A modal panel that slides up from the screen edge and can be dragged down by its handle to dismiss; it also closes on Escape or a backdrop click and returns focus to the trigger."
+    },
+    {
+      "name": "coachmark",
+      "title": "Coachmark",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A guided tour that dims the page around a target element picked by CSS selector and shows a callout beside it with step count, Back, Next and Skip; it repositions on scroll and resize, flips to fit, and Escape skips."
+    },
+    {
+      "name": "lightbox",
+      "title": "Lightbox",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A full-screen modal image viewer with previous/next buttons, arrow-key paging, a counter and captions; it traps focus, closes on Escape or a backdrop click and returns focus to the trigger."
+    },
+    {
+      "name": "hover-card",
+      "title": "Hover card",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A rich preview that opens after a short delay when the pointer rests on, or keyboard focus lands on, its trigger; it stays open while the pointer is over the card, closes on Escape and flips to stay in the viewport."
+    },
+    {
+      "name": "context-menu",
+      "title": "Context menu",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "Wraps an area so a right click, long press, the context-menu key or Shift+F10 opens a WAI-ARIA menu at the pointer, flipped to stay inside the viewport and closed by Escape, outside clicks or scrolling."
+    },
+    {
+      "name": "side-sheet",
+      "title": "Side sheet",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A modal panel that slides in from the left or right edge with a title, scrolling body and pinned footer; it traps focus, closes on Escape or a backdrop click and returns focus to the trigger."
+    },
+    {
+      "name": "popover",
+      "title": "Popover",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A panel anchored to a button with a small arrow. A click opens it and moves focus to the first field; Escape or a click outside closes it and hands focus back. It flips above or below and shifts sideways to stay on screen, and it follows the trigger when the page scrolls."
+    },
+    {
+      "name": "shortcuts-dialog",
+      "title": "Shortcuts dialog",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A modal cheat sheet of keyboard shortcuts in titled groups with a filter box; \"?\" toggles it by default, and key names render per platform (Cmd on Mac, Ctrl elsewhere)."
+    },
+    {
+      "name": "image-cropper",
+      "title": "Image cropper",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "Drag (or use arrow keys) to position an image inside a fixed crop frame, set zoom with a slider, and receive the crop rectangle in source-image pixels; the math lives in exported pure helpers."
+    },
+    {
+      "name": "display-options",
+      "title": "Display options",
+      "kind": "component",
+      "group": "Overlays",
+      "description": "A trigger that opens a popover of view settings (segmented choices, switches and selects), shows how many differ from the defaults and offers a reset; Escape and outside clicks close it."
+    },
+    {
+      "name": "badge",
+      "title": "Badge",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "A full-pill status label in six tones and three styles. A new label slides in and the colour eases to the new tone."
+    },
+    {
+      "name": "progress",
+      "title": "Progress",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Bar, segments or ring that animate to each new value, count the percent up, and loop while the length is unknown."
+    },
+    {
+      "name": "toast",
+      "title": "Toast",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Call toast() from anywhere to queue a message and render <Toaster /> once; toasts auto-dismiss, pause while hovered or focused, show at most a few at a time with the rest queued, and are announced through a live region."
+    },
+    {
+      "name": "onboarding-checklist",
+      "title": "Onboarding checklist",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "A card of getting-started tasks with a progress bar, check-off toggles, per-task actions, a collapse control and a celebratory finish state with dismiss."
+    },
+    {
+      "name": "usage-meter",
+      "title": "Usage meter",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "A quota bar showing used against a limit with a plain-language readout, colour that shifts to warning and danger as it fills, an optional stacked breakdown with legend and a slot for an upgrade action; it exposes role=\"meter\"."
+    },
+    {
+      "name": "forecast-alert",
+      "title": "Forecast alert",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Projects a billing period's usage linearly from the burn so far and says in words whether you will stay under the limit, cut it close or run out early, with a bar that marks used, projected and limit; forecastUsage is the exported math."
+    },
+    {
+      "name": "skeleton",
+      "title": "Skeleton",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Placeholder lines, circles and blocks with a soft light sweep, plus ready list, card and table layouts inside a loading status. The sweep stops for reduced motion."
+    },
+    {
+      "name": "empty-state",
+      "title": "Empty state",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "A text-only empty state: a title, one line on what happens next, a primary and an optional secondary action. Variants for first use, no results and errors, with a small meta pill and a dot loader on Retry."
+    },
+    {
+      "name": "alert-banner",
+      "title": "Alert banner",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "An inline alert with an icon, a title, a line of detail and an optional action and close. Info, success, warning and danger take their soft fills from the kit tokens, so accents and looks restyle them, and closing folds the banner's height away."
+    },
+    {
+      "name": "priority-icon",
+      "title": "Priority icon",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Five priority levels in one 16 or 14 px glyph, so a dense row says how urgent an issue is without a word: three dashes for none, one to three bars from Low to High, and a red disc with an exclamation mark for Urgent, the only level in color. A new level grows the bars one after another and pops the disc in, and every glyph carries its own name for screen readers and a hover title."
+    },
+    {
+      "name": "status-icon",
+      "title": "Status icon",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "Eight workflow states, each with its own shape so a list, a menu or a dark board reads the same in grayscale: a dashed ring for Backlog, an empty ring for Todo, a quarter for In progress, an arrow coming in for In review, a dashed check for Ready, solid discs for Done and Canceled, and a bar for Blocked. A new state turns in and draws its mark, and Done and Canceled draw their mark in the surface color so it stays crisp in Light and Dark."
+    },
+    {
+      "name": "date-chip",
+      "title": "Date chip",
+      "kind": "component",
+      "group": "Feedback",
+      "description": "A due or target date that works out where it stands: the date while it is upcoming, Today, Tomorrow or In 2 days when it is close, the days late once it has passed, and Done with the close date. The glyph, the words and the tone change together, so the risk reads in grayscale, and screen readers hear the whole sentence (Overdue: due Wednesday, October 21, 3 days late). Plain for dense rows and board cards, a pill for property panels."
+    },
+    {
+      "name": "kbd",
+      "title": "Kbd",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Keycaps for shortcuts and key sequences that sink while the real key is held down."
+    },
+    {
+      "name": "avatar",
+      "title": "Avatar",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Flat avatars with a one-letter initial, a photo that fades in and a presence dot. Groups overlap and part on hover."
+    },
+    {
+      "name": "data-table",
+      "title": "Data table",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A sortable, filterable, paginated table with row selection and an indeterminate header checkbox; sort, filter and paging are pure functions."
+    },
+    {
+      "name": "settings-row",
+      "title": "Settings row",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A label and description on the left with a control on the right; give it `checked` handling for a built-in switch or pass any control as children."
+    },
+    {
+      "name": "api-key-row",
+      "title": "API key row",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A named API key shown masked, with reveal, copy and regenerate buttons; copying confirms for two seconds in a live region."
+    },
+    {
+      "name": "stat-card",
+      "title": "Stat card",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A KPI card whose number counts up, with a colored delta and a sparkline of this period against the last one that you can scrub."
+    },
+    {
+      "name": "code-block",
+      "title": "Code block",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Code with language tabs, line numbers, highlighted lines and a copy button. A tiny built-in tokenizer colours keywords, strings and comments, with no dependencies."
+    },
+    {
+      "name": "week-calendar",
+      "title": "Week calendar",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A seven-day time grid with navigation; events are positioned by time and overlapping ones share the day column side by side."
+    },
+    {
+      "name": "resizable-panels",
+      "title": "Resizable panels",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Two panels split by a draggable separator (role=\"separator\") that resizes with the pointer or the arrow, Home and End keys, within min and max percentages."
+    },
+    {
+      "name": "sparkline-table",
+      "title": "Sparkline table",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A compact metrics table with an inline SVG trend line per row, the latest value and the change over the series."
+    },
+    {
+      "name": "avatar-stack",
+      "title": "Avatar stack",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Overlapping faces with a +N chip, each set in a ring of the surface colour. Hovering fans the stack out a little and tags the face with its name; arrow keys walk the faces, and the chip lists who is hidden. People who join or leave slide in and out."
+    },
+    {
+      "name": "carousel",
+      "title": "Carousel",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A scroll-snap slider with previous/next buttons and dot indicators; arrow keys move between slides and the dots follow native scrolling."
+    },
+    {
+      "name": "leaderboard",
+      "title": "Leaderboard",
+      "kind": "component",
+      "group": "Data display",
+      "description": "Ranked rows with avatars, scores and a place-change arrow; the top three wear quiet mono medals, rows glide into their new order when the period changes, and your own row pins to the edge while it is out of view."
+    },
+    {
+      "name": "timeline",
+      "title": "Timeline",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A vertical list of events on a 1 px rail: an icon in a small circle per event, the time, a title, an optional note and file chips. Runs of events with the same day sit under one day label, and a Show more fold opens the rest with a height animation; new events slide in at the top."
+    },
+    {
+      "name": "month-calendar",
+      "title": "Month calendar",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A month grid with roving-tabindex arrow-key navigation, a selected day, today marker and a dot under days that have events."
+    },
+    {
+      "name": "file-manager",
+      "title": "File manager",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A folder browser with a breadcrumb trail, a keyboard-navigable listbox (arrows, Enter to open, Backspace to go up) and name, size and modified columns, folders first."
+    },
+    {
+      "name": "sortable-list",
+      "title": "Sortable list",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A list you reorder by dragging a row's grip, or from the keyboard: Space lifts the row, the arrows carry it, Space drops it and Escape puts it back, while a live region reads out each new position. The other rows reflow with a spring; an optional round × removes a row."
+    },
+    {
+      "name": "cohort-table",
+      "title": "Cohort table",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A retention heatmap where each row is a cohort and each column a period; cell tint scales with the retained share."
+    },
+    {
+      "name": "org-chart",
+      "title": "Org chart",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A top-down tree of people; a pure layout places each node (leaves in order, parents centred over their children) and SVG elbow connectors join them."
+    },
+    {
+      "name": "gantt-chart",
+      "title": "Gantt chart",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A timeline of tasks as bars across a date range, with week gridlines, a month header and a vertical line for today."
+    },
+    {
+      "name": "cycle-card",
+      "title": "Cycle card",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A sprint or cycle summary with its date range, a status chip, days left, a stacked progress bar of completed, started and remaining scope, and counts."
+    },
+    {
+      "name": "gantt-row",
+      "title": "Gantt row",
+      "kind": "component",
+      "group": "Data display",
+      "description": "One task line of a Gantt chart, a label beside a track holding a bar positioned by date within the visible range, with optional progress fill."
+    },
+    {
+      "name": "audio-player",
+      "title": "Audio player",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A player for voice notes, call recordings and AI voice replies: a 48 px pill for message threads, or a card with the recording's name, source and date. Click or drag the waveform to seek and the played part fills in as it plays; the card adds 10 s skips, elapsed and remaining times, a 1× / 1.5× / 2× chip and an optional transcript row. Loading and error swap the play button's glyph and dim the controls, with Retry. It plays a real file from src, or runs on a timer for previews."
+    },
+    {
+      "name": "rolling-number",
+      "title": "Rolling number",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A number whose changed digits roll to their new values one after another, left to right, on tabular figures so the width never jumps, with a chip for the change: up in green and down in red, or the other way round for costs. The wheels turn the way the number moved and keep going past 9, a roll cut short carries on from where it is, and the final value is read out once. Two sizes, and any currency or unit through format."
+    },
+    {
+      "name": "integration-card",
+      "title": "Integration card",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A connectable service tile with icon, name, description and a connect/disconnect button that shows a pending state while the async handler runs."
+    },
+    {
+      "name": "swipe-row",
+      "title": "Swipe row",
+      "kind": "component",
+      "group": "Data display",
+      "description": "A list row that slides left on drag to reveal action buttons; it snaps open or closed by distance and velocity, and Arrow keys or Escape do the same from the keyboard."
+    },
+    {
+      "name": "forecast-chart",
+      "title": "Forecast chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "An actual line that continues as a dashed forecast with a shaded confidence band, split at a \"now\" marker; hover or arrow keys read any point."
+    },
+    {
+      "name": "activity-heatmap",
+      "title": "Activity heatmap",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A calendar grid of weeks by weekdays where each day's colour reflects its count, with month labels and a less-to-more legend; arrow keys move between days."
+    },
+    {
+      "name": "grouped-bar",
+      "title": "Grouped bar",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Side-by-side bars per month or quarter that grow in on first view; hover or arrow to a group to lift it, dim the rest and read every series."
+    },
+    {
+      "name": "treemap",
+      "title": "Treemap",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Rectangles tiled by a squarified layout so area equals value; labels appear where they fit, and hover or focus shows each item's share of the total."
+    },
+    {
+      "name": "bullet-chart",
+      "title": "Bullet chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A compact progress-versus-target row per metric, with qualitative bands behind a value bar and a target tick; hover or focus a row for the exact numbers."
+    },
+    {
+      "name": "candlestick",
+      "title": "Candlestick",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Open, high, low and close per period as candles, green when the period closed up and red when down; hover or arrow keys read the full OHLC."
+    },
+    {
+      "name": "scatter-plot",
+      "title": "Scatter plot",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Points on two numeric axes, coloured by group with a legend; hover finds the nearest point and arrow keys walk the points from left to right."
+    },
+    {
+      "name": "waffle-chart",
+      "title": "Waffle chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A 10 by 10 grid where each square is one percent of the whole, filled from the bottom by segment; hover or focus a legend entry to light up its squares."
+    },
+    {
+      "name": "dot-globe",
+      "title": "Dot globe",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A slowly rotating sphere of dots on an invented coarse land mask, drawn on canvas with an orthographic projection; drag to spin, markers glow on the near side, reduced motion draws it once."
+    },
+    {
+      "name": "dot-map",
+      "title": "Dot map",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A dotted world-ish map built from an invented coarse lat/long grid (not real geography) with highlighted, focusable locations that pulse and show a tooltip."
+    },
+    {
+      "name": "threshold-gauge",
+      "title": "Threshold gauge",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A half-circle dial split into success, warning and danger zones with a needle at the current value and a large readout; exposed as a meter."
+    },
+    {
+      "name": "compare-bars",
+      "title": "Compare bars",
+      "kind": "component",
+      "group": "Charts",
+      "description": "This week against last in seven bars, biggest day in blue and days to come as stubs; flip periods and the bars, total and stat tiles roll to the new numbers."
+    },
+    {
+      "name": "portfolio-chart",
+      "title": "Portfolio chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "A headline value with its change over the selected range, a smooth area chart under it, and range buttons; scrubbing the chart swaps the headline for that point."
+    },
+    {
+      "name": "since-last-visit",
+      "title": "Since last visit",
+      "kind": "component",
+      "group": "Charts",
+      "description": "What changed in each metric since the user was last here, as a signed delta with a sparkline that marks the visit and tints everything after it."
+    },
+    {
+      "name": "uptime-bars",
+      "title": "Uptime bars",
+      "kind": "component",
+      "group": "Charts",
+      "description": "One thin bar per day coloured by service status, with an overall uptime figure; hover or arrow keys read any day."
+    },
+    {
+      "name": "funnel-chart",
+      "title": "Funnel chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Stages as centred trapezoids sized by value, with the conversion rate from each stage to the next; hover or focus a stage for its share of the top."
+    },
+    {
+      "name": "ring-stats",
+      "title": "Ring stats",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Two or three concentric goal rings with their numbers beside them: the rings draw in when seen, the values roll, and the first ring carries the accent while the rest step down in mono."
+    },
+    {
+      "name": "radar-chart",
+      "title": "Radar chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "One polygon per series across shared axes on concentric rings; hover or focus a vertex to read it, hover a legend entry to isolate a series."
+    },
+    {
+      "name": "stacked-area",
+      "title": "Stacked area",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Series layered into one total over time, optionally normalised to 100 %; a hover crosshair lists each layer's value and share."
+    },
+    {
+      "name": "donut-chart",
+      "title": "Donut chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Three to six slices that sweep in round the ring in mono steps, the accent on the first or the one you point at; the centre rolls from the total to that slice's value and share, and the legend rows light their slice."
+    },
+    {
+      "name": "hour-heatmap",
+      "title": "Hour heatmap",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Weekdays down, hours of the day across, each cell shaded by its value, to show when something peaks; arrow keys move between cells."
+    },
+    {
+      "name": "waterfall-chart",
+      "title": "Waterfall chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "How a starting value becomes an ending value through increases (green), decreases (red) and subtotal bars, with connectors between steps."
+    },
+    {
+      "name": "sankey-chart",
+      "title": "Sankey chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Flows between stages drawn as ribbons whose width is the value; hover a ribbon for its share, hover or focus a node to isolate everything passing through it."
+    },
+    {
+      "name": "annotated-line",
+      "title": "Annotated line",
+      "kind": "component",
+      "group": "Charts",
+      "description": "One series with numbered event markers pinned to points (a deploy, an outage, a launch); markers are focusable and each reads its note."
+    },
+    {
+      "name": "box-plot",
+      "title": "Box plot",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Each group's distribution as a box from first to third quartile with the median, Tukey whiskers at 1.5 IQR and outliers as dots."
+    },
+    {
+      "name": "multi-line",
+      "title": "Multi-line chart",
+      "kind": "component",
+      "group": "Charts",
+      "description": "Several series on shared axes with a hover crosshair that reads every series at once, and a legend whose entries toggle lines on and off."
+    },
+    {
+      "name": "comment-thread",
+      "title": "Comment thread",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Nested comments with relative timestamps, inline replies and a composer; replies indent under their parent."
+    },
+    {
+      "name": "activity-feed",
+      "title": "Activity feed",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "A vertical timeline of who did what and when, with relative timestamps that carry the exact time in a tooltip."
+    },
+    {
+      "name": "kanban-board",
+      "title": "Kanban board",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Columns of cards you can drag with a pointer, or move by keyboard (Space to pick up, arrows to move, Space to drop, Escape to cancel), with every step announced in a live region."
+    },
+    {
+      "name": "issue-list",
+      "title": "Issue list",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Issues grouped by status with counts, a filter box and arrow-key navigation between rows."
+    },
+    {
+      "name": "document-card",
+      "title": "Document card",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "A file tile with a text preview, owner, relative edit time and an avatar stack of collaborators; becomes a link or button when given href or onOpen."
+    },
+    {
+      "name": "property-panel",
+      "title": "Property panel",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "A labelled list of record fields where text fields edit in place (Enter saves, Escape cancels) and option fields use a native select."
+    },
+    {
+      "name": "reaction-bar",
+      "title": "Reaction bar",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Emoji pills with counts that toggle your own reaction, plus a small picker to add a new one."
+    },
+    {
+      "name": "roadmap-timeline",
+      "title": "Roadmap timeline",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Initiatives drawn as bars on a month scale, with optional progress fill and a today marker; every bar has a text equivalent with its dates."
+    },
+    {
+      "name": "board-card",
+      "title": "Board card",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "The compact work item shown on a kanban board, with labels, title, due date, comment count and an assignee avatar."
+    },
+    {
+      "name": "issue-row",
+      "title": "Issue row",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "One line of an issue tracker with its key, status icon, title, labels, priority, assignee and last-updated time."
+    },
+    {
+      "name": "project-card",
+      "title": "Project card",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "A project summary with status badge, description, task progress bar, due date and member avatars; becomes a link or button when given href or onOpen."
+    },
+    {
+      "name": "live-cursors",
+      "title": "Live cursors",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "Draws other people's pointers over a surface from props, gliding between positions with a spring; there is no networking, feed it positions from anywhere."
+    },
+    {
+      "name": "version-history",
+      "title": "Version history",
+      "kind": "component",
+      "group": "Collaboration",
+      "description": "A list of saved versions with author and relative time; selecting one marks it, and older versions offer a restore action."
+    },
+    {
+      "name": "product-card",
+      "title": "Product card",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "Image, name, rating, price with an optional struck-through compare-at price and a sale badge, and an add-to-cart button that confirms briefly."
+    },
+    {
+      "name": "cart-summary",
+      "title": "Cart summary",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "Subtotal, discount, shipping, tax and total with an optional promo code field and checkout button; all arithmetic runs in integer minor units (cents) through the exported helpers."
+    },
+    {
+      "name": "receipt",
+      "title": "Receipt",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "A paper-style proof of payment with merchant, receipt number, date, itemised lines, totals and the masked payment method; offers print when asked."
+    },
+    {
+      "name": "payment-picker",
+      "title": "Payment picker",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "A radio group over saved payment methods passed in as props, shown masked (\"•••• 4242\"); it never collects card numbers, adding a method is delegated to onAddNew."
+    },
+    {
+      "name": "pricing-table",
+      "title": "Pricing table",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "Plan cards side by side with a monthly/yearly switch; yearly prices are shown per month with the saving called out."
+    },
+    {
+      "name": "supplier-compare",
+      "title": "Supplier compare",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "A sortable table of supplier quotes (unit price, minimum order, lead time, rating) that highlights the best value in each column and lets you pick one."
+    },
+    {
+      "name": "order-tracker",
+      "title": "Order tracker",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "A vertical list of fulfilment steps with done, current and upcoming states, optional timestamps, and a \"Step n of m\" summary for screen readers."
+    },
+    {
+      "name": "subscription-manager",
+      "title": "Subscription manager",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "Shows the current plan, status and renewal date, lets you switch plan, and handles cancel (with a confirm step) and resume; every change is reported through callbacks."
+    },
+    {
+      "name": "pricing-calculator",
+      "title": "Pricing calculator",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "Sliders for seats and monthly usage that price a plan live (base fee, extra seats, overage) with a monthly/yearly switch; math is in integer minor units."
+    },
+    {
+      "name": "order-summary",
+      "title": "Order summary",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "A read-only list of purchased lines (name, quantity, price) above subtotal, discount, shipping, tax and total."
+    },
+    {
+      "name": "cart-item",
+      "title": "Cart item",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "One cart line with thumbnail, name, variant, unit and line price, a quantity stepper and a remove button."
+    },
+    {
+      "name": "billing-plan-card",
+      "title": "Billing plan card",
+      "kind": "component",
+      "group": "Commerce",
+      "description": "One plan with name, price per interval, feature list and a call-to-action; marks the current plan and can be highlighted as recommended."
+    },
+    {
+      "name": "swap-card",
+      "title": "Swap card",
+      "kind": "component",
+      "group": "Finance",
+      "description": "A two-sided conversion form that turns an amount of one currency or asset into another at a given rate, with a flip button and a rate line."
+    },
+    {
+      "name": "balance-card",
+      "title": "Balance card",
+      "kind": "component",
+      "group": "Finance",
+      "description": "An account balance in minor units with a period change, an optional sparkline, a hide toggle and an actions slot."
+    },
+    {
+      "name": "transaction-list",
+      "title": "Transaction list",
+      "kind": "component",
+      "group": "Finance",
+      "description": "Payments grouped under day headings (Today, Yesterday, then dates) with signed amounts, a pending badge and optional row selection."
+    },
+    {
+      "name": "budget-bars",
+      "title": "Budget bars",
+      "kind": "component",
+      "group": "Finance",
+      "description": "One meter per spending category showing spent against its limit, amber near the limit and red once over it."
+    },
+    {
+      "name": "watchlist",
+      "title": "Watchlist",
+      "kind": "component",
+      "group": "Finance",
+      "description": "Tracked assets with price, percent change and a sparkline, sortable by name or change, with optional remove and select."
+    },
+    {
+      "name": "invoice-editor",
+      "title": "Invoice editor",
+      "kind": "component",
+      "group": "Finance",
+      "description": "Editable line items with quantity and unit price, a tax rate and live subtotal, tax and total computed in integer minor units."
+    },
+    {
+      "name": "payment-card",
+      "title": "Payment card",
+      "kind": "component",
+      "group": "Finance",
+      "description": "A styled bank card visual with a masked number by default, holder, expiry and a reveal toggle; built for demo data only."
+    },
+    {
+      "name": "spend-limit",
+      "title": "Spend limit",
+      "kind": "component",
+      "group": "Finance",
+      "description": "A slider for a card's spending cap in minor units with a daily, weekly or monthly period and a bar of what is already spent."
+    },
+    {
+      "name": "recurring-bills",
+      "title": "Recurring bills",
+      "kind": "component",
+      "group": "Finance",
+      "description": "Upcoming subscriptions and bills sorted by due date, with a due-in label, an autopay switch per bill and a monthly total."
+    },
+    {
+      "name": "testimonial-card",
+      "title": "Testimonial card",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "A quote with an optional star rating and an author line with initials avatar, name and role."
+    },
+    {
+      "name": "faq-list",
+      "title": "FAQ list",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "An accessible disclosure list; each question is a button with aria-expanded controlling its answer region, one open at a time unless `multiple`."
+    },
+    {
+      "name": "feature-grid",
+      "title": "Feature grid",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "A responsive grid of feature tiles, each with an icon, a title and a short description."
+    },
+    {
+      "name": "announcement-pill",
+      "title": "Announcement pill",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "The small pill above a hero with a dark New tag and an arrow; change the line and the old one rolls up while the pill eases to the new width."
+    },
+    {
+      "name": "copy-prompt-box",
+      "title": "Copy-prompt box",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "“Using an AI assistant? Paste this:” with the prompt and a Copy prompt button that draws a check, rolls to Copied and sweeps a soft light over the text."
+    },
+    {
+      "name": "steps-card",
+      "title": "Steps card",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "A numbered, vertical list of steps joined by a line; steps before `current` show a check, the current one is highlighted."
+    },
+    {
+      "name": "newsletter-signup",
+      "title": "Newsletter signup",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "An email capture card with the field and Subscribe button in one pill: it checks the address inline, shows a sending state, then settles into Check your inbox with the address and a way back."
+    },
+    {
+      "name": "changelog-entry",
+      "title": "Changelog entry",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "One release of a product changelog: version and date, title, a short paragraph, changes with New, Improved or Fixed outline tags, longer notes behind Read more that open with a smooth height animation, and an optional author."
+    },
+    {
+      "name": "metric-strip",
+      "title": "Metric strip",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "A row of big stats with labels and small change lines that count up once when the strip scrolls into view, in tabular figures with hairlines between; four wrap to 2 × 2 on narrow widths."
+    },
+    {
+      "name": "cta-banner",
+      "title": "CTA banner",
+      "kind": "component",
+      "group": "Marketing",
+      "description": "The closing call to action: headline, one line, a primary and a secondary button on a card whose 1 px edge carries a soft light that travels slowly around it."
+    },
+    {
+      "name": "ascii-globe",
+      "title": "ASCII globe",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A rotating sphere drawn in characters with orthographic projection, simple land masses and a lit side; it pauses off-screen and shows one still frame under reduced motion."
+    },
+    {
+      "name": "ascii-text",
+      "title": "ASCII text",
+      "kind": "component",
+      "group": "Effects",
+      "description": "Renders a word as large ASCII art by drawing it on an offscreen canvas and sampling brightness, with a built-in 3x5 pixel font when canvas is unavailable."
+    },
+    {
+      "name": "ascii-image",
+      "title": "ASCII image",
+      "kind": "component",
+      "group": "Effects",
+      "description": "Converts an image source into a block of characters by sampling its luminance on a canvas and mapping brightness to a character ramp."
+    },
+    {
+      "name": "ascii-field",
+      "title": "ASCII field",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A grid of characters that ripples like a slow wave and swells around the pointer; it pauses off-screen and renders a still frame under reduced motion."
+    },
+    {
+      "name": "ascii-loader",
+      "title": "ASCII loader",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A text-mode spinner, bouncing bar or wave for waiting states; it announces its label as a status and holds one frame under reduced motion."
+    },
+    {
+      "name": "confetti",
+      "title": "Confetti",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A celebration for a moment that earned it, drawn on one canvas with no dependencies. Paper pieces flip in 3D with a shaded back face, dots fall a little faster and thin streamers curl as they drift, under gravity, air drag and a gentle gust of wind. Burst from a button, the middle or a point, fire two cannons from the bottom corners, or let a shower fall from the top. The canvas never takes a click, follows resize and pixel density, and removes itself once the last piece lands; with reduced motion a small ring of sparkles fades in and out in place instead."
+    },
+    {
+      "name": "spotlight-card",
+      "title": "Spotlight card",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A card whose surface and border glow under a soft radial light that follows the pointer, and sit centered while a child has keyboard focus."
+    },
+    {
+      "name": "text-scramble",
+      "title": "Text scramble",
+      "kind": "component",
+      "group": "Effects",
+      "description": "Letters resolve left to right out of random glyphs on mount, on text change and on hover; the real text stays in a visually hidden copy and the scrambled one is hidden from screen readers."
+    },
+    {
+      "name": "shiny-text",
+      "title": "Shiny text",
+      "kind": "component",
+      "group": "Effects",
+      "description": "Text with a soft highlight that sweeps across it on a loop, optionally pausing on hover; the text is real, so screen readers read it as is."
+    },
+    {
+      "name": "dot-field",
+      "title": "Dot field",
+      "kind": "component",
+      "group": "Effects",
+      "description": "A canvas grid of dots that shimmer slowly and get pushed away and enlarged by the pointer; it pauses off-screen and draws a still grid under reduced motion."
+    },
+    {
+      "name": "chart-utils",
+      "title": "Chart utils",
+      "kind": "lib",
+      "group": "Helpers",
+      "description": "Shared scales, paths, statistics and motion helpers (enter, DrawPath, CountUp, Leaving) used by the charts and many components."
+    },
+    {
+      "name": "agents-overview",
+      "title": "Agents overview",
+      "kind": "block",
+      "group": "Agents",
+      "description": "A full-width fleet section with headline counts, a status filter over agent cards, and the latest runs beside them; it adapts to its container, from one column to a cards-plus-runs split."
+    },
+    {
+      "name": "app-shell",
+      "title": "App shell",
+      "kind": "block",
+      "group": "Application",
+      "description": "The frame every template sits in. An inset sidebar, a top bar with the page title and actions, and a scrolling content area; when its container is narrower than 768px the sidebar becomes a drawer. It fills its parent, so give the parent a height (100dvh in an app)."
+    },
+    {
+      "name": "approval-with-history",
+      "title": "Approval with history",
+      "kind": "block",
+      "group": "Agents",
+      "description": "A half-width card pairing one pending approval request with the earlier decisions on the same tool, so a reviewer sees precedent; deciding adds the new entry to the top of the history."
+    },
+    {
+      "name": "approvals-inbox",
+      "title": "Approvals inbox",
+      "kind": "block",
+      "group": "Agents",
+      "description": "A full-width list-and-detail section; pending requests from agents on the left, the selected one as an approval card on the right, a Resolved tab for decided items, and a bulk action that approves every low-risk request."
+    },
+    {
+      "name": "assistant-home",
+      "title": "Assistant home",
+      "kind": "block",
+      "group": "Assistant",
+      "description": "The landing screen of an AI assistant with a greeting, the composer, suggestion cards and recent chats. A full-width section (it centres itself in a 720px column); it answers to its container, not the viewport."
+    },
+    {
+      "name": "assistant-start",
+      "title": "Assistant start",
+      "kind": "block",
+      "group": "Assistant",
+      "description": "The empty state of a new chat, with the composer, model picker, attachments, a context meter and starter chips. A full-width section (centred 680px column); sending hands text, model and files to onSend."
+    },
+    {
+      "name": "chat-answer-sources",
+      "title": "Chat answer sources",
+      "kind": "block",
+      "group": "Assistant",
+      "description": "A question, a finished answer whose [n] markers become hover citations, a numbered source list and answer feedback. Fits a half- or full-width slot; the source grid goes two columns when its container is 560px or wider."
+    },
+    {
+      "name": "chat-thread-composer",
+      "title": "Chat thread composer",
+      "kind": "block",
+      "group": "Assistant",
+      "description": "A scrolling conversation above a docked composer. Sending appends the message, shows a thinking state, then streams a simulated reply word by word; Stop keeps what has streamed. Timers are cleared on unmount. A full-width section that fills its parent's height."
+    },
+    {
+      "name": "contact-record",
+      "title": "Contact record",
+      "kind": "block",
+      "group": "CRM",
+      "description": "A full-width detail view of one contact: profile header with email and call actions, editable properties, related deals, and an activity timeline you can add notes to. Stacks two columns when its container is at least 720px wide."
+    },
+    {
+      "name": "customers-summary",
+      "title": "Customers summary",
+      "kind": "block",
+      "group": "CRM",
+      "description": "A full-width section with account totals above a sortable, filterable customers table (status, owner, annual value in minor units, last contact)."
+    },
+    {
+      "name": "data-pipelines-connector-health",
+      "title": "Connector health",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/2 width, or full width in a 12-column grid) listing every source connector with its sync status, last sync and rows moved, filterable by status."
+    },
+    {
+      "name": "data-pipelines-data-tests",
+      "title": "Data tests",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/2 width) summarising the latest dbt-style test run, with a pass-rate headline and a status-filtered list of tests grouped by the model they guard."
+    },
+    {
+      "name": "data-pipelines-failed-sync",
+      "title": "Failed sync",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/2 width) of syncs that need attention, each with its error and a retry button that shows a retrying state until the host reports the outcome."
+    },
+    {
+      "name": "data-pipelines-freshness",
+      "title": "Freshness",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/3 or 1/2 width) showing how old each warehouse table is against its freshness SLA, worst first, with a marker at the SLA limit."
+    },
+    {
+      "name": "data-pipelines-nightly-run",
+      "title": "Nightly run",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A full-width section drawing the nightly run as a timeline, one bar per task positioned by start offset and duration, so the critical path and failures read at a glance."
+    },
+    {
+      "name": "data-pipelines-rows-loaded",
+      "title": "Rows loaded",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/2 width, or full width) charting rows loaded per day as keyboard-focusable bars, with a 7, 14 or 30 day range, the total, and a readout for the focused day."
+    },
+    {
+      "name": "data-pipelines-warehouse-spend",
+      "title": "Warehouse spend",
+      "kind": "block",
+      "group": "Data pipelines",
+      "description": "A card (1/3 or 1/2 width) showing compute credits used this billing period against a budget, the month-end projection, and a per-warehouse breakdown."
+    },
+    {
+      "name": "deal-pipeline-board",
+      "title": "Deal pipeline board",
+      "kind": "block",
+      "group": "CRM",
+      "description": "A full-width kanban of deals by stage with a count and total per stage; dragging (or keyboard-moving) a deal re-totals both stages. Money is integer minor units."
+    },
+    {
+      "name": "deals-closing-soon",
+      "title": "Deals closing soon",
+      "kind": "block",
+      "group": "CRM",
+      "description": "A half-width card listing open deals whose close date falls inside the next few days, soonest first, with the value at stake."
+    },
+    {
+      "name": "dev-tools-build-health",
+      "title": "Build health",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "CI status per branch with the last twelve runs as a strip and the pass rate. A card, 1/2 width of a 12-column grid (6 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-ci-minutes",
+      "title": "CI minutes",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "Minutes used against the monthly quota with a month-end projection and the heaviest workflows. A card, 1/3 width of a 12-column grid (4 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-deploys-today",
+      "title": "Deploys today",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "Today's deploys with an environment filter, version, author and outcome. A card, 1/2 width of a 12-column grid (6 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-dora",
+      "title": "DORA",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "The four DORA metrics (deploy frequency, lead time, change failure rate, time to restore) with a performance level, a change versus the previous period and a trend line. A full-width section (12 columns); tiles flow 1, 2 or 4 across by container width."
+    },
+    {
+      "name": "dev-tools-flaky-tests",
+      "title": "Flaky tests",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "Tests ranked by failure rate over recent runs, with a quarantine toggle per test. A card, 1/2 width of a 12-column grid (6 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-release-gate",
+      "title": "Release gate",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "A checklist a release must clear, with Approve enabled only when every required item passes and Block always available. A card, 1/3 or 1/2 width of a 12-column grid (4 to 6 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-review-queue",
+      "title": "Review queue",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "Pull requests waiting for review with how long they have waited, size and author, sortable by age or size. A card, 1/2 width of a 12-column grid (6 columns), responsive to its container."
+    },
+    {
+      "name": "dev-tools-top-errors",
+      "title": "Top errors",
+      "kind": "block",
+      "group": "Dev tools",
+      "description": "The most frequent production errors in the last 24 hours with counts, share of the total and change versus the day before. A card, 1/2 width of a 12-column grid (6 columns), responsive to its container."
+    },
+    {
+      "name": "devops-active-incidents",
+      "title": "Active incidents",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "Open incidents ordered by severity then age, each with an Acknowledge action that flips it to acknowledged. A card, 1/2 width on a 12-column grid (or full width)."
+    },
+    {
+      "name": "devops-error-budget",
+      "title": "Error budget",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "Per-SLO error budget consumed over its window with burn rate and minutes left. A card, 1/3 or 1/2 width."
+    },
+    {
+      "name": "devops-hot-hosts",
+      "title": "Hot hosts",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "The hosts under the most load, ranked by CPU or memory with threshold-coloured bars. A card, 1/2 width or full width."
+    },
+    {
+      "name": "devops-latency",
+      "title": "Latency",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "P50, p95 and p99 request latency over a selectable time range, with the latest values above the chart. A full-width section, or 2/3 width."
+    },
+    {
+      "name": "devops-on-call",
+      "title": "On call",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "Who is on call right now for each rotation, with when the shift ends and who is next. A card, 1/3 or 1/2 width."
+    },
+    {
+      "name": "devops-regions",
+      "title": "Regions",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "Per-region health on a dot map beside a status list with latency, plus counts by status. A card, 1/2 width or full width."
+    },
+    {
+      "name": "devops-service-status",
+      "title": "Service status",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "Every service with its current state, error rate and latency; a toggle narrows the list to services with problems. A card, 1/2 width or full width."
+    },
+    {
+      "name": "devops-uptime-history",
+      "title": "Uptime history",
+      "kind": "block",
+      "group": "DevOps",
+      "description": "90-day uptime bars per service with each service's overall percentage. A full-width section, or 1/2 width."
+    },
+    {
+      "name": "invoices-workspace",
+      "title": "Invoices workspace",
+      "kind": "block",
+      "group": "Finance",
+      "description": "A full-width list-and-detail section; filter invoices by status, select one to read its line items and totals, and send or mark it paid through callbacks. Stacks the detail under the list below 900px of container width."
+    },
+    {
+      "name": "knowledge-sources",
+      "title": "Knowledge sources",
+      "kind": "block",
+      "group": "Assistant",
+      "description": "A manager for the places an assistant reads from, with each source's sync status, document count, an enable switch, Sync now, and an Add source menu. A full-width section; rows stack their details under the name when the container is narrower than 600px."
+    },
+    {
+      "name": "llm-ops-agent-runs",
+      "title": "Agent runs",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A full-width (12 columns) table of recent agent runs with status, steps, cost and duration, filterable by status, with the visible cost totalled."
+    },
+    {
+      "name": "llm-ops-cost-by-feature",
+      "title": "Cost by feature",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A card (1/2 or 1/3 width of 12 columns) ranking product features by LLM spend with share-of-total bars and a month-over-month change."
+    },
+    {
+      "name": "llm-ops-cost-by-provider",
+      "title": "Cost by provider",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A card (1/2 or 1/3 width of 12 columns) with a donut of spend split across model providers; hover or pick a slice to read its amount and share."
+    },
+    {
+      "name": "llm-ops-eval-scorecard",
+      "title": "Eval scorecard",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A card (1/2 or 1/3 width of 12 columns) showing one model's evaluation scores against its baseline, with a switcher to compare models."
+    },
+    {
+      "name": "llm-ops-latency",
+      "title": "Latency",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A full-width or 1/2-width (6 of 12 columns) section with p50, p95 and p99 stat cards for either time to first token or total latency, each with a trend line against the previous period."
+    },
+    {
+      "name": "llm-ops-model-spend",
+      "title": "Model spend",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A full-width or 2/3-width (8 of 12 columns) card charting cumulative daily spend with a forecast to month end, summarised against the monthly budget."
+    },
+    {
+      "name": "llm-ops-prompt-cache",
+      "title": "Prompt cache",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A card (1/3 width of 12 columns) with the overall cache hit rate, tokens served from cache and dollars saved, plus hit rate per prompt template."
+    },
+    {
+      "name": "llm-ops-provider-health",
+      "title": "Provider health",
+      "kind": "block",
+      "group": "LLM ops",
+      "description": "A full-width or 1/2-width (6 of 12 columns) card listing each model provider with a 30-day uptime strip, error rate and current status."
+    },
+    {
+      "name": "orders-workspace",
+      "title": "Orders workspace",
+      "kind": "block",
+      "group": "Commerce",
+      "description": "A full-width list + detail section; filter orders by fulfilment status or search, select one to see its items, totals and a fulfilment tracker, and advance it one step at a time. Stacks to one column when its container is narrower than 768px."
+    },
+    {
+      "name": "pnl-overview",
+      "title": "P&L overview",
+      "kind": "block",
+      "group": "Finance",
+      "description": "A full-width profit-and-loss section; revenue, expenses and net margin for a period against the previous one, plus expenses by category as proportional bars. Pure display; all money is integer minor units."
+    },
+    {
+      "name": "product-catalog",
+      "title": "Product catalog",
+      "kind": "block",
+      "group": "Commerce",
+      "description": "A full-width or 2/3-width section listing products as a grid or a table-like list with search, stock level bars and an edit button per product; the grid reflows by container width."
+    },
+    {
+      "name": "revenue-overview",
+      "title": "Revenue overview",
+      "kind": "block",
+      "group": "Commerce",
+      "description": "A full-width section with revenue, orders, average order value and conversion for the chosen window, each compared with the window before it, above a daily revenue bar chart."
+    },
+    {
+      "name": "run-trace",
+      "title": "Run trace",
+      "kind": "block",
+      "group": "Agents",
+      "description": "A full-width section for one agent run: a header with status, duration and cost, the ordered steps (reasoning, tool calls, final output) with a kind filter, and a waterfall of where the time went."
+    },
+    {
+      "name": "sales-kpi-row",
+      "title": "Sales KPI row",
+      "kind": "block",
+      "group": "CRM",
+      "description": "Four stat cards (revenue, win rate, pipeline, sales cycle length) with period trends; a full-width row that is 4 across when its container is wide, 2 by 2 when medium, stacked when narrow."
+    },
+    {
+      "name": "sales-today",
+      "title": "Sales today",
+      "kind": "block",
+      "group": "CRM",
+      "description": "A half-width card with today's calls, meetings, emails and tasks as a checklist; ticking one off updates the \"done of total\" progress."
+    },
+    {
+      "name": "shipment-tracking",
+      "title": "Shipment tracking",
+      "kind": "block",
+      "group": "Commerce",
+      "description": "A full-width or 1/2-width section listing shipments with carrier, ETA and an exceptions filter; the selected shipment shows its carrier scan steps and any delivery exception with an action."
+    },
+    {
+      "name": "treasury-overview",
+      "title": "Treasury overview",
+      "kind": "block",
+      "group": "Finance",
+      "description": "A 1/2-width card (or full width) showing cash across accounts, runway in months from the monthly burn, and inflows against outflows for recent months as paired bars. Display only; money is integer minor units."
+    },
+    {
+      "name": "data-pipelines",
+      "title": "Data pipelines",
+      "kind": "template",
+      "group": "Templates",
+      "description": "Conduit, a fictional ELT observability product. Overview shows rows loaded, spend, freshness and the nightly run; Connectors adds health and failed syncs; Quality adds data tests."
+    },
+    {
+      "name": "dev-tools",
+      "title": "Dev tools",
+      "kind": "template",
+      "group": "Templates",
+      "description": "Forge, an engineering-productivity app. Overview shows DORA, build health, CI minutes, deploys and the release gate; Quality shows flaky tests, review queue and production errors."
+    },
+    {
+      "name": "devops",
+      "title": "DevOps",
+      "kind": "template",
+      "group": "Templates",
+      "description": "Pulsegrid, a fictional SRE monitoring app with an Overview dashboard and a Services view, built from the devops blocks."
+    },
+    {
+      "name": "llm-ops",
+      "title": "LLM ops",
+      "kind": "template",
+      "group": "Templates",
+      "description": "Plumb, a fictional LLM observability product, with an Overview of runs, spend, evals and latency and a Reliability view of provider health, latency and caching."
+    },
+    {
+      "name": "stacks-agents",
+      "title": "Agents",
+      "kind": "template",
+      "group": "Templates",
+      "description": "An operations app for an AI-agent fleet, with the fleet overview, a full run trace, and an approvals inbox, switched from the sidebar."
+    },
+    {
+      "name": "stacks-assist",
+      "title": "Assistant",
+      "kind": "template",
+      "group": "Templates",
+      "description": "An AI assistant product screen. Navigation switches between Home, New chat, a Chat thread, a cited Answer and the Knowledge sources manager."
+    },
+    {
+      "name": "stacks-books",
+      "title": "Books",
+      "kind": "template",
+      "group": "Templates",
+      "description": "A small-business accounting screen with an Overview (profit and loss beside treasury) and an Invoices workspace, switched from the sidebar."
+    },
+    {
+      "name": "stacks-crm",
+      "title": "CRM",
+      "kind": "template",
+      "group": "Templates",
+      "description": "A sales CRM screen for the fictional Orchard product. Overview combines KPIs, today's work, deals closing soon and the pipeline; Pipeline and Contacts are focused views."
+    },
+    {
+      "name": "stacks-crypto",
+      "title": "Crypto",
+      "kind": "template",
+      "group": "Templates",
+      "description": "A digital-asset portfolio screen with invented assets; Portfolio (balance, value chart, activity, reserves) and Markets (candles, watchlist, swap form) views. Display only; Swap reports a request through a callback."
+    },
+    {
+      "name": "stacks-shop",
+      "title": "Shop",
+      "kind": "template",
+      "group": "Templates",
+      "description": "An e-commerce admin template for a fictional store; Overview shows revenue and shipments, Orders, Products and Shipments each give their block the full screen."
+    },
+    {
+      "name": "theme",
+      "title": "Theme",
+      "kind": "theme",
+      "group": "Theme",
+      "description": "Colour, surface, shadow and series tokens for light and dark mode, mapped to Tailwind utilities like bg-surface and text-fg-muted."
+    }
+  ]
+}

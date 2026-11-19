@@ -1,0 +1,20 @@
+{
+  "name": "mini-prompt",
+  "title": "Mini prompt",
+  "kind": "component",
+  "group": "AI chat",
+  "description": "A compact single-line pill for quick asks inside toolbars and cards; Enter sends, Escape clears.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/mini-prompt.tsx",
+      "content": "\"use client\";\n\nimport { ArrowUp, Sparkles } from \"lucide-react\";\nimport { useState, useSyncExternalStore, type FormEvent } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\n\n/* Mini prompt: a compact single-line pill for quick asks inside toolbars and cards; Enter sends, Escape clears. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\nconst spring = { type: \"spring\", stiffness: 480, damping: 34 } as const;\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nexport interface MiniPromptProps {\n  value?: string;\n  defaultValue?: string;\n  onValueChange?: (value: string) => void;\n  onSubmit?: (text: string) => void;\n  placeholder?: string;\n  disabled?: boolean;\n  className?: string;\n}\n\nexport function MiniPrompt({ value: valueProp, defaultValue = \"\", onValueChange, onSubmit, placeholder = \"Ask AI\", disabled = false, className = \"\" }: MiniPromptProps) {\n  const reduce = useReduce();\n  const [inner, setInner] = useState(defaultValue);\n  const value = valueProp ?? inner;\n  const change = (next: string) => {\n    if (valueProp === undefined) setInner(next);\n    onValueChange?.(next);\n  };\n  const submit = (e: FormEvent) => {\n    e.preventDefault();\n    const text = value.trim();\n    if (!text || disabled) return;\n    onSubmit?.(text);\n    change(\"\");\n  };\n  return (\n    <motion.form initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={spring} onSubmit={submit} className={`flex h-10 w-full max-w-sm items-center gap-2 rounded-full bg-surface pl-3.5 pr-1.5 shadow-[var(--shadow-card)] transition-shadow duration-200 focus-within:shadow-[var(--shadow-card),0_0_0_3px_var(--select-soft)] ${disabled ? \"opacity-60\" : \"\"} ${className}`}>\n      <Sparkles size={15} className=\"shrink-0 text-select-text\" aria-hidden />\n      <input\n        type=\"text\"\n        value={value}\n        disabled={disabled}\n        placeholder={placeholder}\n        aria-label={placeholder}\n        onChange={(e) => change(e.target.value)}\n        onKeyDown={(e) => { if (e.key === \"Escape\") change(\"\"); }}\n        className=\"min-w-0 flex-1 bg-transparent text-sm text-fg outline-none placeholder:text-fg-subtle\"\n      />\n      <motion.button type=\"submit\" disabled={disabled || !value.trim()} aria-label=\"Send\" whileTap={reduce ? undefined : { scale: 0.9 }} animate={{ scale: reduce || value.trim() ? 1 : 0.92 }} transition={spring} className={`grid size-7 shrink-0 place-items-center rounded-full bg-[image:var(--grad-primary)] text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)] disabled:opacity-30 ${ring}`}>\n        <ArrowUp size={14} strokeWidth={2.25} aria-hidden />\n      </motion.button>\n    </motion.form>\n  );\n}\n"
+    }
+  ]
+}

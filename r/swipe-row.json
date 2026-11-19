@@ -1,0 +1,19 @@
+{
+  "name": "swipe-row",
+  "title": "Swipe row",
+  "kind": "component",
+  "group": "Data display",
+  "description": "A list row that slides left on drag to reveal action buttons; it snaps open or closed by distance and velocity, and Arrow keys or Escape do the same from the keyboard.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/swipe-row.tsx",
+      "content": "\"use client\";\n\nimport { useState, type KeyboardEvent, type ReactNode } from \"react\";\nimport { motion, useReducedMotion, type PanInfo } from \"motion/react\";\n\n/* SwipeRow: a list row that slides left on drag to reveal action buttons; it snaps open or closed by distance and velocity, and Arrow keys or Escape do the same from the keyboard. */\n\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-inset\";\n\n/** Whether a drag that ended at `offset` (negative = left) with `velocity` should settle open. */\nexport function shouldOpen(offset: number, velocity: number, revealWidth: number): boolean {\n  if (velocity < -500) return true;\n  if (velocity > 500) return false;\n  return offset < -revealWidth / 2;\n}\n\nexport interface SwipeAction {\n  id: string;\n  label: string;\n  tone?: \"neutral\" | \"danger\";\n  onSelect: () => void;\n}\n\nexport interface SwipeRowProps {\n  children: ReactNode;\n  actions: readonly SwipeAction[];\n  /** Width of each action button. */\n  actionWidth?: number;\n  onOpenChange?: (open: boolean) => void;\n  className?: string;\n}\n\nexport function SwipeRow({ children, actions, actionWidth = 80, onOpenChange, className = \"\" }: SwipeRowProps) {\n  const reduce = Boolean(useReducedMotion());\n  const [open, setOpen] = useState(false);\n  const reveal = actions.length * actionWidth;\n\n  const set = (next: boolean) => {\n    setOpen(next);\n    onOpenChange?.(next);\n  };\n  const onDragEnd = (_: unknown, info: PanInfo) => set(shouldOpen(info.offset.x + (open ? -reveal : 0), info.velocity.x, reveal));\n  const onKey = (e: KeyboardEvent) => {\n    if (e.key === \"ArrowLeft\") set(true);\n    else if (e.key === \"ArrowRight\" || e.key === \"Escape\") set(false);\n    else return;\n    e.preventDefault();\n  };\n\n  return (\n    <div className={`relative overflow-hidden rounded-[16px] bg-subtle ${className}`}>\n      <div className=\"absolute inset-y-0 right-0 flex\" style={{ width: reveal }}>\n        {actions.map((a) => (\n          <button\n            key={a.id}\n            type=\"button\"\n            tabIndex={open ? 0 : -1}\n            onClick={() => { a.onSelect(); set(false); }}\n            style={{ width: actionWidth }}\n            className={`text-[13px] font-medium ${ring} ${a.tone === \"danger\" ? \"bg-danger-solid text-white\" : \"bg-track-strong text-fg\"}`}\n          >\n            {a.label}\n          </button>\n        ))}\n      </div>\n      <motion.div\n        role=\"group\"\n        tabIndex={0}\n        aria-label=\"Row, swipe left for actions\"\n        aria-expanded={open}\n        drag={reduce ? false : \"x\"}\n        dragConstraints={{ left: -reveal, right: 0 }}\n        dragElastic={0.08}\n        animate={{ x: open ? -reveal : 0 }}\n        transition={reduce ? { duration: 0 } : { type: \"spring\", stiffness: 500, damping: 34 }}\n        onDragEnd={onDragEnd}\n        onKeyDown={onKey}\n        className={`relative bg-surface px-4 py-3 shadow-[var(--shadow-card)] ${ring}`}\n      >\n        {children}\n      </motion.div>\n    </div>\n  );\n}\n"
+    }
+  ]
+}

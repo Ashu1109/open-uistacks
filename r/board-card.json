@@ -1,0 +1,20 @@
+{
+  "name": "board-card",
+  "title": "Board card",
+  "kind": "component",
+  "group": "Collaboration",
+  "description": "The compact work item shown on a kanban board, with labels, title, due date, comment count and an assignee avatar.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [
+    "lucide-react@^1.75.0",
+    "motion@^14.14.0"
+  ],
+  "requires": [],
+  "files": [
+    {
+      "path": "ui/board-card.tsx",
+      "content": "\"use client\";\n\nimport { useSyncExternalStore } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\nimport { Calendar, MessageSquare } from \"lucide-react\";\n\n/* Board card: the compact work item shown on a kanban board, with labels, title, due date, comment count and an assignee avatar. */\n\nconst noSubscribe = () => () => {};\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport type LabelTone = \"neutral\" | \"info\" | \"success\" | \"warning\" | \"danger\";\n\nconst TONE: Record<LabelTone, string> = {\n  neutral: \"bg-subtle text-fg-muted\",\n  info: \"bg-select-soft text-select-text\",\n  success: \"bg-success-soft text-success-text\",\n  warning: \"bg-warning-soft text-warning-text\",\n  danger: \"bg-danger-soft text-danger-text\",\n};\n\nexport interface BoardCardLabel {\n  text: string;\n  tone?: LabelTone;\n}\n\nexport interface BoardCardProps {\n  title: string;\n  labels?: BoardCardLabel[];\n  assignee?: string;\n  /** Short display text such as \"Nov 24\". */\n  due?: string;\n  overdue?: boolean;\n  comments?: number;\n  /** Renders the title as a button when given. */\n  onOpen?: () => void;\n  className?: string;\n}\n\nexport function initials(name: string): string {\n  return name.split(/\\s+/).filter(Boolean).slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join(\"\");\n}\n\nexport function BoardCard({ title, labels, assignee, due, overdue, comments, onOpen, className = \"\" }: BoardCardProps) {\n  const reduce = useReduce();\n  const heading = onOpen ? (\n    <button type=\"button\" onClick={onOpen} className=\"text-left outline-none focus-visible:underline\">{title}</button>\n  ) : title;\n  return (\n    <motion.div\n      whileHover={reduce ? undefined : { y: -2 }}\n      transition={{ type: \"spring\", stiffness: 520, damping: 34 }}\n      className={`grid gap-2.5 rounded-[14px] bg-surface p-3 shadow-[var(--shadow-card)] transition-shadow duration-150 hover:shadow-[0_6px_18px_-8px_color-mix(in_srgb,var(--fg)_30%,transparent)] dark:bg-raised ${className}`}\n    >\n      {labels && labels.length > 0 && (\n        <ul aria-label=\"Labels\" className=\"flex flex-wrap gap-1\">\n          {labels.map((l) => <li key={l.text} className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${TONE[l.tone ?? \"neutral\"]}`}>{l.text}</li>)}\n        </ul>\n      )}\n      <p className=\"text-sm font-medium leading-5 text-fg\">{heading}</p>\n      <div className=\"flex items-center gap-3 text-xs text-fg-muted\">\n        {due && (\n          <span className={`flex items-center gap-1 ${overdue ? \"text-danger-text\" : \"\"}`}>\n            <Calendar size={13} aria-hidden /> <span className=\"sr-only\">{overdue ? \"Overdue, due\" : \"Due\"}</span>{due}\n          </span>\n        )}\n        {comments !== undefined && comments > 0 && (\n          <span className=\"flex items-center gap-1\"><MessageSquare size={13} aria-hidden /> <span className=\"sr-only\">Comments </span>{comments}</span>\n        )}\n        {assignee && (\n          <span title={assignee} className=\"ml-auto grid size-6 place-items-center rounded-full bg-select-soft text-[10px] font-medium text-select-text\">\n            <span aria-hidden>{initials(assignee)}</span>\n            <span className=\"sr-only\">Assigned to {assignee}</span>\n          </span>\n        )}\n      </div>\n    </motion.div>\n  );\n}\n"
+    }
+  ]
+}

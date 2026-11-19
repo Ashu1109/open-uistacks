@@ -1,0 +1,19 @@
+{
+  "name": "dot-field",
+  "title": "Dot field",
+  "kind": "component",
+  "group": "Effects",
+  "description": "A canvas grid of dots that shimmer slowly and get pushed away and enlarged by the pointer; it pauses off-screen and draws a still grid under reduced motion.",
+  "license": "MIT",
+  "author": "open-uistacks",
+  "dependencies": [],
+  "requires": [
+    "ascii-field"
+  ],
+  "files": [
+    {
+      "path": "ui/dot-field.tsx",
+      "content": "\"use client\";\n\nimport { useEffect, useRef } from \"react\";\nimport { useFrameLoop } from \"./ascii-field\";\n\n/* Dot field: a canvas grid of dots that shimmer slowly and get pushed away and enlarged by the pointer; it pauses off-screen and draws a still grid under reduced motion. */\n\nexport interface DotOffset {\n  x: number;\n  y: number;\n  scale: number;\n}\n\n/** Push and growth of a dot at (dx, dy) from the pointer: nothing beyond `radius`, strongest at the center. */\nexport function dotDisplacement(dx: number, dy: number, radius: number, strength = 14): DotOffset {\n  const dist = Math.hypot(dx, dy);\n  if (dist >= radius) return { x: 0, y: 0, scale: 1 };\n  const falloff = (1 - dist / radius) ** 2;\n  const push = dist === 0 ? 0 : (falloff * strength) / dist;\n  return { x: dx * push, y: dy * push, scale: 1 + falloff * 1.2 };\n}\n\nexport interface DotFieldProps {\n  /** Distance between dots in px. */\n  spacing?: number;\n  /** Dot radius in px. */\n  dotSize?: number;\n  /** Pointer influence radius in px. */\n  radius?: number;\n  className?: string;\n}\n\nexport function DotField({ spacing = 22, dotSize = 1.6, radius = 110, className = \"\" }: DotFieldProps) {\n  const canvas = useRef<HTMLCanvasElement>(null);\n  const size = useRef({ width: 0, height: 0, dpr: 1 });\n  const pointer = useRef<{ x: number; y: number } | null>(null);\n\n  const redraw = useFrameLoop(canvas, (t) => {\n    const el = canvas.current;\n    const ctx = el?.getContext(\"2d\");\n    if (!el || !ctx) return;\n    const { width, height, dpr } = size.current;\n    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);\n    ctx.clearRect(0, 0, width, height);\n    ctx.fillStyle = getComputedStyle(el).color;\n    const p = pointer.current;\n    for (let y = spacing / 2; y < height; y += spacing)\n      for (let x = spacing / 2; x < width; x += spacing) {\n        const shimmer = 0.75 + 0.25 * Math.sin(x * 0.03 + y * 0.02 + t * 0.002);\n        const d = p ? dotDisplacement(x - p.x, y - p.y, radius) : { x: 0, y: 0, scale: 1 };\n        ctx.globalAlpha = Math.min(1, shimmer * (0.45 + (d.scale - 1) * 0.6));\n        ctx.beginPath();\n        ctx.arc(x + d.x, y + d.y, dotSize * d.scale, 0, Math.PI * 2);\n        ctx.fill();\n      }\n  });\n\n  useEffect(() => {\n    const el = canvas.current;\n    if (!el || typeof ResizeObserver === \"undefined\") return;\n    const observer = new ResizeObserver(([entry]) => {\n      if (!entry) return;\n      const dpr = window.devicePixelRatio || 1;\n      const { width, height } = entry.contentRect;\n      el.width = Math.round(width * dpr);\n      el.height = Math.round(height * dpr);\n      size.current = { width, height, dpr };\n      redraw();\n    });\n    observer.observe(el);\n    return () => observer.disconnect();\n  }, [redraw]);\n\n  return (\n    <canvas\n      ref={canvas}\n      aria-hidden\n      className={`block h-full min-h-32 w-full text-fg-subtle ${className}`}\n      onPointerMove={(e) => {\n        const rect = e.currentTarget.getBoundingClientRect();\n        pointer.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };\n        redraw();\n      }}\n      onPointerLeave={() => {\n        pointer.current = null;\n        redraw();\n      }}\n    />\n  );\n}\n"
+    }
+  ]
+}

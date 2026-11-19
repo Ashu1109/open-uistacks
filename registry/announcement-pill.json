@@ -1,0 +1,54 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "announcement-pill",
+  "type": "registry:ui",
+  "title": "Announcement pill",
+  "description": "The small pill above a hero with a dark New tag and an arrow; change the line and the old one rolls up while the pill eases to the new width.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "marketing"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/announcement-pill",
+  "files": [
+    {
+      "path": "registry/ui/announcement-pill.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useLayoutEffect, useRef, useState, useSyncExternalStore, type MouseEvent, type ReactNode } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { ArrowRight } from \"lucide-react\";\n\nexport interface AnnouncementPillProps {\n  /** The announcement line. When it changes (a string), the old line rolls up and the pill eases to the new width. */\n  children: ReactNode;\n  /** The dark tag before the line, e.g. \"New\" or \"Beta\". `false` hides it. */\n  tag?: ReactNode | false;\n  /** Renders a link; without it the pill is a button (with `onClick`) or plain text. */\n  href?: string;\n  target?: string;\n  rel?: string;\n  onClick?: (event: MouseEvent<HTMLElement>) => void;\n  /** Hide the trailing arrow. */\n  arrow?: boolean;\n  \"aria-label\"?: string;\n  className?: string;\n}\n\nconst spring = { type: \"spring\", stiffness: 420, damping: 34 } as const;\nconst focusRing = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n\nconst noSubscribe = () => () => {};\n\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst keyOf = (node: ReactNode, fallback: string) => (typeof node === \"string\" || typeof node === \"number\" ? String(node) : fallback);\n\n/**\n * Rolls its content when `rollKey` changes: the old copy rises out, the new one rises in, and the clipped box springs\n * to the new width (it follows an invisible copy of the current content). While it rolls the text is clipped, not\n * ellipsized, so a longer line never shows \"\u2026\" while the box catches up; once settled, `truncate` covers a pill held\n * narrower by its max width.\n */\nfunction Roll({ children, rollKey, reduce, className, truncate = false }: { children: ReactNode; rollKey: string; reduce: boolean; className: string; truncate?: boolean }) {\n  const sizer = useRef<HTMLSpanElement>(null);\n  const [width, setWidth] = useState<number | null>(null);\n  const [rolling, setRolling] = useState(false);\n\n  useLayoutEffect(() => {\n    const el = sizer.current;\n    if (!el) return;\n    // Rounded up, so a fractional text width never leaves the settled line a hair short (and ellipsized). The computed\n    // width is the layout width, so a scale transform on an ancestor (a zoomed modal, a scaled card) doesn't shrink it.\n    const measure = () => setWidth(Math.ceil(parseFloat(getComputedStyle(el).width) || 0));\n    measure();\n    const ro = new ResizeObserver(measure);\n    ro.observe(el);\n    return () => ro.disconnect();\n  }, [rollKey]);\n\n  return (\n    <motion.span\n      className=\"relative block min-w-0 overflow-hidden\"\n      initial={false}\n      animate={width === null ? undefined : { width }}\n      transition={reduce ? { duration: 0 } : spring}\n      onAnimationStart={() => setRolling(true)}\n      onAnimationComplete={() => setRolling(false)}\n    >\n      <span ref={sizer} aria-hidden className={`invisible absolute left-0 top-0 whitespace-nowrap ${className}`}>\n        {children}\n      </span>\n      <AnimatePresence mode=\"popLayout\" initial={false}>\n        <motion.span\n          key={rollKey}\n          className={`block whitespace-nowrap ${truncate && !rolling ? \"truncate\" : \"\"} ${className}`}\n          initial={reduce ? { opacity: 0 } : { opacity: 0, y: 12 }}\n          animate={{ opacity: 1, y: 0 }}\n          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}\n          transition={reduce ? { duration: 0.15 } : spring}\n        >\n          {children}\n        </motion.span>\n      </AnimatePresence>\n    </motion.span>\n  );\n}\n\nexport function AnnouncementPill({ children, tag = \"New\", href, target, rel, onClick, arrow = true, className = \"\", ...aria }: AnnouncementPillProps) {\n  const reduce = useReduce();\n\n  const interactive = Boolean(href || onClick);\n  const base = `group relative inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-surface py-1 pl-1 pr-3 text-fg ${tag === false ? \"pl-3\" : \"\"} ${\n    interactive ? `transition-colors hover:bg-subtle dark:hover:bg-raised motion-safe:active:scale-[0.98] ${focusRing}` : \"\"\n  } ${className}`;\n\n  const inner = (\n    <>\n      {/* The tag rolls with the line, so the pill's left part eases to its new width instead of snapping. */}\n      {tag !== false && (\n        <span className=\"shrink-0 rounded-full bg-[var(--inverse)] px-2 py-0.5 text-[var(--inverse-fg)]\">\n          <Roll rollKey={keyOf(tag, \"tag\")} reduce={reduce} className=\"text-[12px] font-medium leading-4\">\n            {tag}\n          </Roll>\n        </span>\n      )}\n      <Roll rollKey={keyOf(children, \"line\")} reduce={reduce} truncate className=\"text-[13px] font-medium leading-5 tracking-[-0.003em]\">\n        {children}\n      </Roll>\n      {arrow && (\n        <ArrowRight\n          size={16}\n          strokeWidth={1.5}\n          aria-hidden\n          className=\"shrink-0 text-fg-muted transition-transform duration-200 group-hover:text-fg motion-safe:group-hover:translate-x-0.5\"\n        />\n      )}\n    </>\n  );\n\n  const enter = {\n    initial: reduce ? { opacity: 0 } : { opacity: 0, y: -6 },\n    animate: { opacity: 1, y: 0 },\n    transition: reduce ? { duration: 0.2 } : spring,\n  };\n\n  if (href)\n    return (\n      <motion.a {...enter} href={href} target={target} rel={rel ?? (target === \"_blank\" ? \"noreferrer\" : undefined)} onClick={onClick} className={base} {...aria}>\n        {inner}\n        {target === \"_blank\" && <span className=\"sr-only\"> (opens in a new tab)</span>}\n      </motion.a>\n    );\n  if (onClick)\n    return (\n      <motion.button {...enter} type=\"button\" onClick={onClick} className={base} {...aria}>\n        {inner}\n      </motion.button>\n    );\n  return (\n    <motion.p {...enter} className={base} {...aria}>\n      {inner}\n    </motion.p>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-surface": "var(--surface)",
+      "color-raised": "var(--raised)",
+      "color-subtle": "var(--subtle)"
+    },
+    "light": {
+      "bg": "#ffffff",
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "surface": "#ffffff",
+      "raised": "#ffffff",
+      "subtle": "#f4f4f5",
+      "select": "#1e6af1",
+      "inverse": "#2b2b30",
+      "inverse-fg": "#ffffff"
+    },
+    "dark": {
+      "bg": "#1a1a1a",
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "surface": "#292929",
+      "raised": "#333333",
+      "subtle": "#1f1f1f",
+      "select": "#216ef4",
+      "inverse": "#e9e9ec",
+      "inverse-fg": "#0a0a0a"
+    }
+  }
+}

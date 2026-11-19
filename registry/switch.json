@@ -1,0 +1,43 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch",
+  "type": "registry:ui",
+  "title": "Switch",
+  "description": "An on/off setting that applies at once. The thumb springs across, and the label sits on either side.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "motion"
+  ],
+  "categories": [
+    "choice"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/switch",
+  "files": [
+    {
+      "path": "registry/ui/switch.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useId, useState, useSyncExternalStore, type ComponentProps, type ReactNode } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\nconst noSubscribe = () => () => {};\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport interface SwitchProps extends Omit<ComponentProps<\"button\">, \"type\" | \"role\" | \"value\" | \"defaultValue\"> {\n  checked?: boolean;\n  defaultChecked?: boolean;\n  onCheckedChange?: (checked: boolean) => void;\n  size?: \"md\" | \"sm\";\n  /** Which side the label sits on. \"left\" stretches the row: label left, switch right. */\n  side?: \"right\" | \"left\";\n  label?: ReactNode;\n  description?: ReactNode;\n  /** Class for the row that holds the switch and its text. */\n  className?: string;\n}\n\nconst spring = { type: \"spring\", stiffness: 520, damping: 34 } as const;\n\nexport function Switch({\n  checked,\n  defaultChecked = false,\n  onCheckedChange,\n  size = \"md\",\n  side = \"right\",\n  label,\n  description,\n  className = \"\",\n  id,\n  disabled,\n  onClick,\n  \"aria-describedby\": describedBy,\n  ...rest\n}: SwitchProps) {\n  const autoId = useId();\n  const switchId = id ?? autoId;\n  const descId = `${switchId}-description`;\n  const [own, setOwn] = useState(defaultChecked);\n  const on = checked ?? own;\n  const reduce = useReduce();\n  const md = size === \"md\";\n\n  const control = (\n    <span className=\"flex h-5 shrink-0 items-center\">\n      <button\n        id={switchId}\n        type=\"button\"\n        role=\"switch\"\n        aria-checked={on}\n        // A fallback name when no label, aria-label or aria-labelledby is given (rest overrides it).\n        aria-label={label ? undefined : \"Toggle\"}\n        aria-describedby={[describedBy, description ? descId : undefined].filter(Boolean).join(\" \") || undefined}\n        disabled={disabled}\n        onClick={(e) => {\n          onClick?.(e);\n          if (e.defaultPrevented) return;\n          if (checked === undefined) setOwn(!on);\n          onCheckedChange?.(!on);\n        }}\n        className={`flex shrink-0 items-center rounded-full p-0.5 transition-colors duration-150 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] ${\n          md ? \"h-5 w-9\" : \"h-4 w-7\"\n        } ${on ? \"bg-select enabled:hover:bg-[color-mix(in_oklab,var(--select)_88%,white)]\" : \"bg-[var(--track-strong)] enabled:hover:bg-[color-mix(in_oklab,var(--track-strong)_86%,var(--fg))]\"}`}\n        {...rest}\n      >\n        <motion.span\n          aria-hidden\n          className={`block rounded-full bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_1px_2px_rgb(0_0_0/0.14),0_2px_6px_-2px_rgb(0_0_0/0.12)] ${md ? \"size-4\" : \"size-3\"}`}\n          initial={false}\n          animate={{ x: on ? (md ? 16 : 12) : 0 }}\n          transition={reduce ? { duration: 0 } : spring}\n        />\n      </button>\n    </span>\n  );\n\n  if (!label && !description) return <span className={`inline-flex ${disabled ? \"opacity-50\" : \"\"} ${className}`}>{control}</span>;\n\n  const text = (\n    <span className={`flex min-w-0 flex-col gap-0.5 ${side === \"left\" ? (md ? \"pr-2.5\" : \"pr-2\") : md ? \"pl-2.5\" : \"pl-2\"}`}>\n      {label && (\n        <label htmlFor={switchId} className={`w-fit text-fg ${md ? \"text-sm leading-5\" : \"text-[13px] leading-5\"} ${disabled ? \"cursor-not-allowed\" : \"cursor-pointer\"}`}>\n          {label}\n        </label>\n      )}\n      {description && (\n        <span id={descId} className={`max-w-[520px] text-fg-muted ${md ? \"text-[13px] leading-5\" : \"text-xs leading-4\"}`}>\n          {description}\n        </span>\n      )}\n    </span>\n  );\n\n  return (\n    <div className={`items-start ${side === \"left\" ? \"flex w-full justify-between\" : \"inline-flex\"} ${disabled ? \"opacity-50\" : \"\"} ${className}`}>\n      {side === \"left\" ? text : control}\n      {side === \"left\" ? control : text}\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-select": "var(--select)"
+    },
+    "light": {
+      "bg": "#ffffff",
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "track-strong": "#d4d4d8",
+      "select": "#1e6af1"
+    },
+    "dark": {
+      "bg": "#1a1a1a",
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "track-strong": "#484848",
+      "select": "#216ef4"
+    }
+  }
+}

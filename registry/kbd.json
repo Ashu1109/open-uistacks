@@ -1,0 +1,49 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kbd",
+  "type": "registry:ui",
+  "title": "Kbd",
+  "description": "Keycaps for shortcuts and key sequences that sink while the real key is held down.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "motion"
+  ],
+  "categories": [
+    "data-display"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/kbd",
+  "files": [
+    {
+      "path": "registry/ui/kbd.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { Fragment, useSyncExternalStore, type ComponentProps, type ReactNode } from \"react\";\nimport { motion, useReducedMotion } from \"motion/react\";\n\nconst noSubscribe = () => () => {};\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport type KbdVariant = \"outline\" | \"soft\" | \"inverse\";\nexport type KbdSize = \"sm\" | \"md\";\n\ntype NativeKbd = Omit<ComponentProps<\"kbd\">, \"onAnimationStart\" | \"onAnimationEnd\" | \"onDrag\" | \"onDragStart\" | \"onDragEnd\">;\n\nexport interface KbdProps extends NativeKbd {\n  /** The Figma \"Style\" axis. Inverse sits on dark fills: a Primary button, a tooltip. */\n  variant?: KbdVariant;\n  /** 20 or 22 px tall. */\n  size?: KbdSize;\n  /** Draws the key held down: it sinks 1 px and darkens. Wire it to real key presses. */\n  pressed?: boolean;\n}\n\nexport interface KbdComboProps extends Omit<ComponentProps<\"kbd\">, \"children\"> {\n  /** The keys in order, e.g. [\"\u2318\", \"K\"]. */\n  keys: string[];\n  variant?: KbdVariant;\n  size?: KbdSize;\n  /** Between keys: nothing for a chord (\u2318 K), or a word for a sequence (G then I). */\n  separator?: ReactNode;\n  /** Labels of the keys to draw held down, e.g. [\"\u2318\"]. */\n  pressed?: string[];\n}\n\n// Symbol keys get a readable name as a tooltip.\nconst NAMES: Record<string, string> = {\n  \"\u2318\": \"Command\",\n  \"\u21e7\": \"Shift\",\n  \"\u2325\": \"Option\",\n  \"\u2303\": \"Control\",\n  \"\u21b5\": \"Enter\",\n  \"\u232b\": \"Backspace\",\n  \"\u21e5\": \"Tab\",\n  \"\u238b\": \"Escape\",\n  \"\u2191\": \"Up arrow\",\n  \"\u2193\": \"Down arrow\",\n  \"\u2190\": \"Left arrow\",\n  \"\u2192\": \"Right arrow\",\n};\n\nconst VARIANTS: Record<KbdVariant, { up: string; down: string }> = {\n  outline: {\n    up: \"bg-surface text-fg-muted shadow-[var(--shadow-hairline),inset_0_-1px_0_var(--edge)]\",\n    down: \"bg-muted text-fg shadow-[var(--shadow-hairline)]\",\n  },\n  soft: { up: \"bg-muted text-fg-muted\", down: \"bg-track text-fg\" },\n  inverse: {\n    up: \"bg-[color-mix(in_srgb,var(--inverse-fg)_18%,var(--inverse))] text-[color:color-mix(in_srgb,var(--inverse-fg)_70%,transparent)]\",\n    down: \"bg-[color-mix(in_srgb,var(--inverse-fg)_30%,var(--inverse))] text-[color:var(--inverse-fg)]\",\n  },\n};\n\nconst SIZES: Record<KbdSize, string> = {\n  sm: \"h-5 min-w-5 px-1 [&_svg]:size-3.5\",\n  md: \"h-[22px] min-w-[22px] px-1.5 [&_svg]:size-4\",\n};\n\nexport function Kbd({ variant = \"outline\", size = \"sm\", pressed = false, title, children, className = \"\", ...rest }: KbdProps) {\n  const reduce = useReduce();\n  const v = VARIANTS[variant];\n  const name = typeof children === \"string\" ? NAMES[children] : undefined;\n  return (\n    <motion.kbd\n      {...rest}\n      title={title ?? name}\n      initial={false}\n      animate={{ y: pressed && !reduce ? 1 : 0 }}\n      transition={{ type: \"spring\", stiffness: 520, damping: 34 }}\n      className={`inline-grid shrink-0 place-items-center rounded-[8px] font-sans text-[12px] font-medium leading-4 transition-[background-color,color,box-shadow] duration-150 ${SIZES[size]} ${pressed ? v.down : v.up} ${className}`}\n    >\n      {/* Symbol keys read as their name (\"Command\"), not the raw glyph. */}\n      {name ? (\n        <>\n          <span aria-hidden>{children}</span>\n          <span className=\"sr-only\">{name}</span>\n        </>\n      ) : (\n        children\n      )}\n    </motion.kbd>\n  );\n}\n\nexport function KbdCombo({ keys, variant = \"outline\", size = \"sm\", separator, pressed = [], className = \"\", ...rest }: KbdComboProps) {\n  return (\n    <kbd {...rest} className={`inline-flex items-center gap-1 font-sans ${className}`}>\n      {keys.map((k, i) => (\n        <Fragment key={`${k}-${i}`}>\n          {i > 0 && separator != null && (\n            <span className={`px-0.5 text-[12px] font-normal ${variant === \"inverse\" ? \"text-[color:color-mix(in_srgb,var(--inverse-fg)_64%,transparent)]\" : \"text-fg-muted\"}`}>{separator}</span>\n          )}\n          <Kbd variant={variant} size={size} pressed={pressed.includes(k)}>\n            {k}\n          </Kbd>\n        </Fragment>\n      ))}\n    </kbd>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-surface": "var(--surface)",
+      "color-track": "var(--track)"
+    },
+    "light": {
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "surface": "#ffffff",
+      "track": "#e4e4e7",
+      "inverse": "#2b2b30",
+      "inverse-fg": "#ffffff",
+      "edge": "#0000000f",
+      "shadow-hairline": "0 0 0 1px var(--edge)"
+    },
+    "dark": {
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "surface": "#292929",
+      "track": "#3b3b3b",
+      "inverse": "#e9e9ec",
+      "inverse-fg": "#0a0a0a",
+      "edge": "#ffffff14"
+    }
+  }
+}

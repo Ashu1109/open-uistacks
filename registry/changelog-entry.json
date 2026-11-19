@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "changelog-entry",
+  "type": "registry:ui",
+  "title": "Changelog entry",
+  "description": "One release of a product changelog: version and date, title, a short paragraph, changes with New, Improved or Fixed outline tags, longer notes behind Read more that open with a smooth height animation, and an optional author.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "marketing"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/changelog-entry",
+  "files": [
+    {
+      "path": "registry/ui/changelog-entry.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useId, useState, useSyncExternalStore, type ReactNode } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { ChevronDown } from \"lucide-react\";\n\nexport type ChangeKind = \"new\" | \"improved\" | \"fixed\";\n\nexport interface ChangeItem {\n  kind: ChangeKind;\n  text: ReactNode;\n}\n\nexport interface ChangelogAuthor {\n  name: string;\n  /** e.g. \"Design engineer\". */\n  role?: string;\n  /** A photo; without it the circle shows the first letter of the name. */\n  avatar?: string;\n}\n\nexport interface ChangelogEntryProps {\n  /** e.g. \"v1.16\". */\n  version: string;\n  /** Shown as written, e.g. \"Nov 12\". Pass `dateTime` for the machine-readable date. */\n  date: string;\n  dateTime?: string;\n  title: ReactNode;\n  /** The short paragraph under the title. */\n  description?: ReactNode;\n  /** The list of changes, each with a New, Improved or Fixed tag. */\n  changes?: ChangeItem[];\n  /** Longer notes behind a \"Read more\" toggle that opens with a smooth height animation. */\n  details?: ReactNode;\n  /** Controlled open state of the details. */\n  open?: boolean;\n  defaultOpen?: boolean;\n  onOpenChange?: (open: boolean) => void;\n  readMoreLabel?: string;\n  readLessLabel?: string;\n  author?: ChangelogAuthor;\n  /** Heading level of the title, to fit the page outline. Default 3. */\n  headingLevel?: 2 | 3 | 4;\n  /** Tag text per kind. */\n  kindLabels?: Partial<Record<ChangeKind, string>>;\n  className?: string;\n}\n\nconst spring = { type: \"spring\", stiffness: 380, damping: 38 } as const;\nconst focusRing = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\nconst outline = \"shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--fg)_14%,transparent)]\";\nconst LABELS: Record<ChangeKind, string> = { new: \"New\", improved: \"Improved\", fixed: \"Fixed\" };\n\nconst noSubscribe = () => () => {};\n\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\n/**\n * One release in a product changelog: version and date, title, a short paragraph, the list of changes with a small\n * outline tag each, optional longer notes behind Read more, and an optional author.\n */\nexport function ChangelogEntry({\n  version,\n  date,\n  dateTime,\n  title,\n  description,\n  changes = [],\n  details,\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  readMoreLabel = \"Read more\",\n  readLessLabel = \"Show less\",\n  author,\n  headingLevel = 3,\n  kindLabels,\n  className = \"\",\n}: ChangelogEntryProps) {\n  const reduce = useReduce();\n  const id = useId();\n  const [own, setOwn] = useState(defaultOpen);\n  const open = openProp ?? own;\n  const setOpen = (v: boolean) => {\n    if (openProp === undefined) setOwn(v);\n    onOpenChange?.(v);\n  };\n  const H = `h${headingLevel}` as \"h2\" | \"h3\" | \"h4\";\n  const labels = { ...LABELS, ...kindLabels };\n\n  return (\n    <article aria-labelledby={`${id}-title`} className={`w-full max-w-[640px] ${className}`}>\n      <p className=\"flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] leading-5 text-fg-muted\">\n        <span className={`rounded-full px-2 py-0.5 font-mono text-[12px] leading-4 text-fg ${outline}`}>{version}</span>\n        <time dateTime={dateTime}>{date}</time>\n      </p>\n      <H id={`${id}-title`} className=\"mt-3 text-balance text-[18px] font-medium leading-6 tracking-[-0.014em] text-fg\">\n        {title}\n      </H>\n      {description && <p className=\"mt-2 text-pretty text-[14px] leading-[22px] text-fg-muted\">{description}</p>}\n\n      {changes.length > 0 && (\n        <ul className=\"mt-4 flex flex-col gap-2.5\">\n          {changes.map((c, i) => (\n            <li key={i} className=\"flex items-start gap-3 text-[14px] leading-[22px] text-fg\">\n              {/* Fixed width, so the change lines start on one edge whatever the tag says. */}\n              <span className={`mt-px inline-flex h-5 w-[76px] shrink-0 items-center justify-center rounded-full text-[12px] font-medium leading-4 text-fg-muted ${outline}`}>\n                {labels[c.kind]}\n              </span>\n              <span className=\"min-w-0 text-pretty\">{c.text}</span>\n            </li>\n          ))}\n        </ul>\n      )}\n\n      {details && (\n        <>\n          <AnimatePresence initial={false}>\n            {open && (\n              <motion.div\n                key=\"details\"\n                id={`${id}-details`}\n                role=\"region\"\n                aria-labelledby={`${id}-toggle`}\n                initial={{ height: 0, opacity: 0 }}\n                animate={{ height: \"auto\", opacity: 1 }}\n                exit={{ height: 0, opacity: 0 }}\n                transition={reduce ? { duration: 0 } : { height: spring, opacity: { duration: 0.2 } }}\n                className=\"overflow-hidden\"\n              >\n                <div className=\"pt-4 text-pretty text-[14px] leading-[22px] text-fg-muted [&_p+p]:mt-3\">{details}</div>\n              </motion.div>\n            )}\n          </AnimatePresence>\n          <button\n            id={`${id}-toggle`}\n            type=\"button\"\n            aria-expanded={open}\n            aria-controls={open ? `${id}-details` : undefined}\n            onClick={() => setOpen(!open)}\n            className={`mt-3 -ml-1 inline-flex h-8 items-center gap-1 rounded-full px-1 text-[14px] font-medium text-fg ${focusRing}`}\n          >\n            {open ? readLessLabel : readMoreLabel}\n            <motion.span initial={false} animate={{ rotate: open ? 180 : 0 }} transition={reduce ? { duration: 0 } : spring} className=\"grid size-4 place-items-center text-fg-muted\">\n              <ChevronDown size={16} strokeWidth={1.5} aria-hidden />\n            </motion.span>\n          </button>\n        </>\n      )}\n\n      {author && (\n        <div className=\"mt-4 flex items-center gap-2.5\">\n          {author.avatar ? (\n            // eslint-disable-next-line @next/next/no-img-element\n            <img src={author.avatar} alt=\"\" width={28} height={28} className=\"size-7 shrink-0 rounded-full object-cover\" />\n          ) : (\n            <span aria-hidden className={`grid size-7 shrink-0 place-items-center rounded-full bg-surface text-[12px] font-medium text-fg ${outline}`}>\n              {author.name.charAt(0).toUpperCase()}\n            </span>\n          )}\n          <p className=\"min-w-0 truncate text-[13px] leading-5\">\n            <span className=\"font-medium text-fg\">{author.name}</span>\n            {author.role && <span className=\"text-fg-muted\"> \u00b7 {author.role}</span>}\n          </p>\n        </div>\n      )}\n    </article>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-surface": "var(--surface)"
+    },
+    "light": {
+      "bg": "#ffffff",
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "surface": "#ffffff",
+      "select": "#1e6af1"
+    },
+    "dark": {
+      "bg": "#1a1a1a",
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "surface": "#292929",
+      "select": "#216ef4"
+    }
+  }
+}

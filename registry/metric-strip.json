@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "metric-strip",
+  "type": "registry:ui",
+  "title": "Metric strip",
+  "description": "A row of big stats with labels and small change lines that count up once when the strip scrolls into view, in tabular figures with hairlines between; four wrap to 2 \u00d7 2 on narrow widths.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "marketing"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/metric-strip",
+  "files": [
+    {
+      "path": "registry/ui/metric-strip.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useEffect, useRef, useSyncExternalStore, type ReactNode } from \"react\";\nimport { animate, useInView, useReducedMotion } from \"motion/react\";\nimport { ArrowDownRight, ArrowUpRight } from \"lucide-react\";\n\nexport interface Metric {\n  /** The number it counts up to. */\n  value: number;\n  label: ReactNode;\n  /** Text before and after the number, e.g. \"$\" and \"K\". */\n  prefix?: string;\n  suffix?: string;\n  /** Digits after the decimal point. Default 0. */\n  decimals?: number;\n  /** A small change line under the label, e.g. \"+12.6% vs last month\". `trend` picks the arrow and colour. */\n  delta?: { text: string; trend?: \"up\" | \"down\" | \"neutral\" };\n}\n\nexport interface MetricStripProps {\n  /** 3 or 4 stats work best; 4 wrap to a 2 \u00d7 2 grid on narrow widths, 3 stack. */\n  metrics: Metric[];\n  /** Count-up length in ms. Default 1400. */\n  duration?: number;\n  /** Shows the final numbers without counting (also under reduced motion). */\n  paused?: boolean;\n  /** An accessible name for the list, e.g. \"UI Stacks in numbers\". */\n  \"aria-label\"?: string;\n  className?: string;\n}\n\nconst noSubscribe = () => () => {};\n\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nconst fmt = (n: number, decimals = 0) => n.toLocaleString(\"en-US\", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });\n\n/** The number itself: counts from 0 once `run` turns true; the screen reader always gets the final value. */\nfunction Count({ m, run, still, duration, delay }: { m: Metric; run: boolean; still: boolean; duration: number; delay: number }) {\n  const ref = useRef<HTMLSpanElement>(null);\n  const final = `${m.prefix ?? \"\"}${fmt(m.value, m.decimals)}${m.suffix ?? \"\"}`;\n\n  useEffect(() => {\n    const el = ref.current;\n    if (!el) return;\n    const paint = (n: number) => (el.textContent = `${m.prefix ?? \"\"}${fmt(n, m.decimals)}${m.suffix ?? \"\"}`);\n    if (still) return void paint(m.value);\n    if (!run) return void paint(0);\n    // Written straight to the DOM, so a count-up never re-renders the strip 60 times a second.\n    const c = animate(0, m.value, { duration: duration / 1000, delay: delay / 1000, ease: [0.16, 1, 0.3, 1], onUpdate: paint });\n    return () => c.stop();\n  }, [run, still, duration, delay, m.value, m.decimals, m.prefix, m.suffix]);\n\n  return (\n    <>\n      <span ref={ref} aria-hidden className=\"tabular-nums\">\n        {final}\n      </span>\n      <span className=\"sr-only\">{final}</span>\n    </>\n  );\n}\n\n/**\n * A row of big stats with a label and an optional change line each. The numbers count up the first time the strip\n * scrolls into view, in tabular figures so nothing jitters; hairlines divide the stats in every layout.\n */\nexport function MetricStrip({ metrics, duration = 1400, paused = false, className = \"\", ...aria }: MetricStripProps) {\n  const reduce = useReduce();\n  const root = useRef<HTMLDListElement>(null);\n  const inView = useInView(root, { once: true, amount: 0.4 });\n  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false);\n  const still = paused || reduce || !mounted;\n  const n = metrics.length;\n  const cols = n >= 4 ? \"grid-cols-1 @[18rem]:grid-cols-2 @3xl:grid-cols-4\" : n === 3 ? \"grid-cols-1 @xl:grid-cols-3\" : n === 2 ? \"grid-cols-1 @[18rem]:grid-cols-2\" : \"grid-cols-1\";\n  // Hairlines per layout: stacked rows get a top line, side-by-side cells a left line (1 \u00d7 4, 2 \u00d7 2 or stacked).\n  const line = (i: number) => {\n    if (i === 0) return \"\";\n    if (n >= 4) return i === 1 ? \"border-t @[18rem]:border-t-0 @[18rem]:border-l\" : i === 3 ? \"border-t @[18rem]:border-l @3xl:border-t-0\" : \"border-t @3xl:border-t-0 @3xl:border-l\";\n    if (n === 3) return \"border-t @xl:border-t-0 @xl:border-l\";\n    return \"border-t @[18rem]:border-t-0 @[18rem]:border-l\";\n  };\n\n  return (\n    <div className={`@container w-full rounded-[20px] shadow-[var(--shadow-card)] ${className}`}>\n      <dl ref={root} {...aria} className={`grid overflow-hidden rounded-[20px] bg-surface ${cols}`}>\n        {metrics.map((m, i) => (\n          <div key={i} className={`flex flex-col border-[color-mix(in_srgb,var(--fg)_9%,transparent)] px-5 py-5 @3xl:px-6 @3xl:py-6 ${line(i)}`}>\n            <dt className=\"order-2 mt-1 text-[14px] leading-5 text-fg-muted\">{m.label}</dt>\n            <dd className=\"order-1 text-[32px] font-medium leading-10 tracking-[-0.03em] text-fg @3xl:text-[36px] @3xl:leading-[44px]\">\n              <Count m={m} run={inView} still={still} duration={duration} delay={i * 90} />\n            </dd>\n            {m.delta && (\n              <dd\n                className={`order-3 mt-2 inline-flex items-center gap-1 text-[13px] leading-5 tabular-nums ${\n                  m.delta.trend === \"up\" ? \"text-success-text\" : m.delta.trend === \"down\" ? \"text-danger-text\" : \"text-fg-muted\"\n                }`}\n              >\n                {m.delta.trend === \"up\" && <ArrowUpRight size={14} strokeWidth={1.5} aria-hidden className=\"shrink-0\" />}\n                {m.delta.trend === \"down\" && <ArrowDownRight size={14} strokeWidth={1.5} aria-hidden className=\"shrink-0\" />}\n                {m.delta.text}\n              </dd>\n            )}\n          </div>\n        ))}\n      </dl>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-surface": "var(--surface)",
+      "color-success-text": "var(--success-text)",
+      "color-danger-text": "var(--danger-text)"
+    },
+    "light": {
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "surface": "#ffffff",
+      "success-text": "#0d7a3d",
+      "danger-text": "#c42f35",
+      "shadow-card": "0 0 0 1px rgb(0 0 0 / 0.115), 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 12px rgb(0 0 0 / 0.05), 0 12px 24px rgb(0 0 0 / 0.05)"
+    },
+    "dark": {
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "surface": "#292929",
+      "success-text": "#a0efc0",
+      "danger-text": "#f06464",
+      "shadow-card": "0 0 0 1px rgb(255 255 255 / 0.15)"
+    }
+  }
+}

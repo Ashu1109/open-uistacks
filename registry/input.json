@@ -1,0 +1,64 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "type": "registry:ui",
+  "title": "Input",
+  "description": "A one-line field with its label, hint and error wired for screen readers, plus an icon, prefix, suffix, a clear button and status icons that pop in.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "text-entry"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/input",
+  "files": [
+    {
+      "path": "registry/ui/input.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useId, useImperativeHandle, useRef, useState, useSyncExternalStore, type ComponentProps, type ReactNode } from \"react\";\nimport { AnimatePresence, motion, useReducedMotion } from \"motion/react\";\nimport { CircleAlert, CircleCheck, X } from \"lucide-react\";\n\nconst noSubscribe = () => () => {};\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport type InputSize = \"sm\" | \"md\" | \"lg\" | \"xl\";\nexport type InputVariant = \"outline\" | \"filled\";\nexport type InputValidation = \"none\" | \"error\" | \"success\";\n\nexport interface InputProps extends Omit<ComponentProps<\"input\">, \"size\" | \"prefix\"> {\n  label?: ReactNode;\n  /** Helper text under the field. An error message takes its place. */\n  hint?: ReactNode;\n  /** Error message under the field. Setting it turns the field red. */\n  error?: ReactNode;\n  /** Mark the field without a message. `error` wins over this. */\n  validation?: InputValidation;\n  /** Outline: surface with a 1 px border. Filled: a grey well that turns white on focus. */\n  variant?: InputVariant;\n  size?: InputSize;\n  /** Icon at the start, sized for you (16 px up to md, 20 px from lg). */\n  leadingIcon?: ReactNode;\n  /** Muted text before the value, e.g. \"$\". */\n  prefix?: ReactNode;\n  /** Muted text after the value, e.g. \"USD\". */\n  suffix?: ReactNode;\n  /** Anything at the end: a shortcut key, a unit picker, a button. */\n  trailing?: ReactNode;\n  /** Show a clear button while the field has a value. */\n  clearable?: boolean;\n  onClear?: () => void;\n  /** Called with the text on every change, and with \"\" on clear. */\n  onValueChange?: (value: string) => void;\n  /** Class for the wrapper that holds the label, the field and the message. */\n  className?: string;\n}\n\nconst spring = { type: \"spring\", stiffness: 520, damping: 34 } as const;\n\n// The status icon steps with the leading icon: 16 px up to md, 20 px from lg.\nconst SIZES: Record<InputSize, { field: string; text: string; icon: string; status: number }> = {\n  sm: { field: \"h-8 gap-2 rounded-[12px] px-2.5\", text: \"text-[13px] leading-5\", icon: \"[&_svg]:size-4\", status: 16 },\n  md: { field: \"h-9 gap-2 rounded-[14px] px-3\", text: \"text-sm leading-5\", icon: \"[&_svg]:size-4\", status: 16 },\n  lg: { field: \"h-10 gap-2 rounded-[14px] px-3\", text: \"text-[15px] leading-[22px]\", icon: \"[&_svg]:size-5\", status: 20 },\n  xl: { field: \"h-12 gap-2.5 rounded-[14px] px-3.5\", text: \"text-base leading-6\", icon: \"[&_svg]:size-5\", status: 20 },\n};\n\nexport function Input({\n  label,\n  hint,\n  error,\n  validation = \"none\",\n  variant = \"outline\",\n  size = \"md\",\n  leadingIcon,\n  prefix,\n  suffix,\n  trailing,\n  clearable = false,\n  onClear,\n  onValueChange,\n  className = \"\",\n  id,\n  ref,\n  value,\n  defaultValue,\n  onChange,\n  disabled,\n  readOnly,\n  \"aria-describedby\": describedBy,\n  ...rest\n}: InputProps) {\n  const autoId = useId();\n  const inputId = id ?? autoId;\n  const msgId = `${inputId}-message`;\n  const okId = `${inputId}-ok`;\n  const inner = useRef<HTMLInputElement>(null);\n  useImperativeHandle(ref, () => inner.current as HTMLInputElement, []);\n  const [own, setOwn] = useState(String(defaultValue ?? \"\"));\n  const current = value !== undefined ? String(value) : own;\n  const reduce = useReduce();\n\n  const state: InputValidation = error ? \"error\" : validation;\n  const message = error || hint;\n  const s = SIZES[size];\n  const interactive = !disabled && !readOnly;\n  const showClear = clearable && interactive && current.length > 0;\n  const pop = reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6 };\n\n  const clear = () => {\n    if (value === undefined) setOwn(\"\");\n    onValueChange?.(\"\");\n    onClear?.();\n    inner.current?.focus();\n  };\n\n  const filled = variant === \"filled\" && !readOnly;\n  const fill = readOnly\n    ? \"bg-subtle\"\n    : filled\n      ? `bg-muted focus-within:bg-surface ${disabled ? \"\" : \"hover:not-focus-within:bg-track\"}`\n      : `bg-surface ${disabled ? \"\" : \"hover:not-focus-within:bg-subtle\"}`;\n  // the 1 px edge: red in error, hidden on a filled field until it has focus\n  const edge =\n    state === \"error\" ? \"shadow-[0_0_0_1px_var(--danger)]\" : filled ? \"focus-within:shadow-[var(--shadow-control)]\" : \"shadow-[var(--shadow-control)]\";\n  const ring = `has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-offset-2 has-[input:focus-visible]:ring-offset-[var(--bg)] ${\n    state === \"error\" ? \"has-[input:focus-visible]:ring-[var(--danger)]\" : \"has-[input:focus-visible]:ring-[var(--select)]\"\n  }`;\n\n  return (\n    <div className={`flex w-full flex-col ${className}`}>\n      {label && (\n        <label htmlFor={inputId} className={`mb-1.5 w-fit font-medium text-fg ${size === \"sm\" ? \"text-[13px] leading-5\" : \"text-sm leading-5\"}`}>\n          {label}\n        </label>\n      )}\n\n      <div\n        className={`flex items-center transition-[background-color,box-shadow] duration-150 ${s.field} ${fill} ${edge} ${ring} ${\n          disabled ? \"cursor-not-allowed opacity-50\" : \"cursor-text\"\n        }`}\n        onMouseDown={(e) => {\n          // a click on the padding or an icon focuses the text\n          if (e.target === e.currentTarget && !disabled) {\n            e.preventDefault();\n            inner.current?.focus();\n          }\n        }}\n      >\n        {leadingIcon && <span className={`pointer-events-none flex shrink-0 text-fg-muted ${s.icon}`}>{leadingIcon}</span>}\n        {prefix && <span className={`pointer-events-none shrink-0 text-fg-subtle ${s.text}`}>{prefix}</span>}\n\n        <input\n          ref={inner}\n          id={inputId}\n          value={current}\n          disabled={disabled}\n          readOnly={readOnly}\n          aria-invalid={state === \"error\" || undefined}\n          aria-describedby={[describedBy, message ? msgId : undefined, state === \"success\" ? okId : undefined].filter(Boolean).join(\" \") || undefined}\n          onChange={(e) => {\n            if (value === undefined) setOwn(e.target.value);\n            onChange?.(e);\n            onValueChange?.(e.target.value);\n          }}\n          className={`h-full min-w-0 flex-1 bg-transparent text-fg outline-none placeholder:text-fg-subtle disabled:cursor-not-allowed ${s.text}`}\n          // No spell-check squiggle under addresses (a spellCheck prop still wins).\n          spellCheck={rest.type === \"email\" || rest.type === \"url\" ? false : undefined}\n          {...rest}\n        />\n\n        {suffix && <span className={`pointer-events-none shrink-0 text-fg-subtle ${s.text}`}>{suffix}</span>}\n\n        <AnimatePresence initial={false} mode=\"popLayout\">\n          {showClear && (\n            <motion.button\n              key=\"clear\"\n              type=\"button\"\n              aria-label=\"Clear\"\n              onClick={clear}\n              initial={pop}\n              animate={{ opacity: 1, scale: 1 }}\n              exit={pop}\n              transition={spring}\n              className=\"grid size-6 shrink-0 place-items-center rounded-full text-fg-subtle transition-colors hover:bg-muted hover:text-fg outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\"\n            >\n              <X size={16} strokeWidth={1.5} />\n            </motion.button>\n          )}\n          {state !== \"none\" && (\n            <motion.span\n              key={state}\n              aria-hidden\n              initial={pop}\n              animate={{ opacity: 1, scale: 1 }}\n              exit={pop}\n              transition={spring}\n              className={`pointer-events-none flex shrink-0 ${state === \"error\" ? \"text-danger\" : \"text-success\"}`}\n            >\n              {state === \"error\" ? <CircleAlert size={s.status} strokeWidth={1.5} /> : <CircleCheck size={s.status} strokeWidth={1.5} />}\n            </motion.span>\n          )}\n        </AnimatePresence>\n\n        {trailing && <span className=\"flex shrink-0 items-center\">{trailing}</span>}\n      </div>\n\n      <AnimatePresence initial={false}>\n        {message && (\n          <motion.div\n            key=\"message\"\n            initial={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}\n            animate={{ opacity: 1, height: \"auto\" }}\n            exit={reduce ? { opacity: 0 } : { opacity: 0, height: 0 }}\n            transition={spring}\n            className=\"overflow-hidden\"\n          >\n            <p id={msgId} className={`pt-1.5 ${size === \"sm\" ? \"text-xs leading-4\" : \"text-[13px] leading-5\"} ${state === \"error\" ? \"text-danger-text\" : \"text-fg-muted\"}`}>\n              {message}\n            </p>\n          </motion.div>\n        )}\n      </AnimatePresence>\n      {/* The success icon is decorative, so the state is also given in words. */}\n      {state === \"success\" && (\n        <span id={okId} className=\"sr-only\">\n          Valid\n        </span>\n      )}\n      {/* Announces an error when it appears (the visible message may already be mounted as a hint). */}\n      <span className=\"sr-only\" role=\"status\" aria-live=\"polite\">\n        {state === \"error\" ? error : null}\n      </span>\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-fg-subtle": "var(--fg-subtle)",
+      "color-surface": "var(--surface)",
+      "color-subtle": "var(--subtle)",
+      "color-track": "var(--track)",
+      "color-success": "var(--success)",
+      "color-danger": "var(--danger)",
+      "color-danger-text": "var(--danger-text)"
+    },
+    "light": {
+      "bg": "#ffffff",
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "fg-subtle": "#67676c",
+      "surface": "#ffffff",
+      "subtle": "#f4f4f5",
+      "track": "#e4e4e7",
+      "success": "#12a150",
+      "danger": "#e5484d",
+      "danger-text": "#c42f35",
+      "select": "#1e6af1",
+      "shadow-control": "0 0 0 1px var(--border)"
+    },
+    "dark": {
+      "bg": "#1a1a1a",
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "fg-subtle": "#929292",
+      "surface": "#292929",
+      "subtle": "#1f1f1f",
+      "track": "#3b3b3b",
+      "success": "#a0efc0",
+      "danger": "#f06464",
+      "danger-text": "#f06464",
+      "select": "#216ef4",
+      "shadow-control": "0 0 0 1px var(--border)"
+    }
+  }
+}

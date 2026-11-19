@@ -1,0 +1,9 @@
+The components in registry/ are the free UI Stacks components (https://uistacks.dev),
+open source under the MIT License, copyright UI Stacks. Keep this notice with them.
+Fetched 2026-11-18 from the official registry: https://uistacks.dev/r/<name>.json
+Pro components are not included: they are licensed separately (https://uistacks.dev/license).
+
+originals/ holds new work written from scratch for this project (not UI Stacks code), built on the same theme tokens:
+211 components in originals/ui/ (one per Pro slug, plus chart-utils.ts), 54 blocks in originals/blocks/ (app-shell first)
+and 10 full-app templates in originals/templates/, with tests next to them. Blocks may import the free components in registry/ui/.
+Run `npm install`, then `npm run dev` (playground, one tab per category and per block family), `npm test`, `npm run build`.

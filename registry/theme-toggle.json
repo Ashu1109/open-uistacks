@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "theme-toggle",
+  "type": "registry:ui",
+  "title": "Theme toggle",
+  "description": "Light or Dark in one small pill: the thumb slides under the mode you pick, its glyph turns upright and the other steps back. Sun and moon icons for a site header or a sidebar, the mode names for a settings row. It only reports the choice, so you apply the theme your way, before first paint, and keep it per device.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "choice"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/theme-toggle",
+  "files": [
+    {
+      "path": "registry/ui/theme-toggle.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode } from \"react\";\nimport { animate, motion, useMotionValue, useReducedMotion, useTransform } from \"motion/react\";\nimport { Moon, Sun } from \"lucide-react\";\n\nconst noSubscribe = () => () => {};\n/** Reduced motion, read only after hydration so the server and the first client render match. */\nfunction useReduce() {\n  const prefers = useReducedMotion();\n  const hydrated = useSyncExternalStore(noSubscribe, () => true, () => false);\n  return hydrated && Boolean(prefers);\n}\n\nexport type ThemeMode = \"light\" | \"dark\";\n\nexport interface ThemeToggleProps {\n  value?: ThemeMode;\n  defaultValue?: ThemeMode;\n  onValueChange?: (mode: ThemeMode) => void;\n  /** Icons only (74 \u00d7 36, for headers and sidebars) or the mode names (138 \u00d7 36, for settings pages). */\n  content?: \"icons\" | \"labels\";\n  /** The names of the two modes: shown with `content=\"labels\"`, and always the radios' accessible names. */\n  lightLabel?: string;\n  darkLabel?: string;\n  /** Swap the 16 px glyphs (Lucide Sun and Moon by default). */\n  lightIcon?: ReactNode;\n  darkIcon?: ReactNode;\n  disabled?: boolean;\n  className?: string;\n  /** Names the group (default \"Theme\"). */\n  \"aria-label\"?: string;\n  \"aria-labelledby\"?: string;\n  /** Ties the group to a note, such as a settings row's hint. */\n  \"aria-describedby\"?: string;\n}\n\n// \"Spring Gentle\" on the kit's 180 ms base: the thumb slides and the picked glyph turns upright.\nconst gentle = { type: \"spring\", visualDuration: 0.18, bounce: 0.18 } as const;\nconst ring = \"outline-none focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]\";\n// The glyph angles (CSS, clockwise) when the mode is not picked: the sun turns back 45\u00b0, the moon tips 30\u00b0 so its\n// opening faces right. Picking a mode turns its glyph upright.\nconst REST = { light: -45, dark: 30 } as const;\n\n/**\n * Light or Dark: two segments on a grey track, one white thumb that slides under the picked mode.\n * It only reports the choice; apply the theme yourself (a `.dark` class, a data attribute, a cookie).\n */\nexport function ThemeToggle({\n  value,\n  defaultValue = \"light\",\n  onValueChange,\n  content = \"icons\",\n  lightLabel = \"Light\",\n  darkLabel = \"Dark\",\n  lightIcon,\n  darkIcon,\n  disabled = false,\n  className = \"\",\n  \"aria-label\": ariaLabel,\n  \"aria-labelledby\": labelledBy,\n  \"aria-describedby\": describedBy,\n}: ThemeToggleProps) {\n  const reduce = useReduce();\n  const [own, setOwn] = useState<ThemeMode>(defaultValue);\n  const mode = value ?? own;\n  const labels = content === \"labels\";\n  const buttons = useRef<(HTMLButtonElement | null)[]>([]);\n\n  // One motion value places the thumb (0 Light, 1 Dark). The segments split the track in two equal columns, so\n  // the thumb's left edge runs from 4 px to half the track plus 1 px (the 2 px gap): true at any width or zoom.\n  const t = useMotionValue(mode === \"dark\" ? 1 : 0);\n  const left = useTransform(t, (v) => `calc(4px + ${v.toFixed(4)} * (50% - 3px))`);\n  useEffect(() => {\n    const to = mode === \"dark\" ? 1 : 0;\n    if (reduce) {\n      t.set(to);\n      return;\n    }\n    const run = animate(t, to, gentle);\n    return () => run.stop();\n  }, [mode, reduce, t]);\n\n  const pick = (next: ThemeMode) => {\n    if (disabled || next === mode) return;\n    if (value === undefined) setOwn(next);\n    onValueChange?.(next);\n  };\n\n  const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {\n    const next: ThemeMode | undefined =\n      e.key === \"ArrowRight\" || e.key === \"ArrowDown\" || e.key === \"End\"\n        ? \"dark\"\n        : e.key === \"ArrowLeft\" || e.key === \"ArrowUp\" || e.key === \"Home\"\n          ? \"light\"\n          : undefined;\n    if (!next) return;\n    e.preventDefault();\n    buttons.current[next === \"light\" ? 0 : 1]?.focus();\n    pick(next);\n  };\n\n  const segments = [\n    { mode: \"light\" as const, label: lightLabel, icon: lightIcon ?? <Sun size={16} strokeWidth={1.5} /> },\n    { mode: \"dark\" as const, label: darkLabel, icon: darkIcon ?? <Moon size={16} strokeWidth={1.5} /> },\n  ];\n\n  return (\n    <div\n      role=\"radiogroup\"\n      aria-label={labelledBy ? undefined : (ariaLabel ?? \"Theme\")}\n      aria-labelledby={labelledBy}\n      aria-describedby={describedBy}\n      aria-disabled={disabled || undefined}\n      className={`relative inline-grid h-9 shrink-0 grid-cols-[1fr_1fr] gap-0.5 rounded-full bg-muted p-1 transition-colors duration-200 ${disabled ? \"opacity-50\" : \"\"} ${className}`}\n    >\n      <motion.span\n        aria-hidden\n        style={{ left, width: \"calc(50% - 5px)\" }}\n        className=\"absolute inset-y-1 rounded-full bg-surface shadow-[inset_0_0_0_1px_var(--border)] transition-colors duration-200 dark:shadow-none\"\n      />\n      {segments.map((s, i) => {\n        const on = s.mode === mode;\n        return (\n          <button\n            key={s.mode}\n            ref={(el) => {\n              buttons.current[i] = el;\n            }}\n            type=\"button\"\n            role=\"radio\"\n            aria-checked={on}\n            aria-label={labels ? undefined : s.label}\n            title={labels ? undefined : s.label}\n            tabIndex={on && !disabled ? 0 : -1}\n            disabled={disabled}\n            onClick={() => pick(s.mode)}\n            onKeyDown={onKeyDown}\n            className={`relative flex h-7 min-w-0 items-center justify-center whitespace-nowrap rounded-full transition-colors duration-200 disabled:cursor-not-allowed ${\n              labels ? \"min-w-16 px-3 text-[13px] font-medium leading-5 tracking-[-0.003em]\" : \"w-8\"\n            } ${on ? \"text-fg\" : labels ? \"text-fg-muted enabled:hover:text-fg\" : \"text-fg-subtle enabled:hover:text-fg\"} ${ring}`}\n          >\n            {labels ? (\n              s.label\n            ) : (\n              <motion.span\n                aria-hidden\n                initial={false}\n                animate={{ rotate: on ? 0 : REST[s.mode] }}\n                transition={reduce ? { duration: 0 } : gentle}\n                className=\"grid size-4 place-items-center [&_svg]:size-4\"\n              >\n                {s.icon}\n              </motion.span>\n            )}\n          </button>\n        );\n      })}\n    </div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-fg-subtle": "var(--fg-subtle)",
+      "color-surface": "var(--surface)"
+    },
+    "light": {
+      "bg": "#ffffff",
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "fg-subtle": "#67676c",
+      "surface": "#ffffff",
+      "select": "#1e6af1"
+    },
+    "dark": {
+      "bg": "#1a1a1a",
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "fg-subtle": "#929292",
+      "surface": "#292929",
+      "select": "#216ef4"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "approval-request",
+  "type": "registry:ui",
+  "title": "Approval request",
+  "description": "Ask a person before an agent acts. Risk level, expiry and details, then Allow once or Deny, with the result animating in place.",
+  "author": "UI Stacks <https://uistacks.dev>",
+  "dependencies": [
+    "lucide-react",
+    "motion"
+  ],
+  "categories": [
+    "ai-agents"
+  ],
+  "docs": "Docs, props and the agent prompt: https://uistacks.dev/components/approval-request",
+  "files": [
+    {
+      "path": "registry/ui/approval-request.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { useEffect, useRef, useState, type ReactNode } from \"react\";\nimport { AnimatePresence, motion } from \"motion/react\";\nimport { CircleAlert, Check, Landmark, ShieldCheck, Timer, TriangleAlert, X } from \"lucide-react\";\n\nexport type ApprovalStatus = \"pending\" | \"approved\" | \"always\" | \"denied\";\n\nexport interface ApprovalRequestProps {\n  /** The agent and the app, above the title. */\n  overline?: string;\n  title: string;\n  description?: string;\n  /** A short red line about what can't be undone (high risk). */\n  warning?: string;\n  risk?: \"low\" | \"high\";\n  /** Shown with a timer under the details while the request is pending, e.g. \"Expires in 9 min\". */\n  expiry?: string;\n  /** `mono` sets the value in the mono face, for a tool name such as `payments.create`. */\n  details?: { label: string; value: string; mono?: boolean }[];\n  icon?: ReactNode;\n  /** Show the \"Always allow\" button. */\n  allowAlways?: boolean;\n  status?: ApprovalStatus;\n  defaultStatus?: ApprovalStatus;\n  onApprove?: (scope: \"once\" | \"always\") => void;\n  onDeny?: () => void;\n  className?: string;\n}\n\nconst spring = { type: \"spring\", stiffness: 420, damping: 34 } as const;\n// Hover and press tint a ::before layer under the label (the kit button language); focus gets the select-blue ring.\nconst btn =\n  \"relative isolate h-9 shrink-0 whitespace-nowrap rounded-full px-3 text-[14px] @[400px]:px-3.5 font-medium outline-none transition active:scale-[0.97] before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-full before:opacity-0 before:transition-opacity focus-visible:ring-2 focus-visible:ring-[var(--select)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--surface)]\";\nconst secondary = `${btn} bg-surface text-fg shadow-[var(--shadow-btn-secondary)] before:bg-fg hover:before:opacity-[0.04] active:before:opacity-[0.08]`;\nconst primary = `${btn} text-[var(--inverse-fg)] shadow-[var(--shadow-btn-primary)] before:bg-[var(--inverse-fg)] hover:before:opacity-[0.08] active:before:opacity-[0.14]`;\n\nexport function ApprovalRequest({\n  overline,\n  title,\n  description,\n  warning,\n  risk = \"low\",\n  expiry,\n  details,\n  icon,\n  allowAlways = true,\n  status: statusProp,\n  defaultStatus = \"pending\",\n  onApprove,\n  onDeny,\n  className = \"\",\n}: ApprovalRequestProps) {\n  const [inner, setInner] = useState<ApprovalStatus>(defaultStatus);\n  const status = statusProp ?? inner;\n  const high = risk === \"high\";\n  const result = status === \"approved\" ? \"Allowed once\" : status === \"always\" ? \"Always allowed for this tool\" : status === \"denied\" ? \"Denied\" : \"\";\n  // The pressed button unmounts with the pending row: focus moves to the result line (only after a click here).\n  const decided = useRef(false);\n  const resultRef = useRef<HTMLDivElement>(null);\n  useEffect(() => {\n    if (!decided.current || status === \"pending\") return;\n    decided.current = false;\n    resultRef.current?.focus();\n  }, [status]);\n\n  const approve = (scope: \"once\" | \"always\") => {\n    decided.current = true;\n    setInner(scope === \"once\" ? \"approved\" : \"always\");\n    onApprove?.(scope);\n  };\n\n  const riskPill = (place: string) => (\n    <span\n      className={`h-7 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-sm ${high ? \"bg-danger-soft text-danger\" : \"bg-muted text-fg-muted\"} ${place}`}\n    >\n      {high ? <TriangleAlert size={16} strokeWidth={1.5} /> : <ShieldCheck size={16} strokeWidth={1.5} />}\n      {high ? \"High risk\" : \"Low risk\"}\n    </span>\n  );\n\n  return (\n    <motion.div\n      layout\n      initial={{ opacity: 0, y: 10, scale: 0.98 }}\n      animate={{ opacity: 1, y: 0, scale: 1 }}\n      transition={spring}\n      className={`@container w-full max-w-[460px] rounded-[20px] bg-surface p-5 shadow-[var(--shadow-card)] ${className}`}\n    >\n      <div className=\"flex items-start gap-3\">\n        <div className={`grid size-10 shrink-0 place-items-center rounded-[14px] ${high ? \"bg-danger-soft text-danger\" : \"bg-surface shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--fg)_10%,transparent)] text-fg\"}`}>\n          {icon ?? <Landmark size={20} strokeWidth={1.5} />}\n        </div>\n        <div className=\"min-w-0 flex-1 pt-0.5\">\n          {overline && <p className=\"text-[13px] font-medium text-fg-muted\">{overline}</p>}\n          <p className=\"mt-0.5 text-[17px] font-medium leading-6 text-fg\">{title}</p>\n          {/* A narrow card moves the risk pill under the title, so the overline and the title keep their words. */}\n          {riskPill(\"mt-2 inline-flex @[400px]:hidden\")}\n        </div>\n        {riskPill(\"mt-2 hidden @[400px]:inline-flex\")}\n      </div>\n\n      {description && <p className=\"mt-3 text-base leading-[26px] text-fg-muted\">{description}</p>}\n\n      {warning && (\n        <div className=\"mt-3 flex items-center gap-2.5 rounded-[14px] bg-danger-soft px-4 py-3 text-[15px] text-danger\">\n          <CircleAlert size={16} strokeWidth={1.5} className=\"shrink-0\" />\n          {warning}\n        </div>\n      )}\n\n      {details && details.length > 0 && (\n        // A narrow card tightens the label column; values wrap rather than cut a payee or an amount.\n        <dl className=\"mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 rounded-[18px] bg-subtle p-4 text-[15px] @[400px]:grid-cols-[minmax(96px,auto)_1fr] @[400px]:gap-x-6\">\n          {details.map((d) => (\n            <div key={d.label} className=\"contents\">\n              <dt className=\"text-fg-muted\">{d.label}</dt>\n              <dd className={`min-w-0 break-words text-fg ${d.mono ? \"font-mono text-[14px]\" : \"\"}`}>{d.value}</dd>\n            </div>\n          ))}\n        </dl>\n      )}\n\n      {/* The expiry is a meta line of its own, so the three buttons always share one row. */}\n      {expiry && status === \"pending\" && (\n        <p className=\"mt-3 flex items-center gap-1 text-[13px] text-fg-muted\">\n          <Timer size={16} strokeWidth={1.5} className=\"shrink-0\" />\n          {expiry}\n        </p>\n      )}\n\n      <div className=\"mt-4 flex min-h-9 items-center gap-3\">\n        <AnimatePresence mode=\"popLayout\" initial={false}>\n          {status === \"pending\" ? (\n            // Deny on the left, the approvals on the right.\n            <motion.div key=\"pending\" className=\"flex w-full items-center gap-1.5\" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={spring}>\n              <button\n                type=\"button\"\n                className={`${secondary} mr-auto`}\n                onClick={() => {\n                  decided.current = true;\n                  setInner(\"denied\");\n                  onDeny?.();\n                }}\n              >\n                Deny\n              </button>\n              {allowAlways && !high && (\n                <button type=\"button\" className={secondary} onClick={() => approve(\"always\")}>\n                  Always allow\n                </button>\n              )}\n              <button\n                type=\"button\"\n                onClick={() => approve(\"once\")}\n                className={primary}\n                style={{ backgroundImage: \"var(--grad-primary)\" }}\n              >\n                Allow once\n              </button>\n            </motion.div>\n          ) : (\n            <motion.div\n              key={status}\n              ref={resultRef}\n              tabIndex={-1}\n              className={`flex items-center gap-2 rounded-full text-[15px] font-medium outline-none ${status === \"denied\" ? \"text-fg-muted\" : \"text-success\"}`}\n              initial={{ opacity: 0, y: 6 }}\n              animate={{ opacity: 1, y: 0 }}\n              exit={{ opacity: 0, y: -6 }}\n              transition={spring}\n            >\n              <motion.span\n                className={`grid size-7 place-items-center rounded-full ${status === \"denied\" ? \"bg-muted\" : \"bg-success-soft\"}`}\n                initial={{ scale: 0.4, rotate: -30 }}\n                animate={{ scale: 1, rotate: 0 }}\n                transition={{ type: \"spring\", stiffness: 520, damping: 18 }}\n              >\n                {status === \"denied\" ? <X size={16} strokeWidth={2} /> : <Check size={16} strokeWidth={2} />}\n              </motion.span>\n              {result}\n            </motion.div>\n          )}\n        </AnimatePresence>\n      </div>\n      <span className=\"sr-only\" role=\"status\" aria-live=\"polite\">\n        {result}\n      </span>\n    </motion.div>\n  );\n}\n"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "color-fg": "var(--fg)",
+      "color-fg-muted": "var(--fg-muted)",
+      "color-surface": "var(--surface)",
+      "color-subtle": "var(--subtle)",
+      "color-success": "var(--success)",
+      "color-success-soft": "var(--success-soft)",
+      "color-danger": "var(--danger)",
+      "color-danger-soft": "var(--danger-soft)"
+    },
+    "light": {
+      "fg": "#18181b",
+      "fg-muted": "#535358",
+      "surface": "#ffffff",
+      "subtle": "#f4f4f5",
+      "success": "#12a150",
+      "success-soft": "#12a1501a",
+      "danger": "#e5484d",
+      "danger-soft": "#e5484d1a",
+      "select": "#1e6af1",
+      "inverse-fg": "#ffffff",
+      "shadow-card": "0 0 0 1px rgb(0 0 0 / 0.115), 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 12px rgb(0 0 0 / 0.05), 0 12px 24px rgb(0 0 0 / 0.05)",
+      "shadow-btn-secondary": "0 0 0 1px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.06), 0 2px 4px rgb(0 0 0 / 0.04), inset 0 1px 0 #ffffff",
+      "shadow-btn-primary": "0 0 0 1px #18181b, 0 1px 2px rgb(0 0 0 / 0.2), 0 3px 6px rgb(0 0 0 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.14)",
+      "grad-primary": "linear-gradient(180deg, #45454b 0%, #2b2b30 100%)"
+    },
+    "dark": {
+      "fg": "#ededed",
+      "fg-muted": "#aaaaaf",
+      "surface": "#292929",
+      "subtle": "#1f1f1f",
+      "success": "#a0efc0",
+      "success-soft": "#a0efc024",
+      "danger": "#f06464",
+      "danger-soft": "#f0646429",
+      "select": "#216ef4",
+      "inverse-fg": "#0a0a0a",
+      "shadow-card": "0 0 0 1px rgb(255 255 255 / 0.15)",
+      "shadow-btn-secondary": "0 0 0 1px rgb(255 255 255 / 0.08), 0 1px 2px rgb(0 0 0 / 0.4), inset 0 1px 0 rgb(255 255 255 / 0.06)",
+      "shadow-btn-primary": "0 0 0 1px #ffffff, 0 1px 2px rgb(0 0 0 / 0.4), inset 0 -1px 0 rgb(0 0 0 / 0.08)",
+      "grad-primary": "linear-gradient(180deg, #ffffff 0%, #e9e9ec 100%)"
+    }
+  }
+}

@@ -19,6 +19,8 @@ const NAV: { section: Section; label: string }[] = [
 ];
 
 function readDark() {
+  const asked = new URLSearchParams(window.location.search).get("theme");
+  if (asked === "dark" || asked === "light") return asked === "dark";
   try {
     return localStorage.getItem("kit-theme") === "dark";
   } catch {

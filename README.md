@@ -12,7 +12,30 @@ npx github:Ashu1109/open-uistacks init
 npx github:Ashu1109/open-uistacks add prompt-input
 ```
 
+![The open-uistacks docs site: every component as a live, interactive preview, grouped by category](docs/screenshots/components.png)
+
 > open-uistacks is an independent project. It is not made by, affiliated with or endorsed by UI Stacks; it includes their free MIT components, credited below.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/component-page.png" alt="A component page: live preview with a Replay button, then the one-line install command"></td>
+    <td width="50%"><img src="docs/screenshots/charts-dark.png" alt="The charts category in dark mode: forecast chart, activity heatmap, grouped bars and treemap"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><strong>Component page.</strong> Live preview, source, install command and props for every item.</sub></td>
+    <td align="center"><sub><strong>Dark mode.</strong> The same tokens restyle every component.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/block-page.png" alt="The revenue overview block: four metric tiles that count up and a bar chart that grows in"></td>
+    <td width="50%"><img src="docs/screenshots/template-dark.png" alt="The DevOps template in dark mode: app shell with sidebar, active incidents and on-call rota"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><strong>Blocks.</strong> Ready-made sections with sample data, like this revenue overview.</sub></td>
+    <td align="center"><sub><strong>Templates.</strong> Complete app screens, previewed at desktop, tablet and phone widths.</sub></td>
+  </tr>
+</table>
 
 ## Why open-uistacks
 
